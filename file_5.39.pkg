@@ -1,0 +1,7 @@
+# file_5.39
+PKG_URL="ftp://ftp.astron.com/pub/file/file-5.39.tar.gz"
+#PATCHES=
+#AUTOCONF=0
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+INST_CMD="install-strip"

@@ -1,0 +1,7 @@
+# readline_8.1
+PKG_URL="https://ftp.gnu.org/gnu/readline/readline-8.1.tar.gz"
+#PATCHES=
+AUTOCONF=0
+BUILD_PROCESS=configmake
+CONF_FLAGS="--disable-option-checking --with-curses"
+INST_CMD="install"

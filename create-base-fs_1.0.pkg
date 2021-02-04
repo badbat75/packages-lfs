@@ -1,0 +1,15 @@
+BUILD_PROCESS=none
+PKG_POSTBUILD="mkdir -pv ${BIN_PATH}/{dev,proc,sys,run,etc,var}
+	[ ! -f ${BIN_PATH}/dev/console ] && sudo mknod -m 600 ${BIN_PATH}/dev/console c 5 1 || true
+	[ ! -f ${BIN_PATH}/dev/console ] && sudo mknod -m 666 ${BIN_PATH}/dev/null c 1 3 || true
+	ln -snfv /run ${BIN_PATH}/var/run
+	ln -snfv /run/lock ${BIN_PATH}/var/lock
+	install -dv -m 0750 ${BIN_PATH}/root
+	install -dv -m 1777 ${BIN_PATH}/tmp ${BIN_PATH}/var/tmp
+	ln -sfv /proc/self/mounts ${BIN_PATH}/etc/mtab
+	mkdir -pv ${BIN_PATH}/var/log
+	touch ${BIN_PATH}/var/log/{btmp,lastlog,faillog,wtmp}
+	#chgrp -v utmp ${BIN_PATH}/var/log/lastlog
+	chmod -v 664 ${BIN_PATH}/var/log/lastlog
+	chmod -v 600 ${BIN_PATH}/var/log/btmp
+"
