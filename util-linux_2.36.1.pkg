@@ -1,0 +1,17 @@
+# util-linux_2.36.1
+PKG_URL="https://www.kernel.org/pub/linux/utils/util-linux/v2.36/util-linux-2.36.1.tar.xz"
+PKG_DEPS="lfs/ncurses_6.2+p20210130"
+AUTOCONF=0
+BUILD_PROCESS=configmake
+CONF_FLAGS="ADJTIME_PATH=/var/lib/hwclock/adjtime \
+            --disable-chfn-chsh \
+            --disable-login \
+            --disable-nologin \
+            --disable-su \
+            --disable-setpriv \
+            --disable-runuser \
+            --disable-pylibmount \
+            --disable-makeinstall-chown \
+            --without-python \
+            runstatedir=/run"
+INST_CMD="install-strip"

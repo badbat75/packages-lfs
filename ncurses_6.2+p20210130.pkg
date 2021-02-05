@@ -4,12 +4,13 @@ PKG_URL="https://github.com/mirror/ncurses/archive/5d5daf53864fdb666df16c82c3710
 #GIT_COMMIT=
 AUTOCONF=0
 BUILD_PROCESS=configmake
-CONF_FLAGS="--with-pkg-config-libdir=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/pkgconfig --without-debug --without-ada --without-normal --enable-widec --enable-pc-files"
+CONF_FLAGS="--with-pkg-config-libdir=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/pkgconfig \
+	--without-debug --without-ada --without-normal --enable-widec --enable-pc-files"
 #CONF_FLAGS+=" --disable-stripping"
 #CONF_FLAGS+=" --with-manpage-format=normal"
 if [ "${BUILD_LIBSHARED}" -eq "1" ]
 then
-    CONF_FLAGS+=" --with-shared"
+	CONF_FLAGS+=" --with-shared"
 fi
 INST_CMD="install"
 PKG_PREBUILD="sed -i '/INSTALL_OPT_S=\"-s\"/ s/-s/--strip-program \${STRIP} -s/' configure"

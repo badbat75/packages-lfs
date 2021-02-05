@@ -1,0 +1,32 @@
+# procps-ng_3.3.16
+PKG_URL="https://sourceforge.net/projects/procps-ng/files/Production/procps-ng-3.3.16.tar.xz"
+PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/systemd_247"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--disable-kill --enable-watch8bit --with-systemd \
+     NCURSES_LIBS=-ltinfo ac_cv_func_malloc_0_nonnull=yes ac_cv_func_realloc_0_nonnull=yes"
+INST_CMD="install-strip"
+PKG_PREBUILD='cat <<EOF | patch -s -p0 || true
+--- configure.ac.orig   2021-02-05 17:12:40.834208000 +0100
++++ configure.ac        2021-02-05 17:16:26.824208000 +0100
+@@ -155,9 +155,17 @@
+     AC_CHECK_LIB(ncurses, initscr, [have_ncurses=yes], [have_ncurses=no])
+     AC_CHECK_HEADERS(curses.h ncurses.h term.h, [], [have_ncurses=no], AC_INCLUDES_DEFAULT)
+     if test "x\$have_ncurses" = xno; then
+-      AC_MSG_ERROR([ncurses support missing/incomplete (for partial build use --without-ncurses)])
++      PKG_CHECK_MODULES([NCURSES], [ncurses], [], [
++        AC_CHECK_LIB(ncursesw, initscr, [have_ncurses=yes], [have_ncurses=no])
++        AC_CHECK_HEADERS(curses.h ncurses.h term.h, [], [have_ncurses=no], AC_INCLUDES_DEFAULT)
++        if test "x\$have_ncurses" = xno; then
++          AC_MSG_ERROR([ncursesw support missing/incomplete (for partial build use --without-ncurses)])
++        fi
++        NCURSES_LIBS="-lncursesw"
++      ])
++    else
++      NCURSES_LIBS="-lncurses"
+     fi
+-    NCURSES_LIBS="-lncurses"
+   ])
+   AM_CONDITIONAL(WITH_NCURSES, true)
+   if test "\$enable_watch8bit" = yes; then
+EOF
+'
