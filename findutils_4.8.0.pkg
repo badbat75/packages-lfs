@@ -1,0 +1,5 @@
+# findutils_4.8.0
+PKG_URL="http://ftp.gnu.org/gnu/findutils/findutils-4.8.0.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+INST_CMD="install-strip"

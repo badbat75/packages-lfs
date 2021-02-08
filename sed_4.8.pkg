@@ -1,0 +1,5 @@
+# sed_4.8
+PKG_URL="http://ftp.gnu.org/gnu/sed/sed-4.8.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+INST_CMD="install-strip"

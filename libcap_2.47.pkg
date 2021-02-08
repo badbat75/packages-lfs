@@ -3,5 +3,5 @@ PKG_URL="https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libc
 #PKG_CFLAGS=""
 #PKG_LDFLAGS=
 BUILD_PROCESS=simplemake
-PKG_MAKEVARS="lib=${BUILD_LIBDIR}${LIBSUFFIX} CROSS_COMPILE=${HARCH}- BUILD_CC=${BARCH}-gcc"
+PKG_MAKEVARS="lib=${BUILD_LIBDIR}${BUILD_LIBSUFFIX} CROSS_COMPILE=${HARCH}- BUILD_CC=${BARCH}-gcc"
 INST_CMD="install"
