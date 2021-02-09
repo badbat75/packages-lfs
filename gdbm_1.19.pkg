@@ -1,0 +1,5 @@
+# gdbm_1.19
+PKG_URL="http://ftp.gnu.org/gnu/gdbm/gdbm-1.19.tar.gz"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--enable-libgdbm-compat"
+INST_CMD="install-strip"

@@ -1,0 +1,6 @@
+# gawk_5.1.0
+PKG_URL="http://ftp.gnu.org/gnu/gawk/gawk-5.1.0.tar.xz"
+PKG_DEPS="lfs/readline_8.1"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+INST_CMD="install-strip"

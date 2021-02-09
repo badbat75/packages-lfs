@@ -1,5 +1,6 @@
 # kbd_2.4.0
 PKG_URL="https://www.kernel.org/pub/linux/utils/kbd/kbd-2.4.0.tar.xz"
+PKG_DEPS="lfs/gzip_1.10"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--disable-vlock"
 INST_CMD="install-strip"
