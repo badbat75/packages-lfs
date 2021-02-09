@@ -6,3 +6,5 @@ CONF_FLAGS="-Drootlibdir=${BUILD_LIBDIR}${BUILD_LIBSUFFIX} -Dblkid=true -Ddefaul
 	-Dmount-path=/bin/mount -Dsplit-usr=true -Dsysusers=false -Drpmmacrosdir=no -Dhomed=false -Duserdb=false \
 	-Dman=true -Dmode=release"
 INST_CMD="install/strip"
+PKG_POSTBUILD="systemd-machine-id-setup --root=${BIN_PATH}
+	systemctl preset-all --root=${BIN_PATH}"

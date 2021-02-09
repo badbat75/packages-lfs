@@ -1,7 +1,7 @@
 BUILD_PROCESS=none
 PKG_POSTBUILD="echo '127.0.0.1 localhost' > ${BIN_PATH}/etc/hosts
 	cat > ${BIN_PATH}/etc/passwd <<-EOF
-		root:x:0:0:root:/root:/bin/bash
+		root:\$6\$YUC1C/M0p1G/6\$Nwt1Gjr3wTAib4Oe9SFgS65dFT5NMYIWjrJCn1HyzmQZxBpKk9VXSYzdrqt7i6/UqChY7b8/MxLisOfhy2rX31:0:0:root:/root:/bin/bash
 		bin:x:1:1:bin:/dev/null:/bin/false
 		daemon:x:6:6:Daemon User:/dev/null:/bin/false
 		messagebus:x:18:18:D-Bus Message Daemon User:/var/run/dbus:/bin/false
@@ -50,4 +50,54 @@ PKG_POSTBUILD="echo '127.0.0.1 localhost' > ${BIN_PATH}/etc/hosts
 		nogroup:x:99:
 		users:x:999:
 	EOF
-"
+	sudo cat > ${BIN_PATH}/etc/inputrc <<-EOF
+		# Begin /etc/inputrc
+		# Modified by Chris Lynn <roryo@roryo.dynup.net>
+
+		# Allow the command prompt to wrap to the next line
+		set horizontal-scroll-mode Off
+
+		# Enable 8bit input
+		set meta-flag On
+		set input-meta On
+
+		# Turns off 8th bit stripping
+		set convert-meta Off
+
+		# Keep the 8th bit for display
+		set output-meta On
+
+		# none, visible or audible
+		set bell-style none
+
+		# All of the following map the escape sequence of the value
+		# contained in the 1st argument to the readline specific functions
+		"\eOd": backward-word
+		"\eOc": forward-word
+
+		# for linux console
+		"\e[1~": beginning-of-line
+		"\e[4~": end-of-line
+		"\e[5~": beginning-of-history
+		"\e[6~": end-of-history
+		"\e[3~": delete-char
+		"\e[2~": quoted-insert
+
+		# for xterm
+		"\eOH": beginning-of-line
+		"\eOF": end-of-line
+
+		# for Konsole
+		"\e[H": beginning-of-line
+		"\e[F": end-of-line
+
+		# End /etc/inputrc
+	EOF
+	cat > ${BIN_PATH}/etc/shells <<-EOF
+		# Begin /etc/shells
+
+		/bin/sh
+		/bin/bash
+
+		# End /etc/shells
+	EOF"

@@ -1,0 +1,8 @@
+# kbd_2.4.0
+PKG_URL="https://www.kernel.org/pub/linux/utils/kbd/kbd-2.4.0.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--disable-vlock"
+INST_CMD="install-strip"
+
+PKG_PREBUILD="sed -i '/RESIZECONS_PROGS=/s/yes/no/' configure.ac
+    sed -i 's/resizecons.8 //' docs/man/man8/Makefile.in"
