@@ -72,24 +72,24 @@ PKG_POSTBUILD="echo '127.0.0.1 localhost' > ${BIN_PATH}/etc/hosts
 
 		# All of the following map the escape sequence of the value
 		# contained in the 1st argument to the readline specific functions
-		"\eOd": backward-word
-		"\eOc": forward-word
+		\"\\eOd\": backward-word
+		\"\\eOc\": forward-word
 
 		# for linux console
-		"\e[1~": beginning-of-line
-		"\e[4~": end-of-line
-		"\e[5~": beginning-of-history
-		"\e[6~": end-of-history
-		"\e[3~": delete-char
-		"\e[2~": quoted-insert
+		\"\\e[1~\": beginning-of-line
+		\"\\e[4~\": end-of-line
+		\"\\e[5~\": beginning-of-history
+		\"\\e[6~\": end-of-history
+		\"\\e[3~\": delete-char
+		\"\\e[2~\": quoted-insert
 
 		# for xterm
-		"\eOH": beginning-of-line
-		"\eOF": end-of-line
+		\"\\eOH\": beginning-of-line
+		\"\\eOF\": end-of-line
 
 		# for Konsole
-		"\e[H": beginning-of-line
-		"\e[F": end-of-line
+		\"\\e[H\": beginning-of-line
+		\"\\e[F\": end-of-line
 
 		# End /etc/inputrc
 	EOF

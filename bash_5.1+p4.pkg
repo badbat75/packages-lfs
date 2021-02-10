@@ -22,3 +22,5 @@ PKG_PREBUILD="cat <<EOF | patch -s -p0 || true
  TERMCAP_DEP=
 EOF
 sed -i 's/(INSTALL_PROGRAM) -s/(INSTALL_PROGRAM) --strip-program=\${STRIP} -s/' Makefile.in "
+
+PKG_POSTBUILD="ln -sfv bash ${BIN_PATH}${BUILD_PREFIX}/bin/sh"

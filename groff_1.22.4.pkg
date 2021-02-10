@@ -1,0 +1,7 @@
+# groff_1.22.4
+PKG_URL="http://ftp.gnu.org/gnu/groff/groff-1.22.4.tar.gz"
+BUILD_PROCESS=configmake
+CONF_FLAGS="PAGE=A4"
+INST_CMD="install-strip"
+GROFFBIN=$(which groff)
+PKG_MAKEVARS="GROFFBIN=${GROFFBIN} GROFF_BIN_PATH=$(dirname ${GROFFBIN})"
