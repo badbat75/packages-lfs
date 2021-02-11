@@ -5,9 +5,7 @@ BUILD_PROCESS=configmake
 CONF_FLAGS="--disable-debuginfod --enable-libdebuginfod=dummy --disable-werror"
 INST_CMD="install-strip STRIPPROG=${HARCH}-strip"
 LTOENABLE=0
-PKG_PREBUILD='echo Eddai porca miseria
-    set -x
-    cat <<EOF | patch -s -p1 || true
+PKG_PREBUILD='cat <<EOF | patch -s -p1 || true
 diff -Naur elfutils_0.182.orig/config/eu.am elfutils_0.182/config/eu.am
 --- elfutils_0.182.orig/config/eu.am$(echo -e "\\t")2020-10-31 23:38:55.000000000 +0100
 +++ elfutils_0.182/config/eu.am$(echo -e "\\t")2021-02-10 14:21:19.679718200 +0100

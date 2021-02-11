@@ -1,0 +1,5 @@
+# acl_2.2.53
+PKG_URL="http://download.savannah.gnu.org/releases/acl/acl-2.2.53.tar.gz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+INST_CMD="install-strip"
