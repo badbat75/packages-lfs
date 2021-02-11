@@ -1,11 +1,11 @@
 # bc_1.0.7
 PKG_URL="https://ftp.gnu.org/gnu/bc/bc-1.07.tar.gz"
+PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/readline_8.1"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--with-readline"
-PKG_MAKEVARS="-j1"
-PKG_TWOSTEPSBUILD=1
 PKG_MAKEVARS=""
 INST_CMD="install-strip CC_FOR_BUILD=gcc"
+
 PKG_PREBUILD='cat <<EOF | patch -s -p1 || true
 diff -Naur bc-1.07.orig/bc/Makefile.am bc-1.07/bc/Makefile.am
 --- bc-1.07.orig/bc/Makefile.am$(echo -e "\\t")2016-02-29 23:50:35.000000000 +0100

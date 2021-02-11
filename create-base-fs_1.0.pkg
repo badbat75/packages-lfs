@@ -1,8 +1,7 @@
 BUILD_PROCESS=none
-PKG_POSTBUILD="mkdir -pv ${BIN_PATH}/{dev,proc,sys,run,etc,usr/bin,usr/lib,usr/lib64,usr/sbin,var}
+PKG_POSTBUILD="mkdir -pv ${BIN_PATH}/{dev,proc,sys,run,etc,lib,usr/bin,usr/lib,usr/sbin,var}
 	ln -sfv usr/bin ${BIN_PATH}
-	ln -sfv usr/lib ${BIN_PATH}
-	ln -sfv usr/lib64 ${BIN_PATH}
+	#ln -sfv usr/lib ${BIN_PATH}
 	ln -sfv usr/sbin ${BIN_PATH}
 	[ ! -f ${BIN_PATH}/dev/console ] && sudo mknod -m 600 ${BIN_PATH}/dev/console c 5 1 || true
 	[ ! -f ${BIN_PATH}/dev/console ] && sudo mknod -m 666 ${BIN_PATH}/dev/null c 1 3 || true
