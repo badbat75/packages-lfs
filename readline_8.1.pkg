@@ -1,5 +1,6 @@
 # readline_8.1
 PKG_URL="https://ftp.gnu.org/gnu/readline/readline-8.1.tar.gz"
+PKG_DEPS="lfs/ncurses_6.2+p20210130"
 #PATCHES=
 AUTOCONF=0
 BUILD_PROCESS=configmake

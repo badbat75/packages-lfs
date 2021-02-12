@@ -2,7 +2,7 @@
 PKG_URL="https://sourceware.org/ftp/elfutils/0.182/elfutils-0.182.tar.bz2"
 PKG_DEPS="lfs/zlib_1.2.11 lfs/gzip_1.10 lfs/bzip2_1.0.8 lfs/zstd_1.4.8"
 BUILD_PROCESS=configmake
-CONF_FLAGS="--disable-debuginfod --enable-libdebuginfod=dummy --disable-werror"
+CONF_FLAGS="--disable-debuginfod --enable-libdebuginfod=dummy --disable-werror --program-prefix="
 INST_CMD="install-strip STRIPPROG=${HARCH}-strip"
 LTOENABLE=0
 PKG_PREBUILD='cat <<EOF | patch -s -p1 || true
