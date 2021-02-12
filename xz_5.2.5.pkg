@@ -1,5 +1,6 @@
 # xz_5.2.5
 PKG_URL="https://tukaani.org/xz/xz-5.2.5.tar.xz"
+PKG_DEPS="lfs/zlib_1.2.11"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 INST_CMD="install-strip"

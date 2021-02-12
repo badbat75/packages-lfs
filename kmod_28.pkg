@@ -1,5 +1,6 @@
 # kmod_28
 PKG_URL="https://www.kernel.org/pub/linux/utils/kernel/kmod/kmod-28.tar.xz"
+PKG_DEPS="lfs/zlib_1.2.11 lfs/zstd_1.4.8"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--with-xz --with-zstd --with-zlib"
 INST_CMD="install-strip"

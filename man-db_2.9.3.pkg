@@ -1,6 +1,6 @@
 # man-db_2.9.3
 PKG_URL="http://download.savannah.gnu.org/releases/man-db/man-db-2.9.3.tar.xz"
-PKG_DEPS="lfs/libpipeline_1.5.3 lfs/gdbm_1.19 lfs/gzip_1.10 lfs/bzip2_1.0.8 lfs/xz_5.2.5 lfs/zstd_1.4.8"
+PKG_DEPS="lfs/libpipeline_1.5.3 lfs/gdbm_1.19 lfs/zlib_1.2.11 lfs/gzip_1.10 lfs/bzip2_1.0.8 lfs/xz_5.2.5 lfs/zstd_1.4.8"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--disable-setuid --enable-cache-owner=bin --with-browser=/usr/bin/lynx --with-vgrind=/usr/bin/vgrind --with-grap=/usr/bin/grap"
 INST_CMD="install-strip"
