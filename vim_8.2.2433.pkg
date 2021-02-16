@@ -3,7 +3,7 @@ PKG_URL="http://anduin.linuxfromscratch.org/LFS/vim-8.2.2433.tar.gz"
 PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/elfutils_0.182"
 BUILD_PROCESS=configmake
 AUTOCONF=0
-CONF_COPYSRC=1
+PKG_COPYSRC=1
 CONF_FLAGS="--with-tlib=ncursesw --disable-option-checking \
 	vim_cv_toupper_broken=no vim_cv_terminfo=no vim_cv_tgetent=zero vim_cv_getcwd_broken=no \
 	vim_cv_stat_ignores_slash=no vim_cv_memmove_handles_overlap=no vim_cv_bcopy_handles_overlap=no \
@@ -17,7 +17,7 @@ PKG_PREBUILD="sed -i 's/ln -s/ln -fsv/g' src/Makefile
 PKG_POSTBUILD="
 	ln -sfv vim ${BIN_PATH}${BUILD_PREFIX}/bin/vi
 	for L in ${BIN_PATH}/usr/share/man/{,*/}man1/vim.1; do
-    	ln -sv vim.1 \$(dirname \$L)/vi.1
+    	ln -sfv vim.1 \$(dirname \$L)/vi.1
 	done
 	cat > ${BIN_PATH}/etc/vimrc <<-EOF
 		\" Begin /etc/vimrc

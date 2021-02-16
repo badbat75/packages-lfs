@@ -1,36 +1,22 @@
 # perl_5.32.1
 PKG_URL="https://www.cpan.org/src/5.0/perl-5.32.1.tar.xz"
-AUTOCONF=0
-STD_CONF_FLAGS=0
-CONF_CMD="Configure"
-CONF_FLAGS="-des -Dprefix=${BUILD_PREFIX} \
-	-Dvendorprefix=${BUILD_PREFIX} \
-	-Dprivlib=${BUILD_LIBDIR}/perl5/5.32/core_perl \
-	-Darchlib=${BUILD_LIBDIR}/perl5/5.32/core_perl \
-	-Dsitelib=${BUILD_LIBDIR}/perl5/5.32/site_perl \
-	-Dsitearch=${BUILD_LIBDIR}/perl5/5.32/site_perl \
-	-Dvendorlib=${BUILD_LIBDIR}/perl5/5.32/vendor_perl \
-	-Dvendorarch=${BUILD_LIBDIR}/perl5/5.32/vendor_perl \
-	-Dman1dir=${BUILD_PREFIX}/share/man/man1 \
-	-Dman3dir=${BUILD_PREFIX}/share/man/man3 \
-	-Dpager=\"${BUILD_PREFIX}/bin/less -isR\" \
-	-Duseshrplib \
-	-Dusethreads \
-	-Dmyhostname=localhost \
-	-Dperladmin=root@localhost \
-	-Darchname=${HARCH} \
-	-Doptimize=-O${OPTLEVEL} \
-	-Dusecrosscompile -Dtargetarch=${HARCH} \
-	-Dcc=${HARCH}-gcc \
-	-Dccflags=\"${COMMON_CFLAGS} ${PLATFORM_CFLAGS} ${OPTCOMP_FLAGS}\" \
-	-Dldflags=\"${SYSROOT_LDFLAGS} ${COMMON_LDFLAGS} ${OPTLINK_FLAGS} ${PKG_LDFLAGS}\" \
-	-Dsysroot=${BIN_PATH} \
-	-Dlddlflags=-shared"
-
-BUILD_PROCESS=configmake
-INST_CMD="install-strip"
-PKG_TWOSTEPSBUILD=1
-PKG_MAKEVARS=""
-
-export BUILD_ZLIB=False
-export BUILD_BZIP2=0
+BUILD_PROCESS=downloadonly
+PKG_COPYSRC=1
+PKG_PREBUILD="NODELETEDESTDIR=1 download_uncompress https://github.com/arsv/perl-cross/releases/download/1.3.5/perl-cross-1.3.5.tar.gz \${PKG_SRCPATH}
+"
+PKG_POSTBUILD="
+	\${PKG_SRCPATH}/configure \
+		--prefix=/usr --target=${HARCH} --sysroot=${BIN_PATH} \
+		--with-cc='${CCWRAPPER:+${CCWRAPPER} }${HARCH}-gcc' \
+		--with-cpp='${CCWRAPPER:+${CCWRAPPER} }${HARCH}-cpp' \
+		--with-ranlib=${HARCH}-gcc-ranlib \
+		-Dccflags='${PLATFORM_CFLAGS} ${OPTCOMP_FLAGS}' \
+		-Doptimize='${OPTLEVEL:+-O${OPTLEVEL}} $([ ${LTOENABLE:-0} -eq 1 ] && echo ${COMMON_LTOFLAGS} || true)' \
+		-Dldflags='${OPTLINK_FLAGS}' \
+		-Dpager='${BUILD_PREFIX}/bin/less -isR' \
+		-Duseshrplib \
+		-Dusethreads \
+		-Dmyhostname=localhost \
+		-Dperladmin=root@localhost
+	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0}
+	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} DESTDIR=${BIN_PATH} install"

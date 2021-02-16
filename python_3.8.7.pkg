@@ -3,7 +3,6 @@ PYTHON_VER=3.8.7
 PKG_URL="https://www.python.org/ftp/python/${PYTHON_VER}/Python-${PYTHON_VER}.tar.xz"
 PKG_DEPS="lfs/zlib_1.2.11 lfs/zlib_1.2.11 lfs/bzip2_1.0.8 lfs/expat_2.2.10 lfs/libffi_3.3 lfs/readline_8.1 lfs/openssl_1.1.1i"
 BUILD_PROCESS=configmake
-#CONF_COPYSRC=1
 PKG_TWOSTEPSBUILD=1
 CONF_FLAGS="--with-system-expat --with-system-ffi --enable-ipv6 --with-ensurepip=yes \
 	CROSS_COMPILE=${HARCH}- CROSS_COMPILE_TARGET=yes \
