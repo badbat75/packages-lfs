@@ -1,5 +1,6 @@
 # acl_2.2.53
 PKG_URL="http://download.savannah.gnu.org/releases/acl/acl-2.2.53.tar.gz"
+PKG_DEPS="lfs/attr_2.4.48"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 INST_CMD="install-strip"
@@ -65,5 +66,46 @@ PKG_PREBUILD="cat <<EOF | patch -s -p1 || true
  
  #define ALIGN_MASK(x, mask)    (((x) + (mask)) & ~(mask))
  #define ALIGN(x, a)            ALIGN_MASK(x, (typeof(x))(a) - 1)
+---
+
+ LTO Building issues (broken aliases)
+
+--- a/tools/getfacl.c
++++ b/tools/getfacl.c
+@@ -380,6 +380,8 @@ int do_show(FILE *stream, const char *pa
+ 			show_line(stream, NULL, NULL, NULL, NULL,
+ 			          &dacl_names, dacl, &dacl_ent, dacl_mask);
+ 			continue;
++		} else if (!dacl && !acl) {
++			return -1;
+ 		} else {
+ 			if (acl_tag == ACL_USER || acl_tag == ACL_GROUP) {
+ 				int id_cmp = 0;
+--- a/libacl/acl_create_entry.c
++++ b/libacl/acl_create_entry.c
+@@ -26,7 +26,7 @@
+ acl_entry_obj *
+ __acl_create_entry_obj(acl_obj *acl_obj_p)
+ {
+-	acl_entry_obj *entry_obj_p;
++	acl_entry_obj *entry_obj_p, *prev;
+ 
+ 	if (acl_obj_p->aprealloc == acl_obj_p->aprealloc_end) {
+ 		entry_obj_p = new_obj_p(acl_entry);
+@@ -39,10 +39,11 @@ __acl_create_entry_obj(acl_obj *acl_obj_p)
+ 	acl_obj_p->aused++;
+ 
+ 	/* Insert at the end of the entry ring */
+-	entry_obj_p->eprev = acl_obj_p->aprev;
++	prev = acl_obj_p->aprev;
++	entry_obj_p->eprev = prev;
+ 	entry_obj_p->enext = (acl_entry_obj *)acl_obj_p;
+-	entry_obj_p->eprev->enext = entry_obj_p;
+-	entry_obj_p->enext->eprev = entry_obj_p;
++	prev->enext = entry_obj_p;
++	acl_obj_p->aprev = entry_obj_p;
+ 	
+ 	entry_obj_p->econtainer = acl_obj_p;
+ 	init_acl_entry_obj(*entry_obj_p);
 EOF
 "
