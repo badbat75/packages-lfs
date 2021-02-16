@@ -3,3 +3,67 @@ PKG_URL="http://download.savannah.gnu.org/releases/acl/acl-2.2.53.tar.gz"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 INST_CMD="install-strip"
+PKG_PREBUILD="cat <<EOF | patch -s -p1 || true
+ libacl/libacl.h |    3 +++
+ 1 file changed, 3 insertions(+)
+
+--- a/libacl/libacl.h
++++ b/libacl/libacl.h
+@@ -25,6 +25,9 @@
+ #ifndef ENOATTR
+ # define ENOATTR ENODATA
+ #endif
++#ifndef ENODATA
++# define ENODATA ENOATTR
++#endif
+ 
+ typedef unsigned int permset_t;
+ 
+--- a/tools/parse.c
++++ b/tools/parse.c
+@@ -413,11 +413,6 @@ read_acl_comments(
+ 	mode_t *flags)
+ {
+ 	int c;
+-	/*
+-	  Max PATH_MAX bytes even for UTF-8 path names and additional 9
+-	  bytes for \"# file: \". Not a good solution but for now it is the
+-	  best I can do without too much impact on the code. [tw]
+-	*/
+ 	char *line, *cp, *p;
+ 	int comments_read = 0;
+ 	
+--- a/test/test_group.c
++++ b/test/test_group.c
+@@ -9,12 +9,8 @@
+ #include <grp.h>
+ 
+ #define TEST_GROUP \"test/test.group\"
+-static char grfile[PATH_MAX];
+-static void setup_grfile() __attribute__((constructor));
++static char grfile[] = BASEDIR \"/\" TEST_GROUP;
+ 
+-static void setup_grfile() {
+-	snprintf(grfile, sizeof(grfile), \"%s/%s\", BASEDIR, TEST_GROUP);
+-}
+ 
+ #define ALIGN_MASK(x, mask)    (((x) + (mask)) & ~(mask))
+ #define ALIGN(x, a)            ALIGN_MASK(x, (typeof(x))(a) - 1)
+--- a/test/test_passwd.c
++++ b/test/test_passwd.c
+@@ -9,12 +9,7 @@
+ #include <pwd.h>
+ 
+ #define TEST_PASSWD \"test/test.passwd\"
+-static char pwfile[PATH_MAX];
+-static void setup_pwfile() __attribute__((constructor));
+-
+-static void setup_pwfile() {
+-	snprintf(pwfile, sizeof(pwfile), \"%s/%s\", BASEDIR, TEST_PASSWD);
+-}
++static char pwfile[] = BASEDIR \"/\" TEST_PASSWD;
+ 
+ #define ALIGN_MASK(x, mask)    (((x) + (mask)) & ~(mask))
+ #define ALIGN(x, a)            ALIGN_MASK(x, (typeof(x))(a) - 1)
+EOF
+"

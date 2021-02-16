@@ -1,7 +1,8 @@
 BUILD_PROCESS=none
-PKG_POSTBUILD="echo '127.0.0.1 localhost' > ${BIN_PATH}/etc/hosts
+####### Basic configuration files ##########
+PKG_POSTBUILD="echo '127.0.0.1 localhost' > \\${BIN_PATH}/etc/hosts
 	cat > ${BIN_PATH}/etc/passwd <<-EOF
-		root:\\\$6\\\$YUC1C/M0p1G/6\\\$Nwt1Gjr3wTAib4Oe9SFgS65dFT5NMYIWjrJCn1HyzmQZxBpKk9VXSYzdrqt7i6/UqChY7b8/MxLisOfhy2rX31:0:0:root:/root:/bin/bash
+		root:\\\\\$6\\\\\$YUC1C/M0p1G/6\\\\\$Nwt1Gjr3wTAib4Oe9SFgS65dFT5NMYIWjrJCn1HyzmQZxBpKk9VXSYzdrqt7i6/UqChY7b8/MxLisOfhy2rX31:0:0:root:/root:/bin/bash
 		bin:x:1:1:bin:/dev/null:/bin/false
 		daemon:x:6:6:Daemon User:/dev/null:/bin/false
 		messagebus:x:18:18:D-Bus Message Daemon User:/var/run/dbus:/bin/false
@@ -50,6 +51,29 @@ PKG_POSTBUILD="echo '127.0.0.1 localhost' > ${BIN_PATH}/etc/hosts
 		nogroup:x:99:
 		users:x:999:
 	EOF
+	echo 20210214-systemd > ${BIN_PATH}/etc/lfs-release
+	cat > ${BIN_PATH}/etc/lsb-release <<-EOF
+		DISTRIB_ID="Linux From Scratch"
+		DISTRIB_RELEASE="20210214-systemd"
+		DISTRIB_CODENAME="<your name here>"
+		DISTRIB_DESCRIPTION="Linux From Scratch"
+	EOF
+	cat > ${BIN_PATH}/etc/os-release <<-EOF
+		NAME="Linux From Scratch"
+		VERSION="20210214-systemd"
+		ID=lfs
+		PRETTY_NAME="Linux From Scratch 20210214-systemd"
+		VERSION_CODENAME="Gabriele"
+	EOF
+	echo '127.0.0.1 localhost' > \\${BIN_PATH}/etc/hosts
+	cat > ${BIN_PATH}/etc/shells <<-EOF
+		# Begin /etc/shells
+
+		/bin/sh
+		/bin/bash
+
+		# End /etc/shells
+	EOF
 	sudo cat > ${BIN_PATH}/etc/inputrc <<-EOF
 		# Begin /etc/inputrc
 		# Modified by Chris Lynn <roryo@roryo.dynup.net>
@@ -93,11 +117,4 @@ PKG_POSTBUILD="echo '127.0.0.1 localhost' > ${BIN_PATH}/etc/hosts
 
 		# End /etc/inputrc
 	EOF
-	cat > ${BIN_PATH}/etc/shells <<-EOF
-		# Begin /etc/shells
-
-		/bin/sh
-		/bin/bash
-
-		# End /etc/shells
-	EOF"
+	"
