@@ -1,12 +1,21 @@
 # perl_5.32.1
-PKG_URL="https://www.cpan.org/src/5.0/perl-5.32.1.tar.xz"
+PKG_PERL_MAJVER=5.32
+PKG_PERL_SUBVER=1
+PKG_PERL_VER=${PKG_PERL_MAJVER}.${PKG_PERL_SUBVER}
+PKG_URL="https://www.cpan.org/src/5.0/perl-${PKG_PERL_VER}.tar.xz"
 BUILD_PROCESS=downloadonly
+PKG_MAKEVARS="-j1"
 PKG_COPYSRC=1
 PKG_PREBUILD="NODELETEDESTDIR=1 download_uncompress https://github.com/arsv/perl-cross/releases/download/1.3.5/perl-cross-1.3.5.tar.gz \${PKG_SRCPATH}
-"
+	set -x
+	[ -d ${SRC_PATH}/perl ] && cp -frpv ${SRC_PATH}/perl/* . || true
+	set +x"
 PKG_POSTBUILD="
 	\${PKG_SRCPATH}/configure \
 		--prefix=/usr --target=${HARCH} --sysroot=${BIN_PATH} \
+		--host-cc=${BARCH}-gcc \
+		--host-cpp=${BARCH}-cpp \
+		--host-ranlib=${BARCH}-gcc-ranlib \
 		--with-cc='${CCWRAPPER:+${CCWRAPPER} }${HARCH}-gcc' \
 		--with-cpp='${CCWRAPPER:+${CCWRAPPER} }${HARCH}-cpp' \
 		--with-ranlib=${HARCH}-gcc-ranlib \
@@ -17,6 +26,12 @@ PKG_POSTBUILD="
 		-Duseshrplib \
 		-Dusethreads \
 		-Dmyhostname=localhost \
-		-Dperladmin=root@localhost
+		-Dperladmin=root@localhost \
+        -Dprivlib=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/perl5/${PKG_PERL_MAJVER}/core_perl      \
+        -Darchlib=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/perl5/${PKG_PERL_MAJVER}/core_perl      \
+        -Dsitelib=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/perl5/${PKG_PERL_MAJVER}/site_perl      \
+        -Dsitearch=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/perl5/${PKG_PERL_MAJVER}/site_perl     \
+        -Dvendorlib=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/perl5/${PKG_PERL_MAJVER}/vendor_perl  \
+        -Dvendorarch=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/perl5/${PKG_PERL_MAJVER}/vendor_perl \
 	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0}
 	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} DESTDIR=${BIN_PATH} install"
