@@ -3,3 +3,298 @@ PKG_URL="http://download.savannah.gnu.org/releases/attr/attr-2.4.48.tar.gz"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 INST_CMD="install-strip"
+PKG_PREBUILD="cat <<EOF | patch -s -p1 || true
+---
+
+ Invoke AC_SYS_LARGEFILE to enable large-file support.
+
+--- a/configure.ac
++++ b/configure.ac
+@@ -30,6 +30,7 @@ AC_C_CONST
+ AC_TYPE_MODE_T
+ AC_FUNC_ALLOCA
+ AC_FUNC_GCC_VISIBILITY
++AC_SYS_LARGEFILE
+ 
+ AM_PROG_AR
+ LT_INIT
+diff --git a/test/attr.test b/test/attr.test
+index 9f750b0..6ce2f9b 100644
+--- a/test/attr.test
++++ b/test/attr.test
+@@ -391,3 +391,9 @@ Test for proper recursion of directory structures with -L -P -R
+ 	>
+ 
+ 	$ rm -R 1
++
++Test for large-file support
++
++	\\\$ dd bs=65536 seek=32768 if=/dev/null of=large-file 2>/dev/null ||:
++	\\\$ sh -c 'if test -f large-file; then getfattr large-file; fi'
++	\\\$ rm large-file
+---
+
+ Switch back to syscall() for the *xattr system calls.
+
+--- a/libattr/syscalls.c
++++ b/libattr/syscalls.c
+@@ -22,6 +22,8 @@
+ 
+ #include \"config.h\"
+ 
++#include <unistd.h>
++#include <sys/syscall.h>
+ #include <sys/xattr.h>
+ 
+ #ifdef HAVE_VISIBILITY_ATTRIBUTE
+@@ -31,67 +33,67 @@
+ int libattr_setxattr(const char *path, const char *name,
+ 		     void *value, size_t size, int flags)
+ {
+-	return setxattr(path, name, value, size, flags);
++	return syscall(__NR_setxattr, path, name, value, size, flags);
+ }
+ 
+ int libattr_lsetxattr(const char *path, const char *name,
+ 		      void *value, size_t size, int flags)
+ {
+-	return lsetxattr(path, name, value, size, flags);
++	return syscall(__NR_lsetxattr, path, name, value, size, flags);
+ }
+ 
+ int libattr_fsetxattr(int filedes, const char *name,
+ 		      void *value, size_t size, int flags)
+ {
+-	return fsetxattr(filedes, name, value, size, flags);
++	return syscall(__NR_fsetxattr, filedes, name, value, size, flags);
+ }
+ 
+ ssize_t libattr_getxattr(const char *path, const char *name,
+ 			 void *value, size_t size)
+ {
+-	return getxattr(path, name, value, size);
++	return syscall(__NR_getxattr, path, name, value, size);
+ }
+ 
+ ssize_t libattr_lgetxattr(const char *path, const char *name,
+ 			  void *value, size_t size)
+ {
+-	return lgetxattr(path, name, value, size);
++	return syscall(__NR_lgetxattr, path, name, value, size);
+ }
+ 
+ ssize_t libattr_fgetxattr(int filedes, const char *name,
+ 			  void *value, size_t size)
+ {
+-	return fgetxattr(filedes, name, value, size);
++	return syscall(__NR_fgetxattr, filedes, name, value, size);
+ }
+ 
+ ssize_t libattr_listxattr(const char *path, char *list, size_t size)
+ {
+-	return listxattr(path, list, size);
++	return syscall(__NR_listxattr, path, list, size);
+ }
+ 
+ ssize_t libattr_llistxattr(const char *path, char *list, size_t size)
+ {
+-	return llistxattr(path, list, size);
++	return syscall(__NR_llistxattr, path, list, size);
+ }
+ 
+ ssize_t libattr_flistxattr(int filedes, char *list, size_t size)
+ {
+-	return flistxattr(filedes, list, size);
++	return syscall(__NR_flistxattr, filedes, list, size);
+ }
+ 
+ int libattr_removexattr(const char *path, const char *name)
+ {
+-	return removexattr(path, name);
++	return syscall(__NR_removexattr, path, name);
+ }
+ 
+ int libattr_lremovexattr(const char *path, const char *name)
+ {
+-	return lremovexattr(path, name);
++	return syscall(__NR_lremovexattr, path, name);
+ }
+ 
+ int libattr_fremovexattr(int filedes, const char *name)
+ {
+-	return fremovexattr(filedes, name);
++	return syscall(__NR_fremovexattr, filedes, name);
+ }
+ 
+ #ifdef HAVE_VISIBILITY_ATTRIBUTE
+---
+ When attr_multi or attr_multif are called with an invalid am_opcode,
+ they fail with errno set to -EINVAL.  Instead, the errno value should be
+ positive.
+--- a/libattr/libattr.c
++++ b/libattr/libattr.c
+@@ -391,7 +391,7 @@ attr_single(const char *path, attr_multiop_t *op, int flags)
+ {
+ 	int r = -1;
+ 
+-	errno = -EINVAL;
++	errno = EINVAL;
+ 	flags |= op->am_flags;
+ 	if (op->am_opcode == ATTR_OP_GET)
+ 		r = attr_get(path, op->am_attrname, op->am_attrvalue,
+@@ -409,7 +409,7 @@ attr_singlef(const int fd, attr_multiop_t *op, int flags)
+ {
+ 	int r = -1;
+ 
+-	errno = -EINVAL;
++	errno = EINVAL;
+ 	flags |= op->am_flags;
+ 	if (op->am_opcode == ATTR_OP_GET)
+ 		r = attr_getf(fd, op->am_attrname, op->am_attrvalue,
+---
+
+ , attr_listf: Guard against unterminated buffer
+
+--- a/libattr/libattr.c
++++ b/libattr/libattr.c
+@@ -290,7 +290,7 @@ attr_list(const char *path, char *buffer, const int buffersize, int flags,
+ {
+ 	const char *l;
+ 	int length, vlength, count = 0;
+-	char lbuf[MAXLISTLEN];
++	char lbuf[MAXLISTLEN+1];
+ 	char name[MAXNAMELEN+16];
+ 	int start_offset, end_offset;
+ 
+@@ -301,11 +301,12 @@ attr_list(const char *path, char *buffer, const int buffersize, int flags,
+ 	bzero(buffer, sizeof(attrlist_t));
+ 
+ 	if (flags & ATTR_DONTFOLLOW)
+-		length = llistxattr(path, lbuf, sizeof(lbuf));
++		length = llistxattr(path, lbuf, sizeof(lbuf) - 1);
+ 	else
+-		length = listxattr(path, lbuf, sizeof(lbuf));
++		length = listxattr(path, lbuf, sizeof(lbuf) - 1);
+ 	if (length <= 0)
+ 		return length;
++	lbuf[length] = 0;  /* not supposed to be necessary */
+ 
+ 	start_offset = sizeof(attrlist_t);
+ 	end_offset = buffersize & ~(8-1);	/* 8 byte align */
+@@ -340,7 +341,7 @@ attr_listf(int fd, char *buffer, const int buffersize, int flags,
+ {
+ 	const char *l;
+ 	int length, vlength, count = 0;
+-	char lbuf[MAXLISTLEN];
++	char lbuf[MAXLISTLEN+1];
+ 	char name[MAXNAMELEN+16];
+ 	int start_offset, end_offset;
+ 
+@@ -350,9 +351,10 @@ attr_listf(int fd, char *buffer, const int buffersize, int flags,
+ 	}
+ 	bzero(buffer, sizeof(attrlist_t));
+ 
+-	length = flistxattr(fd, lbuf, sizeof(lbuf));
++	length = flistxattr(fd, lbuf, sizeof(lbuf) - 1);
+ 	if (length < 0)
+ 		return length;
++	lbuf[length] = 0;  /* not supposed to be necessary */
+ 
+ 	start_offset = sizeof(attrlist_t);
+ 	end_offset = buffersize & ~(8-1);	/* 8 byte align */
+---
+
+ getfattr: don't count terminating NULL in well_enough_printable
+
+--- a/tools/getfattr.c
++++ b/tools/getfattr.c
+@@ -110,6 +110,10 @@ int well_enough_printable(const char *value, size_t size)
+ {
+ 	size_t n, nonpr = 0;
+ 
++	/* Don't count the NULL terminator if there is one */
++	if (size && !value[size - 1])
++		size--;
++
+ 	for (n=0; n < size; n++)
+ 		if (!isprint(*value++))
+ 			nonpr++;
+---
+
+ attr: Replace bzero with memset
+
+--- a/include/attributes.h
++++ b/include/attributes.h
+@@ -91,9 +91,9 @@ typedef struct attrlist_ent {	/* data from attr_list() */
+  * Implement a \"cursor\" for use in successive attr_list() calls.
+  * It provides a way to find the last attribute that was returned in the
+  * last attr_list() call so that we can get the next one without missing
+- * any.  This should be bzero()ed before use and whenever it is desired to
++ * any.  This should be zeroed before use and whenever it is desired to
+  * start over from the beginning of the attribute list.  The only valid
+- * operation on a cursor is to bzero() it.
++ * operation on a cursor is to zero it.
+  */
+ typedef struct attrlist_cursor {
+ 	uint32_t	opaque[4];	/* an opaque cookie */
+diff --git a/libattr/libattr.c b/libattr/libattr.c
+index d550e10..2ebd1c5 100644
+--- a/libattr/libattr.c
++++ b/libattr/libattr.c
+@@ -298,7 +298,7 @@ attr_list(const char *path, char *buffer, const int buffersize, int flags,
+ 		errno = EINVAL;
+ 		return -1;
+ 	}
+-	bzero(buffer, sizeof(attrlist_t));
++	memset(buffer, 0, sizeof(attrlist_t));
+ 
+ 	if (flags & ATTR_DONTFOLLOW)
+ 		length = llistxattr(path, lbuf, sizeof(lbuf) - 1);
+@@ -349,7 +349,7 @@ attr_listf(int fd, char *buffer, const int buffersize, int flags,
+ 		errno = EINVAL;
+ 		return -1;
+ 	}
+-	bzero(buffer, sizeof(attrlist_t));
++	memset(buffer, 0, sizeof(attrlist_t));
+ 
+ 	length = flistxattr(fd, lbuf, sizeof(lbuf) - 1);
+ 	if (length < 0)
+diff --git a/tools/attr.c b/tools/attr.c
+index c8aa0b4..312aef1 100644
+--- a/tools/attr.c
++++ b/tools/attr.c
+@@ -228,7 +228,7 @@ main(int argc, char **argv)
+ 			perror(\"malloc\");
+ 			exit(1);
+ 		}
+-		bzero((char *)&cursor, sizeof(cursor));
++		memset(&cursor, 0, sizeof(cursor));
+ 		do {
+ 			error = attr_list(filename, buffer, BUFSIZE,
+ 					  attrflags, &cursor);
+---
+
+ install-data: Don't remove unrelated empty directories
+
+--- a/man/Makemodule.am
++++ b/man/Makemodule.am
+@@ -21,5 +21,4 @@ install-data-hook:
+ 			echo \\\$(LN_S) \\\$\\\$dst \\\$\\\$ln; \\\\
+ 			\\\$(LN_S) \\\$\\\$dst \\\$\\\$ln; \\\\
+ 		done; \\\\
+-	done; \\\\
+-	rmdir */ 2>/dev/null || :
++	done
+---
+
+ xattr.conf: Indicate afs metadata xattrs should be skipped when copying
+
+--- a/xattr.conf
++++ b/xattr.conf
+@@ -19,3 +19,4 @@ trusted.SGI_MAC_FILE		skip		# xfs specific
+ xfsroot.*			skip		# xfs specific; obsolete
+ user.Beagle.*			skip		# ignore Beagle index data
+ security.evm			skip		# may only be written by kernel
++afs.*				skip		# AFS metadata and ACLs
+EOF
+"
