@@ -1,0 +1,7 @@
+# pciutils_5.7.0
+PKG_URL="https://www.kernel.org/pub/software/utils/pciutils/pciutils-3.7.0.tar.xz"
+#LTOENABLE=0
+BUILD_PROCESS=simplemake
+PKG_CFLAGS=""
+INST_CMD=install
+PKG_MAKEVARS="CROSS_COMPILE=${HARCH}- SHARED=yes ZLIB=no"

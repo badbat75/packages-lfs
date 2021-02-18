@@ -1,0 +1,5 @@
+# libusb_1.0.24
+PKG_URL="https://github.com/libusb/libusb/releases/download/v1.0.24/libusb-1.0.24.tar.bz2"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+INST_CMD="install-strip"

@@ -1,0 +1,10 @@
+# wireless-tools_29
+PKG_URL="https://hewlettpackard.github.io/wireless-tools/wireless_tools.29.tar.gz"
+PATCHES="http://www.linuxfromscratch.org/patches/blfs/svn/wireless_tools-29-fix_iwlist_scanning-1.patch"
+#LTOENABLE=0
+BUILD_PROCESS=simplemake
+INST_CMD="install PREFIX=${BIN_PATH}${BUILD_PREFIX}"
+PKG_DEPS="lfs/libnl_3.5.0"
+PKG_MAKEVARS=""
+PKG_PREBUILD="sed -i '/^CC =/ s/=/?=/' Makefile
+    sed -i '/^INSTALL_LIB=/ s|/lib/$|/lib\$(LIBSUFFIX)/|' Makefile"

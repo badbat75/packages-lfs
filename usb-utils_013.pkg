@@ -1,0 +1,38 @@
+# usb-utils_013
+PKG_URL="https://www.kernel.org/pub/linux/utils/usb/usbutils/usbutils-013.tar.xz"
+PKG_DEPS="lfs/libusb_1.0.24"
+AUTOCONF=0
+#LTOENABLE=0
+PKG_COPYSRC=1
+BUILD_PROCESS=configmake
+CONF_CMD="autogen.sh"
+INST_CMD="install PREFIX=${BIN_PATH}${BUILD_PREFIX}"
+PKG_MAKEVARS=""
+CONF_FLAGS=""
+PKG_POSTBUILD="install -dm755 ${BIN_PATH}/usr/share/hwdata/
+NODELETEDESTDIR=1 download_uncompress http://www.linux-usb.org/usb.ids ${BIN_PATH}/usr/share/hwdata/
+	#cat > ${BIN_PATH}/lib/systemd/system/update-usbids.service <<-EOF
+	#	[Unit]
+	#	Description=Update usb.ids file
+	#	Documentation=man:lsusb(8)
+	#	DefaultDependencies=no
+	#	After=local-fs.target network-online.target
+	#	Before=shutdown.target
+	#
+	#	[Service]
+	#	Type=oneshot
+	#	RemainAfterExit=yes
+	#	ExecStart=/usr/bin/wget http://www.linux-usb.org/usb.ids -O /usr/share/hwdata/usb.ids
+	#EOF
+	#	cat > ${BIN_PATH}/lib/systemd/system/update-usbids.timer <<-EOF
+	#	[Unit]
+	#	Description=Update usb.ids file weekly
+	#
+	#	[Timer]
+	#	OnCalendar=Sun 03:00:00
+	#	Persistent=true
+	#
+	#	[Install]
+	#	WantedBy=timers.target
+	#EOF
+	#systemctl --root=${BIN_PATH} enable update-usbids.timer"

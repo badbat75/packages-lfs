@@ -1,0 +1,6 @@
+# iana-etc_20210202
+PKG_URL="https://github.com/Mic92/iana-etc/releases/download/20210202/iana-etc-20210202.tar.gz"
+BUILD_PROCESS=downloadonly
+PKG_PREBUILD="set -x
+	cp -fv protocols services ${BIN_PATH}/etc/ || true
+	set +x"
