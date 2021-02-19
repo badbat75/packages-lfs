@@ -1,8 +1,10 @@
 BUILD_PROCESS=none
 ####### Basic configuration files ##########
-PKG_POSTBUILD="echo '127.0.0.1 localhost' > \\${BIN_PATH}/etc/hosts
-	cat > ${BIN_PATH}/etc/passwd <<-EOF
-		root:\\\\\$6\\\\\$YUC1C/M0p1G/6\\\\\$Nwt1Gjr3wTAib4Oe9SFgS65dFT5NMYIWjrJCn1HyzmQZxBpKk9VXSYzdrqt7i6/UqChY7b8/MxLisOfhy2rX31:0:0:root:/root:/bin/bash
+PKG_POSTBUILD="set -x
+	install -d -m755 ${PKG_PKGPATH}/etc
+	echo '127.0.0.1 localhost' > ${PKG_PKGPATH}/etc/hosts
+	cat > ${PKG_PKGPATH}/etc/passwd <<-EOF
+		root:x:0:0:root:/root:/bin/bash
 		bin:x:1:1:bin:/dev/null:/bin/false
 		daemon:x:6:6:Daemon User:/dev/null:/bin/false
 		messagebus:x:18:18:D-Bus Message Daemon User:/var/run/dbus:/bin/false
@@ -16,7 +18,7 @@ PKG_POSTBUILD="echo '127.0.0.1 localhost' > \\${BIN_PATH}/etc/hosts
 		systemd-coredump:x:79:79:systemd Core Dumper:/:/bin/false
 		nobody:x:99:99:Unprivileged User:/dev/null:/bin/false
 	EOF
-	cat > ${BIN_PATH}/etc/group <<-EOF
+	cat > ${PKG_PKGPATH}/etc/group <<-EOF
 		root:x:0:
 		bin:x:1:
 		daemonsys:x:2:
@@ -51,22 +53,22 @@ PKG_POSTBUILD="echo '127.0.0.1 localhost' > \\${BIN_PATH}/etc/hosts
 		nogroup:x:99:
 		users:x:999:
 	EOF
-	echo 20210214-systemd > ${BIN_PATH}/etc/lfs-release
-	cat > ${BIN_PATH}/etc/lsb-release <<-EOF
-		DISTRIB_ID="Linux From Scratch"
-		DISTRIB_RELEASE="20210214-systemd"
-		DISTRIB_CODENAME="<your name here>"
-		DISTRIB_DESCRIPTION="Linux From Scratch"
+	echo 20210214-systemd > ${PKG_PKGPATH}/etc/lfs-release
+	cat > ${PKG_PKGPATH}/etc/lsb-release <<-EOF
+		DISTRIB_ID=\"Linux From Scratch\"
+		DISTRIB_RELEASE=\"20210214-systemd\"
+		DISTRIB_CODENAME=\"Gabriele\"
+		DISTRIB_DESCRIPTION=\"Linux From Scratch\"
 	EOF
-	cat > ${BIN_PATH}/etc/os-release <<-EOF
-		NAME="Linux From Scratch"
-		VERSION="20210214-systemd"
+	cat > ${PKG_PKGPATH}/etc/os-release <<-EOF
+		NAME=\"Linux From Scratch\"
+		VERSION=\"20210214-systemd\"
 		ID=lfs
-		PRETTY_NAME="Linux From Scratch 20210214-systemd"
-		VERSION_CODENAME="Gabriele"
+		PRETTY_NAME=\"Linux From Scratch 20210214-systemd\"
+		VERSION_CODENAME=\"Gabriele\"
 	EOF
-	echo '127.0.0.1 localhost' > \\${BIN_PATH}/etc/hosts
-	cat > ${BIN_PATH}/etc/shells <<-EOF
+	echo '127.0.0.1 localhost' > ${PKG_PKGPATH}/etc/hosts
+	cat > ${PKG_PKGPATH}/etc/shells <<-EOF
 		# Begin /etc/shells
 
 		/bin/sh
@@ -74,7 +76,7 @@ PKG_POSTBUILD="echo '127.0.0.1 localhost' > \\${BIN_PATH}/etc/hosts
 
 		# End /etc/shells
 	EOF
-	sudo cat > ${BIN_PATH}/etc/inputrc <<-EOF
+	sudo cat > ${PKG_PKGPATH}/etc/inputrc <<-EOF
 		# Begin /etc/inputrc
 		# Modified by Chris Lynn <roryo@roryo.dynup.net>
 
