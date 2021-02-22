@@ -6,12 +6,11 @@ CONF_FLAGS="--with-group-name-max-length=32"
 INST_CMD="install-strip"
 
 PKG_PREBUILD="sed -i 's/groups\\\$(EXEEXT) //' src/Makefile.in
-    sed -i 's/GROUP=1000/GROUP=999/' etc/useradd 
-    find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \;
-    find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;
-    find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \;"
-PKG_POSTBUILD="chmod u+s ${BIN_PATH}${BUILD_EXECPREFIX}/bin/su
-    sed -e 's:#ENCRYPT_METHOD DES:ENCRYPT_METHOD SHA512:' \
-        -e 's:/var/spool/mail:/var/mail:' \
-        -i ${BIN_PATH}${BUILD_SYSCONFDIR}/login.defs
-    mkdir -pv ${BIN_PATH}/var/mail"
+	sed -i 's/GROUP=1000/GROUP=999/' etc/useradd 
+	find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \;
+	find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;
+	find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \;"
+PKG_POSTBUILD="sed -e 's:#ENCRYPT_METHOD DES:ENCRYPT_METHOD SHA512:' \
+		-e 's:/var/spool/mail:/var/mail:' \
+		-i ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/login.defs
+	mkdir -pv ${PKG_PKGPATH}/var/mail"

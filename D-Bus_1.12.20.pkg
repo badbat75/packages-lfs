@@ -5,4 +5,4 @@ BUILD_PROCESS=configmake
 CONF_FLAGS="-with-console-auth-dir=/run/console --with-system-pid-file=/run/dbus/pid --with-system-socket=/run/dbus/system_bus_socket"
 INST_CMD="install-strip"
 
-PKG_POSTBUILD="ln -sfv /etc/machine-id ${BIN_PATH}/var/lib/dbus"
+PKG_POSTBUILD="ln -sfv /etc/machine-id ${PKG_PKGPATH}/var/lib/dbus"

@@ -34,5 +34,5 @@ PKG_POSTBUILD="
         -Dvendorarch=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/perl5/${PKG_PERL_MAJVER}/vendor_perl
 	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} crosspatch miniperl dynaloader perl cflags nonxs_ext utilities
 	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} -j1 extensions pods
-	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} DESTDIR=${BIN_PATH} install
+	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} DESTDIR=${PKG_PKGPATH} install
 	set +x"

@@ -37,21 +37,22 @@ PKG_PREBUILD="
 		CFLAGS += -I${BIN_PATH}${BUILD_INCLUDEDIR}/libnl3 -I${BIN_PATH}${BUILD_INCLUDEDIR}/dbus-1.0 -I${BIN_PATH}${BUILD_LIBDIR}${BUILD_LIBSUFFIX}/dbus-1.0/include
 		EOF
 		"
-PKG_POSTBUILD="install -d ${BIN_PATH}\${BUILD_SYSCONFDIR}/wpa_supplicant
-	install -v -m755 -s --strip-program=${HARCH:+${HARCH}-}strip -D wpa_supplicant/{wpa_cli,wpa_passphrase,wpa_supplicant} ${BIN_PATH}/sbin/
-	install -v -d -m755 ${BIN_PATH}${BUILD_PREFIX}/share/dbus-1/system-services/
-	install -v -m644 -D wpa_supplicant/dbus/fi.*.service ${BIN_PATH}${BUILD_PREFIX}/share/dbus-1/system-services/
-	install -v -d -m755 ${BIN_PATH}${BUILD_PREFIX}/lib/pm-utils/sleep.d
-	install -v -m644 -D wpa_supplicant/examples/60_wpa_supplicant ${BIN_PATH}${BUILD_PREFIX}/lib/pm-utils/sleep.d/
-	install -v -m644 -D wpa_supplicant/systemd/*.service ${BIN_PATH}/lib/systemd/system/
-	install -v -d -m755 ${BIN_PATH}${BUILD_SYSCONFDIR}/etc/dbus-1/system.d
-	install -v -m644 -D wpa_supplicant/dbus/dbus-wpa_supplicant.conf ${BIN_PATH}${BUILD_SYSCONFDIR}/dbus-1/system.d/wpa_supplicant.conf
+PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/sbin ${PKG_PKGPATH}/lib/systemd/system
+	install -d ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/wpa_supplicant
+	install -v -m755 -s --strip-program=${HARCH:+${HARCH}-}strip -D wpa_supplicant/{wpa_cli,wpa_passphrase,wpa_supplicant} ${PKG_PKGPATH}/sbin/
+	install -v -d -m755 ${PKG_PKGPATH}${BUILD_PREFIX}/share/dbus-1/system-services/
+	install -v -m644 -D wpa_supplicant/dbus/fi.*.service ${PKG_PKGPATH}${BUILD_PREFIX}/share/dbus-1/system-services/
+	install -v -d -m755 ${PKG_PKGPATH}${BUILD_PREFIX}/lib/pm-utils/sleep.d
+	install -v -m644 -D wpa_supplicant/examples/60_wpa_supplicant ${PKG_PKGPATH}${BUILD_PREFIX}/lib/pm-utils/sleep.d/
+	install -v -m644 -D wpa_supplicant/systemd/*.service ${PKG_PKGPATH}/lib/systemd/system/
+	install -v -d -m755 ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/etc/dbus-1/system.d
+	install -v -m644 -D wpa_supplicant/dbus/dbus-wpa_supplicant.conf ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/dbus-1/system.d/wpa_supplicant.conf
 	#make -C wpa_supplicant/doc/docbook
-	#cp wpa_supplicant/doc/docbook/wpa_background.8 ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/wpa_background.8
-	#cp wpa_supplicant/doc/docbook/wpa_cli.8 ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/wpa_cli.8
-	#cp wpa_supplicant/doc/docbook/wpa_passphrase.8 ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/wpa_passphrase.8
-	#cp wpa_supplicant/doc/docbook/wpa_supplicant.8 ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${BIN_PATH}\${BUILD_PREFIX}/share/man/man8/wpa_supplicant.8
-	#cp wpa_supplicant/doc/docbook/wpa_supplicant.conf.5 ${BIN_PATH}\${BUILD_PREFIX}/share/man/man5/ && gzip -f ${BIN_PATH}\${BUILD_PREFIX}/share/man/man5/wpa_supplicant.conf.5"
+	#cp wpa_supplicant/doc/docbook/wpa_background.8 ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/wpa_background.8
+	#cp wpa_supplicant/doc/docbook/wpa_cli.8 ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/wpa_cli.8
+	#cp wpa_supplicant/doc/docbook/wpa_passphrase.8 ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/wpa_passphrase.8
+	#cp wpa_supplicant/doc/docbook/wpa_supplicant.8 ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man8/wpa_supplicant.8
+	#cp wpa_supplicant/doc/docbook/wpa_supplicant.conf.5 ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man5/ && gzip -f ${PKG_PKGPATH}\${BUILD_PREFIX}/share/man/man5/wpa_supplicant.conf.5"
 
 	# Bug in Fedora OpenJade
 	if test_version $(cat /dev/null | openjade -vh 2>&1 | head -n 1 | awk '{print $4}' | sed 's|\"||g') -le 1.3.2

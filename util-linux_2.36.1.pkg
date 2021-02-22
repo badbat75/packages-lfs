@@ -15,4 +15,3 @@ CONF_FLAGS="ADJTIME_PATH=/var/lib/hwclock/adjtime \
             --without-python \
             runstatedir=/run"
 INST_CMD="install-strip"
-PKG_POSTBUILD="chmod +s ${BIN_PATH}/bin/su"

@@ -6,12 +6,12 @@ AUTOCONF=0
 PKG_COPYSRC=1
 BUILD_PROCESS=configmake
 CONF_CMD="autogen.sh"
-INST_CMD="install PREFIX=${BIN_PATH}${BUILD_PREFIX}"
+INST_CMD="install PREFIX=${PKG_PKGPATH}${BUILD_PREFIX}"
 PKG_MAKEVARS=""
 CONF_FLAGS=""
-PKG_POSTBUILD="install -dm755 ${BIN_PATH}/usr/share/hwdata/
-NODELETEDESTDIR=1 download_uncompress http://www.linux-usb.org/usb.ids ${BIN_PATH}/usr/share/hwdata/
-	#cat > ${BIN_PATH}/lib/systemd/system/update-usbids.service <<-EOF
+PKG_POSTBUILD="install -dm755 ${PKG_PKGPATH}/usr/share/hwdata/
+NODELETEDESTDIR=1 download_uncompress http://www.linux-usb.org/usb.ids ${PKG_PKGPATH}/usr/share/hwdata/
+	#cat > ${PKG_PKGPATH}/lib/systemd/system/update-usbids.service <<-EOF
 	#	[Unit]
 	#	Description=Update usb.ids file
 	#	Documentation=man:lsusb(8)
@@ -24,7 +24,7 @@ NODELETEDESTDIR=1 download_uncompress http://www.linux-usb.org/usb.ids ${BIN_PAT
 	#	RemainAfterExit=yes
 	#	ExecStart=/usr/bin/wget http://www.linux-usb.org/usb.ids -O /usr/share/hwdata/usb.ids
 	#EOF
-	#	cat > ${BIN_PATH}/lib/systemd/system/update-usbids.timer <<-EOF
+	#	cat > ${PKG_PKGPATH}/lib/systemd/system/update-usbids.timer <<-EOF
 	#	[Unit]
 	#	Description=Update usb.ids file weekly
 	#
@@ -35,4 +35,4 @@ NODELETEDESTDIR=1 download_uncompress http://www.linux-usb.org/usb.ids ${BIN_PAT
 	#	[Install]
 	#	WantedBy=timers.target
 	#EOF
-	#systemctl --root=${BIN_PATH} enable update-usbids.timer"
+	#systemctl --root=${PKG_PKGPATH} enable update-usbids.timer"

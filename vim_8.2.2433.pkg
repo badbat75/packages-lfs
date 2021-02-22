@@ -15,11 +15,12 @@ PKG_PREBUILD="sed -i 's/ln -s/ln -fsv/g' src/Makefile
 	sed -i 's/ncurses curses/ncurses ncursesw curses/' src/auto/configure
 	sed -i 's/ncurses termlib/ncurses ncursesw termlib/' src/auto/configure"
 PKG_POSTBUILD="
-	ln -sfv vim ${BIN_PATH}${BUILD_PREFIX}/bin/vi
-	for L in ${BIN_PATH}/usr/share/man/{,*/}man1/vim.1; do
+	mkdir -pv ${PKG_PKGPATH}${BUILD_SYSCONFDIR}
+	ln -sfv vim ${PKG_PKGPATH}${BUILD_PREFIX}/bin/vi
+	for L in ${PKG_PKGPATH}/usr/share/man/{,*/}man1/vim.1; do
     	ln -sfv vim.1 \$(dirname \$L)/vi.1
 	done
-	cat > ${BIN_PATH}/etc/vimrc <<-EOF
+	cat > ${PKG_PKGPATH}/etc/vimrc <<-EOF
 		\" Begin /etc/vimrc
 
 		\" Ensure defaults are set before customizing settings, not after

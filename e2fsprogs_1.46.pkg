@@ -5,4 +5,4 @@ BUILD_PROCESS=configmake
 CONF_FLAGS="--disable-option-checking --with-root-prefix=\"\" \
     --enable-elf-shlibs --disable-libblkid --disable-libuuid --disable-uuidd --disable-fsck"
 PKG_TWOSTEPSBUILD=1
-INST_CMD="install install-strip LDCONFIG=/bin/true"
+INST_CMD="-j1 install install-strip LDCONFIG=/bin/true"

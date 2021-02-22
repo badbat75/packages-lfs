@@ -23,10 +23,11 @@ PKG_PREBUILD="cat <<EOF | patch -s -p0 || true
 EOF
 sed -i 's/(INSTALL_PROGRAM) -s/(INSTALL_PROGRAM) --strip-program=\\\${STRIP} -s/' Makefile.in"
 
-PKG_POSTBUILD="ln -sfv bash ${BIN_PATH}${BUILD_PREFIX}/bin/sh
+PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}${BUILD_SYSCONFDIR} ${PKG_PKGPATH}/root
+ln -sfv bash ${PKG_PKGPATH}${BUILD_PREFIX}/bin/sh
 #####################################################################################
 echo /etc/profile
-cat > ${BIN_PATH}/etc/profile <<EOF
+cat > ${PKG_PKGPATH}/etc/profile <<EOF
 # Begin /etc/profile
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -105,10 +106,10 @@ unset script RED GREEN NORMAL
 
 # End /etc/profile
 EOF
-install --directory --mode=0755 ${BIN_PATH}/etc/profile.d
+install --directory --mode=0755 ${PKG_PKGPATH}/etc/profile.d
 #####################################################################################
 echo /etc/profile.d/bash_completion.sh
-cat > ${BIN_PATH}/etc/profile.d/bash_completion.sh <<EOF
+cat > ${PKG_PKGPATH}/etc/profile.d/bash_completion.sh <<EOF
 # Begin /etc/profile.d/bash_completion.sh
 # Import bash completion scripts
 
@@ -145,7 +146,7 @@ fi
 # End /etc/profile.d/bash_completion.sh
 EOF
 #####################################################################################
-cat > ${BIN_PATH}/etc/profile.d/dircolors.sh <<EOF
+cat > ${PKG_PKGPATH}/etc/profile.d/dircolors.sh <<EOF
 # Setup for /bin/ls and /bin/grep to support color, the alias is in /etc/bashrc.
 if [ -f \"/etc/dircolors\" ] ; then
         eval \\\$(dircolors -b /etc/dircolors)
@@ -159,7 +160,7 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 EOF
 #####################################################################################
-cat > ${BIN_PATH}/etc/profile.d/extrapaths.sh <<EOF
+cat > ${PKG_PKGPATH}/etc/profile.d/extrapaths.sh <<EOF
 if [ -d /usr/local/lib/pkgconfig ] ; then
         pathappend /usr/local/lib/pkgconfig PKG_CONFIG_PATH
 fi
@@ -175,7 +176,7 @@ pathappend /usr/share/man  MANPATH
 pathappend /usr/share/info INFOPATH
 EOF
 #####################################################################################
-cat > ${BIN_PATH}/etc/profile.d/umask.sh <<EOF
+cat > ${PKG_PKGPATH}/etc/profile.d/umask.sh <<EOF
 # By default, the umask should be set.
 if [ \"\\\$(id -gn)\" = \"\\\$(id -un)\" -a \\\$EUID -gt 99 ] ; then
   umask 002
@@ -184,12 +185,12 @@ else
 fi
 EOF
 #####################################################################################
-cat > ${BIN_PATH}/etc/profile.d/i18n.sh <<EOF
+cat > ${PKG_PKGPATH}/etc/profile.d/i18n.sh <<EOF
 # Set up i18n variables
 #export LANG=<ll>_<CC>.<charmap><@modifiers>
 EOF
 #####################################################################################
-cat > ${BIN_PATH}/etc/bashrc<<EOF
+cat > ${PKG_PKGPATH}/etc/bashrc<<EOF
 # Begin /etc/bashrc
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -227,9 +228,9 @@ unset RED GREEN NORMAL
 # End /etc/bashrc
 EOF
 #####################################################################################
-mkdir -p ${BIN_PATH}/etc/skel
+mkdir -p ${PKG_PKGPATH}/etc/skel
 
-cat > ${BIN_PATH}/etc/skel/.bash_profile <<EOF
+cat > ${PKG_PKGPATH}/etc/skel/.bash_profile <<EOF
 # Begin ~/.bash_profile
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -257,7 +258,7 @@ fi
 # End ~/.bash_profile
 EOF
 #####################################################################################
-cat > ${BIN_PATH}/etc/skel/.bashrc <<EOF
+cat > ${PKG_PKGPATH}/etc/skel/.bashrc <<EOF
 # Begin ~/.bashrc
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -279,7 +280,7 @@ fi
 # End ~/.bashrc
 EOF
 #####################################################################################
-cat > ${BIN_PATH}/etc/skel/.bash_logout <<EOF
+cat > ${PKG_PKGPATH}/etc/skel/.bash_logout <<EOF
 # Begin ~/.bash_logout
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -289,5 +290,5 @@ cat > ${BIN_PATH}/etc/skel/.bash_logout <<EOF
 # End ~/.bash_logout
 EOF
 #####################################################################################
-find ${BIN_PATH}/etc/skel/ -exec cp -fv {} ${BIN_PATH}/root \;
+find ${PKG_PKGPATH}/etc/skel/ -exec cp -fv {} ${PKG_PKGPATH}/root \;
 "

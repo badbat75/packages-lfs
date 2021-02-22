@@ -1,10 +1,11 @@
 # bind_9.16.12
-PKG_URL="ftp://ftp.isc.org/isc/bind9/9.16.12/bind-9.16.12.tar.xz"
+PKG_URL="https://downloads.isc.org/isc/bind9/9.16.12/bind-9.16.12.tar.xz"
 PKG_DEPS="lfs/libuv_1.41.0"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--without-python BUILD_CC=\"${CCWRAPPER:+${CCWRAPPER} }${BARCH}-gcc\""
 PKG_MAKETARGETS="-Clib/dns -Clib/isc -Clib/bind9 -Clib/isccfg -Clib/irs -Cbin/dig -Cdoc"
 INST_CMD="-C bin/dig install"
 PKG_PREBUILD="sed -i '/for lib in -lterminfo -ltermcap -lncurses -lcurses/ s/-ltermcap -lncurses/-ltermcap -lncursesw -lncurses/' configure.ac"
-PKG_POSTBUILD="install -v -v doc/man/{dig.1,host.1,nslookup.1} ${BIN_PATH}/usr/share/man/man1"
+PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/usr/share/man/man1
+    install -v -v doc/man/{dig.1,host.1,nslookup.1} ${PKG_PKGPATH}/usr/share/man/man1"
 

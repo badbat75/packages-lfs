@@ -1,5 +1,5 @@
 # dhcp_4.4.2
-PKG_URL="ftp://ftp.isc.org/isc/dhcp/4.4.2/dhcp-4.4.2.tar.gz"
+PKG_URL="https://downloads.isc.org/isc/dhcp/4.4.2/dhcp-4.4.2.tar.gz"
 BUILD_PROCESS=configmake
 PKG_TWOSTEPSBUILD=1
 PKG_PREBUILD="sed -i '/o.*dhcp_type/d' server/mdb.c
@@ -16,9 +16,10 @@ CONF_FLAGS="--with-randomdev= \
     BUILD_CC='${CCWRAPPER:+${CCWRAPPER} }${BARCH}-gcc'"
 PKG_MAKEVARS="-j1 AR=${HARCH}-gcc-ar"
 INST_CMD="-C client install-strip"
-PKG_POSTBUILD="install -v -m755 \${PKG_SRCPATH}/client/scripts/linux ${BIN_PATH}/sbin/dhclient-script
-    install -vdm755 ${BIN_PATH}/etc/dhcp
-    cat > ${BIN_PATH}/etc/dhcp/dhclient.conf <<EOF
+PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/sbin
+    install -v -m755 \${PKG_SRCPATH}/client/scripts/linux ${PKG_PKGPATH}/sbin/dhclient-script
+    install -vdm755 ${PKG_PKGPATH}/etc/dhcp
+    cat > ${PKG_PKGPATH}/etc/dhcp/dhclient.conf <<EOF
 # Begin /etc/dhcp/dhclient.conf
 #
 # Basic dhclient.conf(5)
@@ -37,7 +38,8 @@ require subnet-mask, domain-name-servers;
 
 # End /etc/dhcp/dhclient.conf
 EOF
-    cat >${BIN_PATH}/lib/systemd/system/dhclient@.service <<EOF
+    mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
+    cat >${PKG_PKGPATH}/lib/systemd/system/dhclient@.service <<EOF
 [Unit]
 Description=ISC DHCP Client on %I
 Wants=network.target

@@ -12,7 +12,8 @@ PKG_POSTBUILD="cat <<-EOF >${USERDATA_PATH}/postinstall/${PKG_NAME}.task
 		groupadd -g 50 sshd
 		useradd  -c 'sshd PrivSep' -d /var/lib/sshd -g sshd -s /bin/false -u 50 sshd
 	EOF
-	cat <<-EOF >${BIN_PATH}/lib/systemd/system/sshd.service
+	mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
+	cat <<-EOF >${PKG_PKGPATH}/lib/systemd/system/sshd.service
 		[Unit]
 		Description=OpenSSH Daemon
 
@@ -25,7 +26,7 @@ PKG_POSTBUILD="cat <<-EOF >${USERDATA_PATH}/postinstall/${PKG_NAME}.task
 		[Install]
 		WantedBy=multi-user.target
 	EOF
-	cat <<-EOF >${BIN_PATH}/lib/systemd/system/sshd.socket
+	cat <<-EOF >${PKG_PKGPATH}/lib/systemd/system/sshd.socket
 		[Unit]
 		Conflicts=sshd.service
 
@@ -36,7 +37,7 @@ PKG_POSTBUILD="cat <<-EOF >${USERDATA_PATH}/postinstall/${PKG_NAME}.task
 		[Install]
 		WantedBy=sockets.target
 	EOF
-	cat <<-EOF >${BIN_PATH}/lib/systemd/system/sshd\@.service
+	cat <<-EOF >${PKG_PKGPATH}/lib/systemd/system/sshd\@.service
 		[Unit]
 		Description=SSH Per-Connection Server
 

@@ -1,5 +1,5 @@
 # file_5.38
-PKG_URL="ftp://ftp.astron.com/pub/file/file-5.38.tar.gz"
+PKG_URL="http://ftp.astron.com/pub/file/file-5.38.tar.gz"
 PKG_DEPS="lfs/zlib_1.2.11 lfs/bzip2_1.0.8"
 #PATCHES=
 #AUTOCONF=0
