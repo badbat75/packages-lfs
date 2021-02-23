@@ -7,17 +7,17 @@ PKG_MAKEVARS=""
 INST_CMD="install"
 
 PKG_PREBUILD="cat <<EOF | patch -s -p1 || true
---- bzip2_1.0.8/Makefile-libbz2_so.orig\$(echo -e \"\\t\")2021-02-12 09:57:34.850000000 +0100
-+++ bzip2_1.0.8/Makefile-libbz2_so\$(echo -e \"\\t\")2021-02-12 10:04:36.160000000 +0100
+--- a/Makefile-libbz2_so	2021-02-23 18:10:26.340000000 +0100
++++ b/Makefile-libbz2_so	2021-02-23 18:12:56.520000000 +0100
 @@ -35,7 +35,7 @@
        bzlib.o
  
  all: \\\$(OBJS)
--\$(echo -e \"\\t\")\\\$(CC) \\\$(CFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.8 \\\$(OBJS)
-+\$(echo -e \"\\t\")\\\$(CC) \\\$(CFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 \\\$(OBJS)
- \$(echo -e \"\\t\")\\\$(CC) \\\$(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
- \$(echo -e \"\\t\")rm -f libbz2.so.1.0
- \$(echo -e \"\\t\")ln -s libbz2.so.1.0.8 libbz2.so.1.0
+-	\\\$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.8 \\\$(OBJS)
++	\\\$(CC) \\\$(CFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 \\\$(OBJS)
+ 	\\\$(CC) \\\$(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
+ 	rm -f libbz2.so.1.0
+ 	ln -s libbz2.so.1.0.8 libbz2.so.1.0
 EOF
 
 	[ ! -f Makefile-libbz2_a ] && mv Makefile Makefile-libbz2_a || true
