@@ -16,7 +16,7 @@ CONF_FLAGS="--with-randomdev= \
     BUILD_CC='${CCWRAPPER:+${CCWRAPPER} }${BARCH}-gcc'"
 PKG_MAKEVARS="-j1 AR=${HARCH}-gcc-ar"
 INST_CMD="-C client install-strip"
-PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/sbin
+PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/sbin ${PKG_PKGPATH}/var/lib/dhclient
     install -v -m755 \${PKG_SRCPATH}/client/scripts/linux ${PKG_PKGPATH}/sbin/dhclient-script
     install -vdm755 ${PKG_PKGPATH}/etc/dhcp
     cat > ${PKG_PKGPATH}/etc/dhcp/dhclient.conf <<EOF

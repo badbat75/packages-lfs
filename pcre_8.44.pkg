@@ -1,0 +1,12 @@
+# pcre_8.44
+PKG_URL="https://ftp.pcre.org/pub/pcre/pcre-8.44.tar.bz2"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--enable-unicode-properties \
+	--enable-pcre16 \
+	--enable-pcre32 \
+	--enable-pcregrep-libz \
+	--enable-pcregrep-libbz2 \
+	--enable-pcretest-libreadline \
+	--enable-jit"
+INST_CMD="install-strip"
+#PATCHDEB=""
