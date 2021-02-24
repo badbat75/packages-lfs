@@ -1,5 +1,7 @@
 # gdbm_1.19
 PKG_URL="http://ftp.gnu.org/gnu/gdbm/gdbm-1.19.tar.gz"
+PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/readline_8.1"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--enable-libgdbm-compat"
 INST_CMD="install-strip"
+PKG_PREBUILD="sed -i '/^for lib in ncurses curses termcap$/ s/in ncurses/in ncursesw ncurses/' configure.ac"

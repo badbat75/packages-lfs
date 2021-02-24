@@ -1,6 +1,6 @@
-# util-linux_2.36.1
-PKG_URL="https://www.kernel.org/pub/linux/utils/util-linux/v2.36/util-linux-2.36.1.tar.xz"
-PKG_DEPS="lfs/zlib_1.2.11 lfs/bzip2_1.0.8 lfs/ncurses_6.2+p20210130"
+# util-linux_2.36.2
+PKG_URL="https://www.kernel.org/pub/linux/utils/util-linux/v2.36/util-linux-2.36.2.tar.xz"
+PKG_DEPS="lfs/zlib_1.2.11 lfs/bzip2_1.0.8 lfs/ncurses_6.2+p20210130 lfs/readline_8.1"
 AUTOCONF=0
 BUILD_PROCESS=configmake
 CONF_FLAGS="ADJTIME_PATH=/var/lib/hwclock/adjtime \
@@ -13,5 +13,8 @@ CONF_FLAGS="ADJTIME_PATH=/var/lib/hwclock/adjtime \
             --disable-pylibmount \
             --disable-makeinstall-chown \
             --without-python \
+            --without-tinfo \
             runstatedir=/run"
 INST_CMD="install-strip"
+PKG_MAKEVARS="NCURSES_LIBS=\"-Wl,-Bsymbolic-functions -lncursesw\""
+PKG_PREBUILD="

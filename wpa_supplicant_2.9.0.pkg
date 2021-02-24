@@ -2,7 +2,7 @@
 PKG_SRCDIR=wpa_2.9.0
 BUILD_PROCESS=simplemake
 INST_CMD=all
-PKG_DEPS="lfs/${PKG_SRCDIR} lfs/libnl_3.5.0 firmwares/wireless-regdb_2020.11.20 lfs/D-Bus_1.12.20"
+PKG_DEPS="lfs/${PKG_SRCDIR} lfs/ncurses_6.2+p20210130 lfs/readline_8.1 lfs/libnl_3.5.0 lfs/openssl_1.1.1i firmwares/wireless-regdb_2020.11.20 lfs/D-Bus_1.12.20"
 PKG_MAKEVARS="PREFIX=${BUILD_PREFIX} INCDIR=${BUILD_INCLUDEDIR} BINDIR=/sbin -C wpa_supplicant"
 PKG_PREBUILD="
 	sed -i 's/-lncurses$/-lncursesw/' wpa_supplicant/Makefile

@@ -1,7 +1,9 @@
 # inetutils_2.0
 PKG_URL="http://ftp.gnu.org/gnu/inetutils/inetutils-2.0.tar.xz"
-PKG_DEPS="lfs/readline_8.1"
+PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/readline_8.1"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--disable-logger --disable-whois --disable-rcp --disable-rexec --disable-rlogin --disable-rsh --disable-servers\
     --with-path-procnet-dev=/proc/net/dev"
 INST_CMD="install-strip"
+PKG_PREBUILD="sed -i 's/AC_CHECK_LIB(ncurses, initscr, LIBNCURSES=\"-lncurses\")/AC_CHECK_LIB(ncurses, initscr, LIBNCURSES=\"-lncurses\", AC_CHECK_LIB(ncursesw, initscr, LIBNCURSES=\"-lncursesw\"))/' am/libcurses.m4
+    sed -i 's/ncurses termcap curses/ncurses ncursesw termcap curses/' m4/readline.m4"

@@ -1,7 +1,7 @@
 # libxml2_2.9.10
 PKG_URL="http://xmlsoft.org/sources/libxml2-2.9.10.tar.gz"
 PATCHES="http://www.linuxfromscratch.org/patches/blfs/svn/libxml2-2.9.10-security_fixes-1.patch"
-PKG_DEPS="lfs/icu_68.2"
+PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/readline_8.1 lfs/icu_68.2"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--with-history --with-python=$(which python3) --with-icu --with-threads"
 INST_CMD="install-strip"

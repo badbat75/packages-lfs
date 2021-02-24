@@ -4,4 +4,3 @@ PKG_DEPS="lfs/readline_8.1 lfs/ncurses_6.2+p20210130 lfs/gmp_6.2.1 lfs/mpfr_4.1.
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 INST_CMD="install-strip"
-PKG_LDFLAGS="-lncursesw"

@@ -1,6 +1,6 @@
 # gmp_6.2.1
 PKG_URL="http://ftp.gnu.org/gnu/gmp/gmp-6.2.1.tar.xz"
-PKG_DEPS="lfs/ncurses_6.2+p20210130"
+PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/readline_8.1"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--enable-cxx"
 INST_CMD="install-strip"

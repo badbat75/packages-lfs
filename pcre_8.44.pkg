@@ -1,5 +1,6 @@
 # pcre_8.44
 PKG_URL="https://ftp.pcre.org/pub/pcre/pcre-8.44.tar.bz2"
+PKG_DEPS="lfs/readline_8.1"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--enable-unicode-properties \
 	--enable-pcre16 \

@@ -7,9 +7,9 @@ BUILD_PROCESS=configmake
 CONF_FLAGS="--without-bash-malloc --with-installed-readline"
 INST_CMD="STRIP=${HARCH}-strip install-strip"
 
-PKG_PREBUILD="cat <<EOF | patch -s -p0 || true
---- configure.orig      2021-02-04 11:30:29.730000000 +0100
-+++ configure   2021-02-04 11:21:13.000000000 +0100
+PKG_PREBUILD="cat <<EOF | patch -s -p1 || true
+--- a/configure      2021-02-04 11:30:29.730000000 +0100
++++ b/configure   2021-02-04 11:21:13.000000000 +0100
 @@ -20266,6 +20266,9 @@
  elif test \\\$bash_cv_termcap_lib = libncurses; then
  TERMCAP_LIB=-lncurses

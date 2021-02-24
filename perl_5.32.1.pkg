@@ -3,6 +3,7 @@ PKG_PERL_MAJVER=5.32
 PKG_PERL_SUBVER=1
 PKG_PERL_VER=${PKG_PERL_MAJVER}.${PKG_PERL_SUBVER}
 PKG_URL="https://www.cpan.org/src/5.0/perl-${PKG_PERL_VER}.tar.xz"
+PKG_DEPS="lfs/gdbm_1.19 lfs/expat_2.2.10"
 BUILD_PROCESS=downloadonly
 #PKG_MAKEVARS="-j1"
 PKG_COPYSRC=1

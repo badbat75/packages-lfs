@@ -1,6 +1,6 @@
 # systemd_247
 PKG_URL="https://github.com/systemd/systemd/archive/v247/systemd-247.tar.gz"
-PKG_DEPS="lfs/libcap_2.47 lfs/kmod_28 lfs/util-linux_2.36.1"
+PKG_DEPS="lfs/libcap_2.47 lfs/kmod_28 lfs/util-linux_2.36.2"
 BUILD_PROCESS=mesonninja
 CONF_FLAGS="-Drootlibdir=${BUILD_LIBDIR}${BUILD_LIBSUFFIX} -Dblkid=true -Ddefault-dnssec=no -Dfirstboot=false -Dinstall-tests=false -Dldconfig=false \
 	-Dmount-path=/bin/mount -Dsplit-usr=true -Dsysusers=false -Drpmmacrosdir=no -Dhomed=false -Duserdb=false \

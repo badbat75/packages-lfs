@@ -1,5 +1,6 @@
 # grep_3.6
 PKG_URL="http://ftp.gnu.org/gnu/grep/grep-3.6.tar.xz"
+PKG_DEPS="lfs/pcre_8.44"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 INST_CMD="install-strip"
