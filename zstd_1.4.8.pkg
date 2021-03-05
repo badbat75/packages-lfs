@@ -5,6 +5,4 @@ PKG_DEPS="lfs/zlib_1.2.11"
 PKG_TWOSTEPSBUILD=0
 BUILD_PROCESS=simplemake
 INST_CMD=install
-PKG_MAKEVARS="PREFIX=${BUILD_PREFIX} LIBDIR=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}"
-
-# Note: Build-Depends: d-shlibs, debhelper-compat (= 13), help2man, liblz4-dev, liblzma-dev, zlib1g-dev
+PKG_MAKEVARS="PREFIX=${BUILD_PREFIX} libdir=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}"
