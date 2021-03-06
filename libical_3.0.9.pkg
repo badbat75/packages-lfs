@@ -1,5 +1,7 @@
 # libical_3.0.9
 PKG_URL="https://github.com/libical/libical/releases/download/v3.0.9/libical-3.0.9.tar.gz"
+VAR_INSTALL_LIBDIR=CMAKE_INSTALL_LIBDIR
+VAR_INSTALL_INCDIR=CMAKE_INSTALL_INCLUDEDIR
 PATCH=""
 PKG_DEPS="lfs/icu_68.2"
 BUILD_PROCESS=cmakemake
