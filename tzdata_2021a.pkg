@@ -1,6 +1,6 @@
 	# tzdata_2021a
     PKG_URL="https://www.iana.org/time-zones/repository/releases/tzdata2021a.tar.gz"
-	PKG_SRCDIR=glibc_2.33/timezone
+	PKG_SRCDIR=glibc_2.34/timezone
 	NODELETEDESTDIR=1
 	MAKEDIR=1
 	BUILD_PROCESS="downloadonly"

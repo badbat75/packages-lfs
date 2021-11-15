@@ -1,0 +1,101 @@
+# glibc_2.34
+PKG_URL="https://ftp.gnu.org/gnu/libc/glibc-2.34.tar.xz"
+PATCHES="http://www.linuxfromscratch.org/patches/lfs/development/glibc-2.34-fhs-1.patch"
+BUILD_PROCESS=configmake
+AUTOCONF=0
+LTOENABLE=0
+CONF_FLAGS="--target=${HARCH} --with-headers=${BIN_PATH}${BUILD_INCLUDEDIR} \
+	--disable-werror --disable-sanity-checks --disable-profile \
+	--enable-stackguard-randomization --enable-stack-protector=strong \
+	--enable-pt_chown --enable-tunables --enable-bind-now \
+	complocaledir=${BUILD_LIBDIR} \
+	libc_cv_slibdir=/lib${BUILD_LIBSUFFIX}"
+CONF_FLAGS+=" libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes"
+INST_CMD="${OVERRIDE_INST_CMD:-install}"
+PKG_TWOSTEPSBUILD=${OVERRIDE_PKG_TWOSTEPSBUILD:-1}
+PKG_MAKEVARS="ARCH=${KERN_ARCH} cross-compiling=yes"
+
+PKG_PREBUILD="if [ x\$(grep \"*result = local->data.services[database_index];\" nss/nss_database.c) == x ]
+	then
+		sed -e '402a\      *result = local->data.services[database_index];' -i nss/nss_database.c
+	fi"
+
+if [ ${WITH_LIBXCRYPT:-0} -eq 1 ]
+then
+	CONF_FLAGS+=" --disable-crypt"
+fi
+if [ ${BOOTSTRAP:-0} -eq 1 ]
+then
+	CONF_FLAGS+=" --without-selinux"
+else
+	PKG_POSTBUILD="set -x"
+	if [ ${BUILD_LIBDIR}${BUILD_LIBSUFFIX} != ${BUILD_LIBDIR} ]
+	then
+		PKG_POSTBUILD+="
+			ld=\$(find ${PKG_PKGPATH}/lib${BUILD_LIBSUFFIX} -name "ld-*.so")
+			ldlink=\$(find ${PKG_PKGPATH}/lib${BUILD_LIBSUFFIX} -name "ld-*.so.*")
+			ln -fsv \${ld#${PKG_PKGPATH}/lib/} ${PKG_PKGPATH}/lib/\${ldlink#${PKG_PKGPATH}/lib${BUILD_LIBSUFFIX}/}
+			ln -fsv \${ldlink#${PKG_PKGPATH}/lib${BUILD_LIBSUFFIX}/} ${PKG_PKGPATH}/lib/ld-linux.so.\$(echo \${ldlink} | sed 's/.*.so.//' )"
+	fi
+	PKG_POSTBUILD+="
+		touch ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/ld.so.conf
+		cp -fv \${PKG_SRCPATH}/nscd/nscd.conf ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/nscd.conf
+		mkdir -pv ${PKG_PKGPATH}/var/cache/nscd
+		install -v -Dm644 \${PKG_SRCPATH}/nscd/nscd.tmpfiles ${PKG_PKGPATH}${BUILD_LIBDIR}/tmpfiles.d/nscd.conf
+		install -v -Dm644 \${PKG_SRCPATH}/nscd/nscd.service ${PKG_PKGPATH}/lib/systemd/system/nscd.service
+		mkdir -pv ${PKG_PKGPATH}${BUILD_LIBDIR}/locale
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i POSIX -f UTF-8 C.UTF-8 2>&1 || true
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i cs_CZ -f UTF-8 cs_CZ.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE -f ISO-8859-1 de_DE
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE@euro -f ISO-8859-15 de_DE@euro
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE -f UTF-8 de_DE.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i el_GR -f ISO-8859-7 el_GR
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_GB -f UTF-8 en_GB.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_HK -f ISO-8859-1 en_HK
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_PH -f ISO-8859-1 en_PH
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_US -f ISO-8859-1 en_US
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_US -f UTF-8 en_US.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i es_MX -f ISO-8859-1 es_MX
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fa_IR -f UTF-8 fa_IR
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR -f ISO-8859-1 fr_FR
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR@euro -f ISO-8859-15 fr_FR@euro
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR -f UTF-8 fr_FR.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i it_IT -f ISO-8859-1 it_IT
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i it_IT -f UTF-8 it_IT.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f EUC-JP ja_JP
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f SHIFT_JIS ja_JP.SIJS --no-warnings=ascii
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f UTF-8 ja_JP.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ru_RU -f KOI8-R ru_RU.KOI8-R
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ru_RU -f UTF-8 ru_RU.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i tr_TR -f UTF-8 tr_TR.UTF-8
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i zh_CN -f GB18030 zh_CN.GB18030
+		I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS
+		cat > ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/nsswitch.conf <<-EOF
+			# Begin /etc/nsswitch.conf
+
+			passwd: files
+			group: files
+			shadow: files
+
+			hosts: files dns
+			networks: files
+
+			protocols: files
+			services: files
+			ethers: files
+			rpc: files
+
+			# End /etc/nsswitch.conf
+		EOF
+
+		cat > ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/ld.so.conf <<-EOF
+		# Begin /etc/ld.so.conf
+		# Add an include directory
+		include /etc/ld.so.conf.d/*.conf
+
+		/usr/local/lib
+		/opt/lib
+
+		EOF
+		mkdir -pv ${PKG_PKGPATH}${BUILD_SYSCONFDIR}/ld.so.conf.d"
+fi
