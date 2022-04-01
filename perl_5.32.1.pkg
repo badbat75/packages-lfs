@@ -20,7 +20,7 @@ PKG_POSTBUILD="
 		--with-cpp='${CCWRAPPER:+${CCWRAPPER} }${HARCH}-cpp' \
 		--with-ranlib=${HARCH}-gcc-ranlib \
 		-Dccflags='${PLATFORM_CFLAGS} ${OPTCOMP_FLAGS}' \
-		-Doptimize='${OPTLEVEL:+-O${OPTLEVEL}} $([ ${LTOENABLE:-0} -eq 1 ] && echo ${COMMON_LTOFLAGS} || true)' \
+		-Doptimize='${OPTLEVEL:+-O${OPTLEVEL}} $([ ${LTOENABLE:-0} -eq 1 ] && echo ${COMMON_GNULTOFLAGS} || true)' \
 		-Dldflags='${OPTLINK_FLAGS}' \
 		-Dpager='${BUILD_PREFIX}/bin/less -isR' \
 		-Duseshrplib \

@@ -1,6 +1,6 @@
 # pciutils_5.7.0
 PKG_URL="https://www.kernel.org/pub/software/utils/pciutils/pciutils-3.7.0.tar.xz"
-#LTOENABLE=0
+#PKG_OVERRIDELTO=0
 BUILD_PROCESS=simplemake
 PKG_CFLAGS=""
 INST_CMD=install

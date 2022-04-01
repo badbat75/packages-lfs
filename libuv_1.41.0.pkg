@@ -1,6 +1,6 @@
 # libuv_1.41.0
 PKG_URL="https://dist.libuv.org/dist/v1.41.0/libuv-v1.41.0.tar.gz"
-AUTOCONF=0
+
 BUILD_PROCESS=configmake
 INST_CMD="install-strip"
 PKG_PREBUILD="./autogen.sh"

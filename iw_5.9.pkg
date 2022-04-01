@@ -1,7 +1,7 @@
-# iw_5.9-3
+# iw_5.16-1
 PKG_URL="https://www.kernel.org/pub/software/network/iw/iw-5.9.tar.xz"
 PKG_DEPS="lfs/libnl_3.5.0"
-#LTOENABLE=0
+#PKG_OVERRIDELTO=0
 BUILD_PROCESS=simplemake
 PKG_CFLAGS="-I${BIN_PATH}${BUILD_INCLUDEDIR}/libnl3"
 INST_CMD=install

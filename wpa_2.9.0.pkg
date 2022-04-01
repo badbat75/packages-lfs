@@ -2,4 +2,4 @@
 PKG_URL="http://archive.raspbian.org/raspbian/pool/main/w/wpa/wpa_2.9.0.orig.tar.xz"
 PATCHDEB="http://archive.raspbian.org/raspbian/pool/main/w/wpa/wpa_2.9.0-16.debian.tar.xz"
 BUILD_PROCESS=downloadonly
-AUTOCONF=0
+

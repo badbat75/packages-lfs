@@ -1,6 +1,6 @@
 # openssl_1.1.1i
 PKG_URL="https://www.openssl.org/source/openssl-1.1.1i.tar.gz"
-AUTOCONF=0
+
 CONF_COPYRSC=1
 CONF_CMD="Configure"
 STD_CONF_FLAGS=0

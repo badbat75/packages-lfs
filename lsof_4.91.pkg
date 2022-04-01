@@ -2,7 +2,7 @@
 PKG_URL="https://www.mirrorservice.org/sites/lsof.itap.purdue.edu/pub/tools/unix/lsof/lsof_4.91.tar.gz"
 PKG_DEPS="lfs/libtirpc_1.3.1"
 BUILD_PROCESS=simplemake
-PKG_MAKEVARS="CDEF=\"${COMMON_CFLAGS} ${PLATFORM_CFLAGS} ${OPTCOMP_FLAGS} ${PKG_CFLAGS} ${SYSROOT_CFLAGS}\" \
+PKG_MAKEVARS="CDEF=\"${COMMON_CFLAGS} ${PLATFORM_CFLAGS} ${OPTCOMP_FLAGS} ${PKG_CFLAGS} ${SYSROOT_FLAGS}\" \
     CFGL=\"-ltirpc ${COMMON_LDFLAGS} ${OPTLINK_FLAGS} ${PKG_LDFLAGS}\""
 INST_CMD="NOINSTALL=0"
 PKG_PREBUILD="tar xvf lsof_4.91_src.tar --strip-components=1

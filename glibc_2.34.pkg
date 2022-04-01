@@ -2,18 +2,20 @@
 PKG_URL="https://ftp.gnu.org/gnu/libc/glibc-2.34.tar.xz"
 PATCHES="http://www.linuxfromscratch.org/patches/lfs/development/glibc-2.34-fhs-1.patch"
 BUILD_PROCESS=configmake
-AUTOCONF=0
-LTOENABLE=0
+
+PKG_OVERRIDELTO=0
+PKG_TWOSTEPSBUILD=0
+CONF_CONFIGPARMS="
+slibdir=${BUILD_LIBDIR}${BUILD_LIBSUFFIX}
+rootsbindir=${BUILD_PREFIX}/sbin
+complocaledir=${BUILD_LIBDIR}
+libc_cv_forced_unwind=yes
+libc_cv_c_cleanup=yes"
 CONF_FLAGS="--target=${HARCH} --with-headers=${BIN_PATH}${BUILD_INCLUDEDIR} \
 	--disable-werror --disable-sanity-checks --disable-profile \
 	--enable-stackguard-randomization --enable-stack-protector=strong \
-	--enable-pt_chown --enable-tunables --enable-bind-now \
-	complocaledir=${BUILD_LIBDIR} \
-	libc_cv_slibdir=/lib${BUILD_LIBSUFFIX}"
-CONF_FLAGS+=" libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes"
-INST_CMD="${OVERRIDE_INST_CMD:-install}"
-PKG_TWOSTEPSBUILD=${OVERRIDE_PKG_TWOSTEPSBUILD:-1}
-PKG_MAKEVARS="ARCH=${KERN_ARCH} cross-compiling=yes"
+	--enable-pt_chown --enable-tunables --enable-bind-now"
+PKG_MAKEVARS="cross-compiling=yes"
 
 PKG_PREBUILD="if [ x\$(grep \"*result = local->data.services[database_index];\" nss/nss_database.c) == x ]
 	then
@@ -27,7 +29,9 @@ fi
 if [ ${BOOTSTRAP:-0} -eq 1 ]
 then
 	CONF_FLAGS+=" --without-selinux"
+	INST_CMD="install-bootstrap-headers=yes install-headers"
 else
+	INST_CMD="install"
 	PKG_POSTBUILD="set -x"
 	if [ ${BUILD_LIBDIR}${BUILD_LIBSUFFIX} != ${BUILD_LIBDIR} ]
 	then

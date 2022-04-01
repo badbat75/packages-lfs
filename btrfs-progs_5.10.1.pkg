@@ -2,7 +2,7 @@
 PKG_URL="https://www.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v5.10.1.tar.xz"
 PKG_DEPS="lfs/util-linux_2.36.2 lfs/e2fsprogs_1.46 lfs/zlib_1.2.11 lfs/lzo_2.10 lfs/acl_2.2.53"
 PKG_COPYSRC=1
-AUTOCONF=0
+
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 PKG_TWOSTEPSBUILD=1

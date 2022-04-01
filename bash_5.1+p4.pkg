@@ -1,9 +1,9 @@
 # bash_5.1+p4
 PKG_URL="https://git.savannah.gnu.org/cgit/bash.git/snapshot/bash-76404c85d492c001f59f2644074333ffb7608532.tar.gz"
 PKG_DEPS="lfs/ncurses_6.2+p20210130 lfs/readline_8.1"
-AUTOCONF=0
+
 BUILD_PROCESS=configmake
-#LTOENABLE=0
+#PKG_OVERRIDELTO=0
 CONF_FLAGS="--without-bash-malloc --with-installed-readline"
 INST_CMD="STRIP=${HARCH}-strip install-strip"
 

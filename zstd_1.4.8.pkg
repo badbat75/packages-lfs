@@ -1,7 +1,7 @@
 # zstd_1.4.8
 PKG_URL="https://github.com/facebook/zstd/releases/download/v1.4.8/zstd-1.4.8.tar.gz"
 PKG_DEPS="lfs/zlib_1.2.11"
-#PKG_DEPS+=" lfs/lz4_1.9.3-1+rpi1"
+#PKG_DEPS+=" lfs/lz4_1.9.3-2"
 PKG_TWOSTEPSBUILD=0
 BUILD_PROCESS=simplemake
 INST_CMD=install
