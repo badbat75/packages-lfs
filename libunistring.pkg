@@ -1,0 +1,10 @@
+# libunistring
+PKG_VER=1.1
+PKG_URL="https://ftp.gnu.org/gnu/libunistring/libunistring-${PKG_VER}.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+PKG_AUTOCONF=1
+PKG_MAKETARGETS="all,install-strip"
+
+# Dependencies:
+

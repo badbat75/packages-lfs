@@ -1,0 +1,191 @@
+# glibc
+PKG_URL="https://ftp.gnu.org/gnu/libc/glibc-${GLIBC_VER}.tar.xz"
+case ${GLIBC_VER} in
+	2.37)
+		PKG_VER=2.37+590d0e089b
+		PATCHES=glibc/glibc_2.37+590d0e089b.patch
+		;;
+	2.36)
+		PKG_VER=2.36+fb1bd9f003
+		PATCHES=glibc/glibc_2.36+fb1bd9f003.patch
+		;;
+	2.35)
+		PKG_VER=2.35+3f63f9dfe1
+		PATCHES=glibc/glibc_2.35+3f63f9dfe1.patch
+		;;
+	*)
+		PKG_VER=${GLIBC_VER}
+		;;
+esac
+PATCHES="${PATCHES:+${PATCHES},}http://www.linuxfromscratch.org/patches/lfs/development/glibc-${GLIBC_VER}-fhs-1.patch"
+
+PKG_OVERRIDELTO=0
+BUILD_PROCESS=configmake
+CONF_VARS="libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes libc_cv_slibdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+PKG_MAKEVARS="cross-compiling=yes"
+PKG_TOOLCHAIN=gnu
+PKG_OVERRIDELD=bfd
+PKG_PREBUILD="mkdir -pv \${PKG_BLDPATH}"
+### Configuration
+case ${PKG_TARGET} in
+	cross)
+		PKG_PREBUILD+="
+			cat <<-EOF > \${PKG_BLDPATH}/configparms
+				rootsbindir=${INSTALL_EXECPREFIX}/bin
+				complocaledir=${TARGET_LIBDIR}/locale
+				datadir=${TARGET_SHAREDIR}
+			EOF
+			"
+		CONF_FLAGS="--libdir=${INSTALL_LIBDIR} \
+			--disable-profile --disable-crypt \
+			--disable-build-nscd --disable-nscd \
+			--disable-werror --disable-sanity-checks --without-cvs"
+	;;
+	headers)
+		PKG_DEPS="lfs/kernel:headers"
+		STD_CONF_FLAGS=0
+		CONF_FLAGS="--build=${BARCH} --host=${HARCH} --target=${HARCH} --prefix=${INSTALL_PREFIX} --includedir=${INSTALL_INCLUDEDIR} \
+			--with-headers=${BIN_PATH}${INSTALL_INCLUDEDIR}"
+		CONF_ENV="unset CXX CXXFLAGS; CC=\"${CC_FOR_BUILD}\" CFLAGS=\"${CFLAGS_FOR_BUILD}\" CC=\"${CPP_FOR_BUILD}\" CPPFLAGS=\"${CPPLAGS_FOR_BUILD}\""
+	;;
+	*)
+		PKG_DEPS="lfs/kernel:headers"
+		PKG_PREBUILD+="
+			cat <<-EOF > \${PKG_BLDPATH}/configparms
+				rootsbindir=${INSTALL_EXECPREFIX}/sbin
+				complocaledir=${INSTALL_LIBDIR}/locale
+				datadir=${INSTALL_SHAREDIR}
+			EOF
+		"
+		CONF_FLAGS="--target=${HARCH} --with-headers=${BIN_PATH}${INSTALL_INCLUDEDIR} \
+			--enable-kernel=5.0.0 \
+			--enable-pt_chown --enable-tunables --enable-bind-now \
+			--disable-profile --disable-crypt \
+			--disable-werror --disable-sanity-checks --without-cvs"
+		if [ ${LFS_ENABLENSCD:-0} -eq 1 ]
+		then
+			CONF_FLAGS+=" --enable-build-nscd --enable-nscd"
+		else
+			CONF_FLAGS+=" --disable-build-nscd --disable-nscd"
+		fi
+		case ${PKG_TARGET} in
+			stage1|stage2) ;;
+			*) 	
+				PKG_DEPS+=" lfs/glibc:cross"
+				CONF_FLAGS+=" --enable-stackguard-randomization --enable-stack-protector=strong"
+				if [ ${GLIBC_SYSTEMTAP:-0} -eq 1 ]
+				then
+					PKG_DEPS+=" lfs/systemtap"
+					CONF_FLAGS+=" --enable-systemtap"
+				fi
+				if [ ${GLIBC_WITH_ANNOBIN:-0} -eq 1 ]
+				then
+					PKG_DEPS+=" lfs/annobin"
+					CONF_FLAGS+=" --with-nonshared-cflags="'"-fplugin=annobin -fplugin-arg-annobin-disable -Wa,--generate-missing-build-notes=yes"'
+					PKG_MAKEVARS+=" ASFLAGS="'"-g -Wa,--generate-missing-build-notes=yes"'
+				fi
+			;;
+		esac
+	;;
+esac
+#PKG_PREBUILD="sed '/MAKEFLAGS :=/s/)r/) -r/' -i Makerules"
+
+### Make
+case ${PKG_TARGET} in
+	cross)
+		PKG_MAKETARGETS="lib,elf/subdir_lib,locale/others,elf/ldso_install,${TOOLCHAIN_PATH}/lib/libc.so.6,${TOOLCHAIN_PATH}/lib/libc.so,locale/subdir_install"
+		PKG_POSTBUILD="patchelf --remove-rpath ${INSTALL_LIBDIR}/ld-linux*.so.*;"
+	;;
+	headers)
+		PKG_MAKEVARS+=" install-bootstrap-headers=yes"
+		PKG_MAKETARGETS="install-headers"
+	;;
+	stage1)
+		PKG_MAKETARGETS="csu/subdir_lib,install-headers"
+		PKG_POSTBUILD="mkdir -pv \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+			install csu/crt1.o csu/crti.o csu/crtn.o \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+			\${CC} \${CFLAGS} \${LDFLAGS} -nostdlib -nostartfiles -shared -x c /dev/null -o \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libc.so;"
+	;;
+	stage2)	;;
+	*)
+		if [ -n "${INSTALL_LIBSUFFIX}" ]
+		then
+			PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/lib
+				LD_LINUX_NAME=\$(basename elf/ld-linux-*.so.*)
+				ln -sfv \"${INSTALL_LIBSUFFIX/#\//}/\${LD_LINUX_NAME}\" \"${PKG_PKGPATH}/lib\"
+				"
+		fi
+		PKG_POSTBUILD+="touch ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf
+
+			cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/nsswitch.conf <<-EOF
+				# Begin /etc/nsswitch.conf
+
+				passwd: files
+				group: files
+				shadow: files
+
+				hosts: files dns
+				networks: files
+
+				protocols: files
+				services: files
+				ethers: files
+				rpc: files
+
+				# End /etc/nsswitch.conf
+			EOF
+
+			cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf <<-EOF
+			# Begin /etc/ld.so.conf
+			# Add an include directory
+
+			include /etc/ld.so.conf.d/*.conf
+
+			# End /etc/ld.so.conf
+			EOF
+			install -vdm755 ${PKG_PKGPATH}${INSTALL_LIBDIR}/locale
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i POSIX -f UTF-8 C.UTF-8 2>&1 || true
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i cs_CZ -f UTF-8 cs_CZ.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE -f ISO-8859-1 de_DE
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE@euro -f ISO-8859-15 de_DE@euro
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE -f UTF-8 de_DE.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i el_GR -f ISO-8859-7 el_GR
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_GB -f UTF-8 en_GB.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_HK -f ISO-8859-1 en_HK
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_PH -f ISO-8859-1 en_PH
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_US -f ISO-8859-1 en_US
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_US -f UTF-8 en_US.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i es_MX -f ISO-8859-1 es_MX
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fa_IR -f UTF-8 fa_IR
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR -f ISO-8859-1 fr_FR
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR@euro -f ISO-8859-15 fr_FR@euro
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR -f UTF-8 fr_FR.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i it_IT -f ISO-8859-1 it_IT
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i it_IT -f UTF-8 it_IT.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f EUC-JP ja_JP
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f SHIFT_JIS ja_JP.SIJS --no-warnings=ascii
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f UTF-8 ja_JP.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ru_RU -f KOI8-R ru_RU.KOI8-R
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ru_RU -f UTF-8 ru_RU.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i tr_TR -f UTF-8 tr_TR.UTF-8
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i zh_CN -f GB18030 zh_CN.GB18030
+			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS;"
+		if [ ${LFS_ENABLENSCD:-0} -eq 1 ]
+		then
+			PKG_POSTBUILD+="cp -fv \${PKG_SRCPATH}/nscd/nscd.conf ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/nscd.conf
+				install -vdm755 ${PKG_PKGPATH}/var/cache/nscd
+				install -vDm644 \${PKG_SRCPATH}/nscd/nscd.tmpfiles ${PKG_PKGPATH}${INSTALL_LIBDIR}/tmpfiles.d/nscd.conf
+				install -vDm644 \${PKG_SRCPATH}/nscd/nscd.service ${PKG_PKGPATH}/lib/systemd/system/nscd.service;"
+			PKG_POSTINSTALL+="systemctl disable nscd"
+		fi
+		PKG_POSTINSTALL_PRIO=01
+	;;
+esac
+if [ ${MAKEVERBOSE:-0} -eq 0 ]
+then
+	PKG_MAKEVARS+=" -s"
+fi
+PKG_POSTBUILD+="if [ ! -f \${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/gnu/stubs.h ]
+	then
+		install -vDm644 /dev/null ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/gnu/stubs.h
+	fi"

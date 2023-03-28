@@ -1,0 +1,11 @@
+# make-ca
+PKG_VER=1.8.1
+PKG_URL="https://github.com/djlucas/make-ca/archive/refs/tags/v${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/p11-kit"
+PKG_DEPS+=" lfs/nss"
+BUILD_PROCESS=simplemake
+PKG_MAKETARGETS="install"
+PKG_PREBUILD="sed 's@elif test -d /lib/systemd/system; then \\\\@else \\\\@' -i Makefile"
+PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/etc/ssl/local
+    ${PKG_PKGPATH}/usr/sbin/make-ca -D ${PKG_PKGPATH} -g"
+PKG_POSTINSTALL="systemctl enable update-pki.timer"

@@ -1,6 +1,0 @@
-# libmnl_1.0.4
-PKG_URL="https://netfilter.org/projects/libmnl/files/libmnl-1.0.4.tar.bz2"
-PKG_DEPS="lfs/pcre_8.44"
-BUILD_PROCESS=configmake
-CONF_FLAGS=""
-INST_CMD="install-strip"

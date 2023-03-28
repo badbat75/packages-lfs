@@ -1,0 +1,12 @@
+# ninja
+PKG_VER=1.11.1
+PKG_URL="https://github.com/ninja-build/ninja/archive/refs/tags/v${PKG_VER}.tar.gz"
+PKG_DEPS=""
+BUILD_PROCESS=cmakebuild
+CONF_FLAGS=
+CMAKE_GENERATOR="Unix Makefiles"
+PKG_MAKETARGETS="all,install/strip"
+
+case ${PKG_TARGET} in
+    native) PKG_CHECK="[ x\$( ${INSTALL_EXECPREFIX}/bin/ninja --version || true ) == x${PKG_VER} ]" ;;
+esac

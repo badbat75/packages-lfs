@@ -1,0 +1,20 @@
+# gnutls
+PKG_VER=3.8.0
+PKG_URL="https://www.gnupg.org/ftp/gcrypt/gnutls/v$(echo ${PKG_VER} | cut -d. -f1,2)/gnutls-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/nettle lfs/make-ca lfs/p11-kit lfs/libtasn1 lfs/libunistring \
+    lfs/net-tools lfs/libidn2 lfs/libseccomp lfs/zlib lfs/brotli"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--without-libiconv-prefix \
+    --without-libintl-prefix \
+    --without-libseccomp-prefix \
+    --without-libcrypto-prefix \
+    --without-librt-prefix \
+    --without-libpthread-prefix \
+    --without-libdl-prefix \
+    --without-libz-prefix"
+PKG_MAKETARGETS="all,install-strip"
+PKG_CFLAGS="-Wno-analyzer-use-of-uninitialized-value"
+
+# Dependencies:
+

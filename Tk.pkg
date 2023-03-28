@@ -1,0 +1,23 @@
+# Tk
+PKG_VER=8.6.13
+PKG_URL="https://downloads.sourceforge.net/tcl/tk${PKG_VER}-src.tar.gz"
+PKG_DEPS="lfs/Tcl"
+BUILD_PROCESS=configmake
+CONF_PATH="unix"
+CONF_FLAGS="--mandir=${INSTALL_SHAREDIR}/man"
+CONF_FLAGS+=" --with-tcl=${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+[ "${HARCH_BITWIDTH}" == 64 ] && CONF_FLAGS+=" --enable-64bit" || :
+CONF_FLAGS+=" --disable-rpath"
+PKG_MAKETARGETS=",install,install-private-headers"
+PKG_LDFLAGS="-lm -s"
+
+PKG_POSTBUILD="sed -e \"s@${PKG_BLDPATH}/unix@${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}@g\" -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/tkConfig.sh
+	ln -v -sf wish8.6 ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/wish &&
+	chmod -v 755 ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libtk8.6.so"
+
+case ${PKG_TARGET} in
+	bootstrap) 
+		PKG_DEPS+=" lfs/libX11:bootstrap"
+	;;
+	*) PKG_DEPS+=" lfs/libX11" ;;
+esac

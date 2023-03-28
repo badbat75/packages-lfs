@@ -1,0 +1,12 @@
+# libgmp
+PKG_SUFFIX=_${GMP_VER}
+PKG_URL="http://ftp.gnu.org/gnu/gmp/gmp-${GMP_VER}.tar.xz"
+PKG_DEPS="lfs/ncurses lfs/readline"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--enable-cxx"
+PKG_MAKETARGETS="all,install-strip"
+PKG_AUTOCONF=1
+PKG_OVERRIDELTO=0
+
+PKG_PREBUILD="cp -v configfsf.guess config.guess
+  cp -v configfsf.sub   config.sub"

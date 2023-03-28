@@ -1,6 +1,0 @@
-# intltool_0.51.0
-PKG_URL="https://launchpad.net/intltool/trunk/0.51.0/+download/intltool-0.51.0.tar.gz"
-PKG_DEPS="lfs/perl_5.32.1"
-BUILD_PROCESS=configmake
-CONF_FLAGS=""
-INST_CMD="install-strip"

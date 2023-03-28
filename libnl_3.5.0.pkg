@@ -1,6 +1,0 @@
-# libnl_3.5.0
-PKG_URL="https://github.com/thom311/libnl/releases/download/libnl3_5_0/libnl-3.5.0.tar.gz"
-BUILD_PROCESS=configmake
-CONF_FLAGS="--disable-debug --disable-cli"
-PKG_MAKEVARS=""
-INST_CMD=install-strip

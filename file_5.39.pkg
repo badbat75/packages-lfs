@@ -1,8 +1,0 @@
-# file_5.39
-PKG_URL="http://ftp.astron.com/pub/file/file-5.39.tar.gz"
-PKG_DEPS="lfs/zlib_1.2.11 lfs/bzip2_1.0.8"
-#PATCHES=
-
-BUILD_PROCESS=configmake
-CONF_FLAGS=""
-INST_CMD="install-strip"

@@ -1,0 +1,7 @@
+# libisl
+PKG_SUFFIX=_${ISL_VER}
+PKG_URL="https://libisl.sourceforge.io/isl-${ISL_VER}.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"
+PKG_AUTOCONF=1

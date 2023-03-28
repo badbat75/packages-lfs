@@ -1,0 +1,27 @@
+# bind9
+PKG_VER=9.19.10
+PKG_URL="https://downloads.isc.org/isc/bind9/${PKG_VER}/bind-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/ncurses lfs/readline lfs/libuv lfs/openssl lfs/libxml2:bootstrap"
+PKG_DEPS+=" lfs/libnghttp2 lfs/krb5:bootstrap lfs/libcap2:bootstrap"
+BUILD_PROCESS=configmake
+case ${PKG_TARGET} in
+	bootstrap)
+		PKG_PREBUILD="sed 's/^SUBDIRS =.*/SUBDIRS = . lib/' -i Makefile.in"
+	;;
+	*)
+		PKG_DEPS+=" lfs/json-c lfs/libidn2"
+		PKG_DEPS+=" lfs/curl lfs/BerkeleyDB lfs/openldap:bootstrap"
+		CONF_FLAGS="--with-libsystemd"
+		PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}${INSTALL_SHAREDIR}/man/man1
+			install -v -v doc/man/{dig.1,host.1,nslookup.1} ${PKG_PKGPATH}${INSTALL_SHAREDIR}/man/man1"
+		PKG_POSTINSTALL="if ! getent group named; then
+	groupadd --system -g 20 named
+fi
+if ! getent passwd named; then
+	useradd --system -c \"BIND Owner\" -g named -s /sbin/nologin -u 20 named
+fi
+install -d -m770 -o named -g named /srv/named"
+	;;
+esac
+CONF_VARS="BUILD_CC=\"\${CC_FOR_BUILD}\""
+PKG_MAKETARGETS="install"

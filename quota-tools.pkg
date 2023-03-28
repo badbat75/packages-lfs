@@ -1,0 +1,12 @@
+# quota-tools
+PKG_VER=4.09
+PKG_URL="https://download.sourceforge.net/project/linuxquota/quota-tools/${PKG_VER}/quota-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/libtirpc lfs/openldap:client"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--enable-rpc --enable-rpcsetquota"
+CONF_VARS="RPCGEN=\${SYSROOT}${INSTALL_EXECPREFIX}/bin/rpcgen"
+PKG_CFLAGS="-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64"
+PKG_CPPFLAGS="-I\${SYSROOT}${INSTALL_INCLUDEDIR}/tirpc"
+PKG_MAKETARGETS="all,install-strip"
+PKG_PREBUILD="rm -fv config.h"

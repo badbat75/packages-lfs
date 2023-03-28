@@ -1,0 +1,47 @@
+# icu
+PKG_VER=72.1
+PKG_URL="https://github.com/unicode-org/icu/archive/refs/tags/release-$(echo ${PKG_VER} | sed 's/\./-/g').tar.gz"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+AUTOCONF_PATH="icu4c/source"
+CONF_CMD="icu4c/source/configure"
+#PKG_MAKETARGETS="all,install"
+case ${PKG_TARGET} in
+	cross)
+		CONF_FLAGS="--enable-icu-config --disable-extras --disable-tests --disable-samples"
+		PKG_POSTBUILD="cat >${TOOLCHAIN_PATH}/share/icu/${PKG_VER}/config/icucross.mk <<-'EOF'
+			CROSS_ICU_VERSION=${PKG_VER}
+			TOOLEXEEXT=
+			TOOLBINDIR=${TOOLCHAIN_PATH}/bin
+			TOOLLIBDIR=${TOOLCHAIN_PATH}/lib
+			INVOKE=
+			PKGDATA_INVOKE=
+		EOF
+		install -vm644 config/icucross.inc ${TOOLCHAIN_PATH}/share/icu/${PKG_VER}/config"
+		PKG_CFLAGS="-DICU_DATA_DIR=\\\"${TOOLCHAIN_PATH}/share/icu/${PKG_VER}\\\""
+		PKG_CXXFLAGS="-DICU_DATA_DIR=\\\"${TOOLCHAIN_PATH}/share/icu/${PKG_VER}\\\""
+		#PKG_LDFLAGS="-Wl,-rpath -Wl,${TOOLCHAIN_PATH}/lib"
+		PKG_MAKEVARS="sbindir=${TOOLCHAIN_PATH}/bin"
+	;;
+	*)
+		PKG_DEPS="lfs/icu:cross"
+		CONF_FLAGS="--enable-icu-config --disable-tests --disable-samples --with-data-packaging=files --with-cross-build=${TOOLCHAIN_PATH}/share/icu/${PKG_VER}"
+		CONF_VARS="ac_cv_c_bigendian=no"
+		PKG_CFLAGS="-DICU_DATA_DIR=\\\"/usr/share/icu/${PKG_VER}\\\""
+		PKG_CXXFLAGS="-DICU_DATA_DIR=\\\"/usr/share/icu/${PKG_VER}\\\""
+	;;
+esac
+PKG_PREBUILD="sed -i 's| \$(ICUPKGDATA_DIR)| \$(DESTDIR)/\$(ICUPKGDATA_DIR)|g' icu4c/source/data/Makefile.in
+	sed -i 's|\$(CURR_TREE)|curr|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(LANG_TREE)|lang|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(REGION_TREE)|region|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(ZONE_TREE)|zone|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(UNIT_TREE)|unit|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(BREAK_TREE)|brkitr|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(COLLATION_TREE)|coll|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(RBNF_TREE)|rbnf|' icu4c/source/data/Makefile.in
+	sed -i 's|\$(TRANSLIT_TREE)|translit|' icu4c/source/data/Makefile.in"
+
+case ${TOOLCHAIN} in
+	llvm) PKG_CXXFLAGS="-Wno-gnu-include-next";;
+esac

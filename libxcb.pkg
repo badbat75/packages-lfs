@@ -1,0 +1,8 @@
+# libxcb
+PKG_VER=1.15
+PKG_URL="https://xorg.freedesktop.org/archive/individual/lib/libxcb-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/libXau lfs/xcb-proto lfs/libXdmcp"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

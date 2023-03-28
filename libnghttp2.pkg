@@ -1,0 +1,6 @@
+# libnghttp2
+PKG_VER=1.52.0
+PKG_URL="https://github.com/nghttp2/nghttp2/releases/download/v${PKG_VER}/nghttp2-${PKG_VER}.tar.xz"
+BUILD_PROCESS=cmakebuild
+CONF_FLAGS="-DPYTHON_EXECUTABLE:FILEPATH=cross-python3 -DPYTHON_LIBRARY:FILEPATH=${GLOBAL_TOOLCHAIN_PATH}/python-${PYTHON_VER}/lib/libpython3.so"
+PKG_MAKETARGETS="all,install/strip"

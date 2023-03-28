@@ -1,0 +1,79 @@
+# binutils
+PKG_URL="https://github.com/gcc-mirror/gcc/archive/releases/gcc-${GCC_VER}.tar.gz"
+PKG_DEPS="lfs/libgmp lfs/libmpfr lfs/libmpc lfs/libisl lfs/zlib"
+case ${GCC_VER} in
+	12.2.0)
+		PKG_VER=12.2.0+378e677bf5c
+		PATCHES=gcc/gcc_12.2.0+378e677bf5c.patch
+		;;
+	*)
+		PKG_VER=${GCC_VER}
+		;;
+esac
+BUILD_PROCESS=configmake
+STD_CONF_FLAGS=0
+CONF_ENV="env -u CPP -u CPPFLAGS"
+CONF_FLAGS="--prefix=${INSTALL_PREFIX} --libdir=${INSTALL_LIBDIR} --with-sysroot=/ --with-build-sysroot=\${SYSROOT} \
+	--build=${BARCH} --host=${HARCH} --target=${HARCH} \
+	--enable-shared --enable-static \
+	--enable-languages=${GCC_LANGUAGES:-c,c++} --enable-version-specific-runtime-libs  \
+	$( if [ ${MULTI_ARCH} -eq 1 ] && [ -z "${HARCH_LIB}" ]; then echo --enable-multiarch; fi ) \
+	--enable-threads=posix --enable-tls --enable-checking=release --disable-multilib \
+	--enable-__cxa_atexit --disable-libunwind-exceptions --enable-gnu-unique-object \
+	--enable-linker-build-id --with-gcc-major-version-only --enable-libstdcxx-backtrace \
+	--with-linker-hash-style=gnu --enable-plugin --enable-initfini-array \
+	--enable-gnu-indirect-function --disable-nls --disable-option-checking"
+CONF_FLAGS+=" --with-system-zlib"
+CONF_FLAGS+=" --with-mpc-include=\${SYSROOT}${INSTALL_INCLUDEDIR} --with-mpc-lib=\${SYSROOT}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+CONF_FLAGS+=" --with-mpfr-include=\${SYSROOT}${INSTALL_INCLUDEDIR} --with-mpfr-lib=\${SYSROOT}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+CONF_FLAGS+=" --with-gmp-include=\${SYSROOT}${INSTALL_INCLUDEDIR} --with-gmp-lib=\${SYSROOT}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+CONF_FLAGS+=" --with-isl-include=\${SYSROOT}${INSTALL_INCLUDEDIR} --with-isl-lib=\${SYSROOT}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+PKG_MAKEENV="env -u CPP -u CPPFLAGS"  
+PKG_MAKEVARS="STAGE_CC_WRAPPER=\"${CCWRAPPER}\" \
+	CFLAGS_FOR_TARGET=\"\${CFLAGS} -fno-lto\" \
+	CXXFLAGS_FOR_TARGET=\"\${CXXFLAGS} -fno-lto\" \
+	AR_FOR_TARGET=\"\${AR}\" \
+	NM_FOR_TARGET=\"\${NM}\" \
+	RANLIB_FOR_TARGET=\"\${RANLIB}\" \
+	gcc_cv_objdump=\"\${OBJDUMP}\" \
+	libsuffix=\"\${INSTALL_LIBSUFFIX}\" \
+"
+PKG_TOOLCHAIN=gnu
+
+PKG_PREBUILD="sed '/all-build-libcpp/,/TARGET-build-libcpp/ s/\\\$(BASE_FLAGS_TO_PASS) //' -i Makefile.in;"
+
+PKG_CXXFLAGS="-Wno-stringop-overflow -Wno-maybe-uninitialized"
+
+PKG_POSTBUILD="eval export PKG_PKGPATH=${PKG_PKGPATH}
+	mkdir -pv \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+	find \${PKG_PKGPATH}${INSTALL_PREFIX}/lib/gcc/${HARCH} -type f,l \\( -name \"*.so*\" -o -name \"*.a*\" -o -name \"*.la*\" -o -name \"crt*.o\" \\) \
+	| xargs -r -I{} bash -c 'ln -fsv \$(realpath --relative-to=\${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} {}) \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/\$(basename {})'"
+
+##################### Package dedicated code #########################
+PKG_MAKETARGETS=
+case "${GCC_TARGETS:-all}" in
+	all)
+		PKG_SUFFIX="-all${PKG_SUFFIX}"
+		local OBJECTS=
+		PKG_MAKETARGETS="all,install-strip"
+	;;
+	binaries)
+		PKG_SUFFIX="-binaries${PKG_SUFFIX}"
+		local OBJECTS="host"
+	;;
+	libraries)
+		PKG_SUFFIX="-libraries${PKG_SUFFIX}"
+		local OBJECTS="target"
+		### Improves build time disabling LTO on host binaries would not be installed
+		PKG_OVERRIDELTO=0
+	;;
+	*) 
+		PKG_SUFFIX="-custom${PKG_SUFFIX}"
+		local OBJECTS="${GCC_TARGETS}"
+	;;
+esac
+for object in $( echo ${OBJECTS} | tr ',' ' ' )
+do
+	PKG_MAKETARGETS+=" all-${object},install-strip-${object}"
+done
+######################################################################

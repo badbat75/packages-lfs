@@ -1,0 +1,12 @@
+# popt
+PKG_VER=1.19
+PKG_URL="http://ftp.rpm.org/popt/releases/popt-$(echo ${PKG_VER} | cut -d. -f1).x/popt-${PKG_VER}.tar.gz"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"
+
+PKG_POSTBUILD="sed -i 's@\./@src/@' Doxyfile
+    doxygen
+    install -v -m755 -d ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/popt-${PKG_VER}
+    install -v -m644 doxygen/html/* ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/popt-${PKG_VER}"

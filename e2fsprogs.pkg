@@ -1,0 +1,28 @@
+# e2fsprogs
+PKG_VER=1.47.0
+PKG_URL="https://downloads.sourceforge.net/project/e2fsprogs/e2fsprogs/v${PKG_VER}/e2fsprogs-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/util-linux"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--disable-option-checking"
+CONF_FLAGS+=" --enable-elf-shlibs"
+CONF_FLAGS+=" --disable-libblkid"
+CONF_FLAGS+=" --disable-libuuid"
+CONF_FLAGS+=" --disable-uuidd"
+CONF_FLAGS+=" --disable-fsck"
+case ${PKG_TARGET} in
+    cross)
+        PKG_MAKETARGETS="-Clib/et install-strip,-Clib/ss install-strip"
+    ;;
+    bootstrap)
+        PKG_DEPS+=" lfs/e2fsprogs:cross"
+        PKG_MAKETARGETS="all,-j1 install install-strip"
+    ;;
+    *)
+        CONF_FLAGS+=" --with-systemd-unit-dir=/lib/systemd/system"
+        CONF_FLAGS+=" --with-udev-rules-dir=/lib/udev/rules.d"
+        CONF_FLAGS+=" --with-root-prefix=\"\""
+        PKG_DEPS+=" lfs/e2fsprogs:cross"
+        PKG_DEPS+=" lfs/systemd:bootstrap"
+        PKG_MAKETARGETS="all,-j1 install install-strip"
+   ;;
+esac

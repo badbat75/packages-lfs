@@ -1,0 +1,14 @@
+# sccache
+PKG_VER=0.3.3
+PKG_URL="https://github.com/mozilla/sccache/archive/refs/tags/v${PKG_VER}.tar.gz"
+BUILD_PROCESS=cargobuild
+PKG_OVERRIDELTO=0
+CONF_FLAGS=""
+CARGO_BINLIST="sccache"
+PKG_LDFLAGS=-s
+
+case ${PKG_TARGET} in
+    native|cross) PKG_CHECK="[ x\$( ${INSTALL_EXECPREFIX}/bin/sccache -V | head -n1 | awk '{print \$2}' ) == x${PKG_VER} ]" ;;
+esac
+
+PKG_POSTBUILD="ln -sfv sccache ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/ccache"

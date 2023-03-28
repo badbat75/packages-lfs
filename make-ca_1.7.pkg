@@ -1,9 +1,0 @@
-# make-ca_1.7
-PKG_URL="https://github.com/djlucas/make-ca/releases/download/v1.7/make-ca-1.7.tar.xz"
-PKG_DEPS="lfs/p11-kit_0.23.22"
-BUILD_PROCESS=simplemake
-PKG_TWOSTEPSBUILD=0
-INST_CMD=install
-PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/etc/ssl/local
-    ${PKG_PKGPATH}/usr/sbin/make-ca -D ${PKG_PKGPATH} -g
-    systemctl --root=${PKG_PKGPATH} enable update-pki.timer"

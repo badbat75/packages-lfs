@@ -1,0 +1,38 @@
+# util-linux
+PKG_VER=2.38.1
+PKG_URL="https://github.com/util-linux/util-linux/archive/refs/tags/v${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/zlib lfs/bzip2 lfs/ncurses lfs/readline"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="ADJTIME_PATH=/var/lib/hwclock/adjtime \
+            --with-systemdsystemunitdir=/lib/systemd/system \
+            --disable-chfn-chsh \
+            --disable-login \
+            --disable-nologin \
+            --disable-su \
+            --disable-setpriv \
+            --disable-runuser \
+            --disable-pylibmount \
+            --disable-makeinstall-chown \
+            --without-tinfo"
+CONF_VARS="ADJTIME_PATH=/var/lib/hwclock/adjtime runstatedir=/run"
+PKG_MAKEVARS="NCURSES_LIBS=-lncurses"
+
+case ${TOOLCHAIN} in
+    llvm)
+        PKG_CFLAGS=" -Wno-implicit-function-declaration"
+        ;;
+esac
+
+case ${PKG_TARGET} in
+    cross)
+        PKG_MAKETARGETS="libuuid.la,libblkid.la,install-nodist_blkidincHEADERS,install-uuidincHEADERS"
+        PKG_SKIPINSTALL=1
+        PKG_POSTBUILD="install -vdm755 ${TOOLCHAIN_PATH}/lib
+            install -vm755 .libs/{libuuid.so,libblkid.so} ${TOOLCHAIN_PATH}/lib"
+    ;;
+    *)
+        PKG_DEPS+=" lfs/util-linux:cross"
+        INST_CMD="install-strip"
+    ;;
+esac

@@ -1,0 +1,8 @@
+# libxkbcommon
+PKG_VER=1.5.0
+PKG_URL="https://xkbcommon.org/download/libxkbcommon-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/xkeyboard-config lfs/libxcb"
+#PKG_DEPS+=" lfs/Wayland lfs/waylandprotocols"
+BUILD_PROCESS=mesonninja
+CONF_FLAGS="-Denable-wayland=false"
+#PKG_MAKETARGETS="all,install"

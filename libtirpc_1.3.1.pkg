@@ -1,5 +1,0 @@
-# libtirpc_1.3.1
-PKG_URL="https://downloads.sourceforge.net/libtirpc/libtirpc-1.3.1.tar.bz2"
-BUILD_PROCESS=configmake
-CONF_FLAGS="--disable-gssapi"
-INST_CMD="install-strip"

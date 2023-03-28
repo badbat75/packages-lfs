@@ -1,0 +1,8 @@
+# libmpfr
+PKG_SUFFIX=_${MPFR_VER}
+PKG_URL="http://www.mpfr.org/mpfr-${MPFR_VER}/mpfr-${MPFR_VER}.tar.xz"
+PKG_DEPS="lfs/libgmp"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--enable-thread-safe"
+PKG_MAKETARGETS="all,install-strip"

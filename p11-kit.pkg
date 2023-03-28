@@ -1,0 +1,30 @@
+# p11-kit
+PKG_VER=0.24.1
+PKG_URL="https://github.com/p11-glue/p11-kit/releases/download/${PKG_VER}/p11-kit-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/libtasn1 lfs/libffi"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--with-trust-paths=${INSTALL_SYSCONFDIR}/pki/anchors"
+CONF_VARS="systemduserunitdir=${INSTALL_PREFIX}/lib/systemd/user"
+PKG_MAKETARGETS="install-strip"
+PKG_PREBUILD="if [ -f trust/trust-extract-compat.orig ]
+		then
+			mv trust/trust-extract-compat.orig rust/trust-extract-compat 
+		fi
+		cp -f trust/trust-extract-compat trust/trust-extract-compat.orig
+		sed '20,\$ d' -i trust/trust-extract-compat &&
+		cat >> trust/trust-extract-compat <<-EOF
+		# Copy existing anchor modifications to /etc/ssl/local
+		/usr/libexec/make-ca/copy-trust-modifications
+
+		# Generate a new trust store
+		/usr/sbin/make-ca -f -g
+	EOF"
+case ${PKG_TARGET} in
+	bootstrap)
+	;;
+	*)
+		PKG_DEPS+=" lfs/nss"
+		PKG_POSTBUILD="ln -sfv /usr/libexec/p11-kit/trust-extract-compat ${PKG_PKGPATH}/usr/bin/update-ca-certificates"
+	;;
+esac

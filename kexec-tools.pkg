@@ -1,0 +1,15 @@
+# kexec-tools
+PKG_VER=2.0.26
+PKG_URL="https://mirrors.edge.kernel.org/pub/linux/utils/kernel/kexec/kexec-tools-${PKG_VER}.tar.xz"
+PKG_DEPS=
+PKG_AUTOCONF=1
+BUILD_PROCESS=configmake
+CONF_FLAGS="--sbindir=${INSTALL_EXECPREFIX}/sbin --without-xen"
+#CONF_ENV="BUILD_CC="'${CC_FOR_BUILD}'" BUILD_CFLAGS="'${CC_FOR_BUILD}'" TARGET_CC="'${CC}'" TARGET_CCFLAGS="'${CFLAGS}'" TARGET_LD="'${LINKER_EXE}'
+#PKG_MAKETARGETS="all,install"
+
+PKG_PREBUILD="rm -fv include/config.h"
+
+PKG_POSTBUILD="\${STRIP} --strip-unneeded ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/{kexec,vmcore-dmesg}"
+
+PKG_FAULTYCFLAGS=1

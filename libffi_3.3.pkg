@@ -1,5 +1,0 @@
-# libffi_3.3
-PKG_URL="https://sourceware.org/pub/libffi/libffi-3.3.tar.gz"
-BUILD_PROCESS=configmake
-CONF_FLAGS="enable_multi_os_directory=no"
-INST_CMD="install-strip"

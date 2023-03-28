@@ -1,0 +1,40 @@
+# python3
+PKG_VER=${PYTHON_VER}
+PKG_URL="https://www.python.org/ftp/python/${PKG_VER}/Python-${PKG_VER}.tar.xz"
+PKG_AUTOCONF=1
+BUILD_PROCESS=configmake
+CONF_ENV="env -u PYTHON_FOR_BUILD PATH=\"${GLOBAL_TOOLCHAIN_PATH}/python3_${PYTHON_VER}/bin:\${PATH}\""
+CONF_FLAGS="--with-platlibdir=lib --with-system-expat --with-system-ffi --with-system-libmpdec --enable-ipv6 --with-ensurepip=yes --disable-test-modules"
+if [ "${LTOENABLE:-0}" != "0" ]
+then
+	CONF_FLAGS+=" --with-lto"
+fi
+case ${PKG_TARGET} in
+	cross|native)
+		;;
+	*)
+		PKG_DEPS="lfs/ncurses"
+		PKG_DEPS+=" lfs/zlib"
+		PKG_DEPS+=" lfs/bzip2"
+		PKG_DEPS+=" lfs/expat"
+		PKG_DEPS+=" lfs/libffi"
+		PKG_DEPS+=" lfs/libmpdec"
+		PKG_DEPS+=" lfs/gdbm"
+		PKG_DEPS+=" lfs/readline"
+		PKG_DEPS+=" lfs/openssl"
+		PKG_DEPS+=" lfs/SQLite"
+		PKG_DEPS+=" lfs/BerkeleyDB"
+		PKG_DEPS+=" lfs/libnsl"
+		PKG_DEPS+=" lfs/Tk:bootstrap"
+		CONF_VARS="CROSS_COMPILE=${HARCH}- CROSS_COMPILE_TARGET=yes \
+			ax_cv_c_float_words_bigendian=$([ ${HMENDIAN} != little ] && echo yes || echo no) \
+			ac_cv_file__dev_ptmx=yes ac_cv_file__dev_ptc=no"
+		;;
+esac
+PKG_LDFLAGS="-s"
+PKG_MAKETARGETS=",install"
+PKG_OVERRIDELTO=0
+PKG_FAULTYCFLAGS=1
+
+PKG_PREBUILD="sed -i 's/self.srcdir = sysconfig.get_config_var('\''srcdir'\'')/self.srcdir = os.path.dirname(os.path.abspath(__file__))/' -i setup.py"
+PKG_DISABLECROSSPYTHON=1

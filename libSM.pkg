@@ -1,0 +1,7 @@
+# libSM
+PKG_VER=1.2.4
+PKG_URL="https://www.x.org/archive/individual/lib/libSM-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/xorg-sgml-doc-tools lfs/libICE lfs/xorgproto lfs/xtrans"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+PKG_MAKETARGETS="all,install-strip"

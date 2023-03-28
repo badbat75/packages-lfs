@@ -1,0 +1,41 @@
+# nss
+PKG_VER=3.88.1
+PKG_URL="https://archive.mozilla.org/pub/security/nss/releases/NSS_$(echo ${PKG_VER} | sed 's/\./_/g')_RTM/src/nss-${PKG_VER}.tar.gz"
+PATCHES="https://www.linuxfromscratch.org/patches/blfs/svn/nss-${PKG_VER}-standalone-1.patch"
+PKG_DEPS="lfs/zlib lfs/nspr lfs/p11-kit:bootstrap"
+PKG_DEPS+=" lfs/SQLite"
+BUILD_PROCESS=simplemake
+PKG_MAKEVARS="OBJDIR_NAME=Release NSS_ENABLE_WERROR=0 MOZILLA_CLIENT=1 NSPR_INCLUDE_DIR=${BIN_PATH}${INSTALL_INCLUDEDIR}/nspr NSPR_LIB_DIR=${BIN_PATH}${INSTALL_LIBDIR}"
+PKG_MAKEVARS+=" BUILD_OPT=1 OPTIMIZER=\"\${CFLAGS} \${CPPFLAGS}\" LDFLAGS=\"\${LDFLAGS}\" DSO_LDOPTS=\"-shared \${LDFLAGS}\" NSS_USE_SYSTEM_SQLITE=1"
+PKG_MAKEVARS+=" NSS_ENABLE_ECC=1 CHECKLOC= CC=\"\${CC}\" CXX=\"\${CXX}\" CCC=\"\${CXX}\" RANLIB=\"\${RANLIB}\" OS_TEST=${HM} KERNEL=${HARCH}"
+PKG_MAKETARGETS="-C nss all"
+PKG_LDFLAGS="-s"
+
+case ${TOOLCHAIN} in
+    gnu) PKG_MAKEVARS+=" NS_USE_GCC=1"
+    ;;
+    llvm)
+    ;;
+esac
+
+if [ "${HARCH_BITWIDTH}" == 64 ]; then PKG_MAKEVARS+=" USE_64=1"; fi
+
+#BUILD_PROCESS=custom
+#PKG_BUILDSCRIPT="pushd nss
+#./build.sh $([ ${MAKEVERBOSE:-0} -eq 1 ] && echo \"-v\" || true) -c --opt --disable-tests $(case ${HM} in
+#        x86_64) echo "--target=x64";; 
+#        *) echo "--target=${HM}";;
+#    esac) --system-nspr --enable-libpkix -j ${NPROCS}
+#popd"
+
+PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/{nss,dbm}
+    install -vdm755 ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}{,/pkgconfig}
+    install -vdm755 ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin
+    cp -vRL dist/{public,private}/nss/* ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/nss
+    cp -vRL dist/{public,private}/dbm/* ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/dbm
+    install -vm755 dist/Release/lib/*.so ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+    install -vm644 dist/Release/lib/*.a ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+    install -vm644 dist/Release/lib/pkgconfig/* ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig
+    #install -vm644 dist/Release/lib/*.chk ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+    ln -sfv ./pkcs11/p11-kit-trust.so ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libnssckbi.so
+    install -vm755 dist/Release/bin/* ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin"

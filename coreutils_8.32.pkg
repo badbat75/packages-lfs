@@ -1,6 +1,0 @@
-# coreutils_8.32
-PKG_URL="https://ftp.gnu.org/gnu/coreutils/coreutils-8.32.tar.xz"
-PATCHES="https://github.com/coreutils/coreutils/commit/10fcb97bd728f09d4a027eddf8ad2900f0819b0a.patch"
-BUILD_PROCESS=configmake
-CONF_FLAGS="--enable-install-program=hostname --enable-no-install-program=kill,uptime"
-INST_CMD="install-strip"

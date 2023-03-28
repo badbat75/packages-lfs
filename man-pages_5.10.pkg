@@ -1,5 +1,0 @@
-# man-pages_5.10
-PKG_URL="https://www.kernel.org/pub/linux/docs/man-pages/man-pages-5.10.tar.xz"
-BUILD_PROCESS=simplemake
-INST_CMD="install"
-PKG_TWOSTEPSBUILD=0

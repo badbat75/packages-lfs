@@ -1,0 +1,8 @@
+# alsa-utils
+PKG_VER=1.2.8
+PKG_URL="https://github.com/alsa-project/alsa-utils/archive/refs/tags/v${PKG_VER}.tar.gz"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+PKG_DEPS="lfs/ncurses lfs/alsa-lib lfs/alsa-topology-conf"
+CONF_FLAGS="--with-systemdsystemunitdir=/lib/systemd/system  --with-systemduserunitdir=${INSTALL_PREFIX}/lib/systemd/user --with-udev-rules-dir=/lib/udev/rules.d"
+PKG_MAKETARGETS="all,install-strip"

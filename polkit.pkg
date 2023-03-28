@@ -1,0 +1,42 @@
+# polkit
+PKG_VER=122
+PKG_URL="https://gitlab.freedesktop.org/polkit/polkit/-/archive/${PKG_VER}/polkit-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/systemd:bootstrap lfs/D-Bus lfs/GLib lfs/duktape lfs/Linux-PAM lfs/libxslt lfs/gobject-introspection lfs/expat"
+CONF_FLAGS="-Dintrospection=true"
+CONF_FLAGS+=" -Dauthfw=pam"
+CONF_FLAGS+=" -Dman=true"
+CONF_FLAGS+=" -Djs_engine=duktape"
+CONF_FLAGS+=" -Dsession_tracking=libsystemd-login"
+CONF_FLAGS+=" -Dsystemdsystemunitdir=/lib/systemd/system"
+CONF_FLAGS+=" -Dos_type=lfs"
+CONF_FLAGS+=" -Dpam_prefix=${INSTALL_SYSCONFDIR}/pam.d"
+CONF_FLAGS+=" -Dpam_module_dir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/security"
+CONF_FLAGS+=" -Dtests=false"
+CONF_FLAGS+=" -Dexamples=false"
+BUILD_PROCESS=mesonninja
+PKG_MAKETARGETS=",install"
+PKG_MAKEENV="LD_LIBRARY_PATH=${TOOLCHAIN_PATH}/lib"
+PKG_LDFLAGS="-s"
+
+PKG_POSTBUILD="chmod -v 04755 ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/polkit-1/polkit-agent-helper-1
+	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/polkit-1 <<-EOF
+		# Begin ${INSTALL_SYSCONFDIR}/pam.d/polkit-1
+
+		auth     include        system-auth
+		account  include        system-account
+		password include        system-password
+		session  include        system-session
+
+		# End ${INSTALL_SYSCONFDIR}/pam.d/polkit-1
+	EOF
+	"
+PKG_POSTINSTALL="if ! getent group polkitd; then
+	groupadd --system -fg 27 polkitd
+fi
+
+if ! getent passwd polkitd; then
+	useradd --system -c \"PolicyKit Daemon Owner\" -d ${INSTALL_SYSCONFDIR}/polkit-1 -u 27 -g polkitd -s /sbin/nologin polkitd
+fi
+
+chown -R polkitd:polkitd ${INSTALL_SHAREDIR}/polkit-1/rules.d
+chown -R polkitd:polkitd ${INSTALL_SYSCONFDIR}/polkit-1/rules.d"

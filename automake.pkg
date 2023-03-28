@@ -1,0 +1,13 @@
+# automake
+PKG_SUFFIX=_${AUTOMAKE_VER}
+PKG_URL="https://ftp.gnu.org/gnu/automake/automake-${AUTOMAKE_VER}.tar.gz"
+PKG_DEPS=lfs/m4
+BUILD_PROCESS=configmake
+CONF_FLAGS="--docdir=/usr/share/doc/automake-1.16.4"
+PKG_MAKETARGETS="all,install-strip"
+PKG_POSTBUILD="mv -v \${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal \${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal.2bmoved"
+PKG_POSTINSTALL="if [ -d ${INSTALL_PREFIX}/share/aclocal.2bmoved ]
+then
+    cp -fprv ${INSTALL_PREFIX}/share/aclocal.2bmoved/* ${INSTALL_PREFIX}/share/aclocal/
+    rm -rfv ${INSTALL_PREFIX}/share/aclocal.2bmoved
+fi"

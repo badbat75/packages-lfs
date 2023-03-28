@@ -1,0 +1,128 @@
+# hostapd
+PKG_VER=2.10
+PKG_SRCDIR=wpa_${PKG_VER}
+BUILD_PROCESS=simplemake
+PKG_MAKETARGETS="all"
+PKG_DEPS="lfs/wpa lfs/libnl"
+PKG_MAKEVARS="PREFIX=${INSTALL_PREFIX} INCDIR=${INSTALL_INCLUDEDIR} BINDIR=${INSTALL_PREFIX}/sbin -C hostapd"
+PKG_PREBUILD="cat > hostapd/.config <<-EOF
+		CONFIG_DRIVER_HOSTAP=y
+		CONFIG_DRIVER_WIRED=y
+		CONFIG_DRIVER_NL80211=y
+		CONFIG_LIBNL32=y
+		CONFIG_DRIVER_NONE=y
+		CONFIG_IAPP=y
+		CONFIG_RSN_PREAUTH=y
+		CONFIG_IEEE80211W=y
+		CONFIG_EAP=y
+		CONFIG_ERP=y
+		CONFIG_EAP_MD5=y
+		CONFIG_EAP_TLS=y
+		CONFIG_EAP_MSCHAPV2=y
+		CONFIG_EAP_PEAP=y
+		CONFIG_EAP_GTC=y
+		CONFIG_EAP_TTLS=y
+		CONFIG_EAP_SIM=y
+		CONFIG_EAP_AKA=y
+		CONFIG_EAP_AKA_PRIME=y
+		CONFIG_EAP_PAX=y
+		CONFIG_EAP_PSK=y
+		CONFIG_EAP_PWD=y
+		CONFIG_EAP_SAKE=y
+		CONFIG_EAP_GPSK=y
+		CONFIG_EAP_GPSK_SHA256=y
+		CONFIG_EAP_FAST=y
+		CONFIG_WPS=y
+		CONFIG_WPS_UPNP=y
+		CONFIG_WPS_NFC=y
+		CONFIG_EAP_IKEV2=y
+		CONFIG_EAP_TNC=y
+		CONFIG_EAP_EKE=y
+		CONFIG_PKCS12=y
+		CONFIG_RADIUS_SERVER=y
+		CONFIG_IPV6=y
+		CONFIG_IEEE80211R=y
+		CONFIG_IEEE80211N=y
+		CONFIG_WNM=y
+		CONFIG_IEEE80211AC=y
+		CONFIG_DEBUG_FILE=y
+		CONFIG_DEBUG_LINUX_TRACING=y
+		CONFIG_FULL_DYNAMIC_VLAN=y
+		CONFIG_VLAN_NETLINK=y
+		EOF
+	"
+PKG_POSTBUILD="install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/sbin
+	install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man1
+	install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8
+	install --mode=755 -s --strip-program=${HARCH:+${HARCH}-}strip -D hostapd/hostapd ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/
+	install --mode=755 -s --strip-program=${HARCH:+${HARCH}-}strip -D hostapd/hostapd_cli ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/
+	install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man{5,8}
+	cp hostapd/hostapd.8 ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8/hostapd.8
+	cp hostapd/hostapd_cli.1 ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man5/ && gzip -f ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man5/hostapd_cli.1
+
+	mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
+	cat > ${PKG_PKGPATH}/lib/systemd/system/hostapd.service <<-EOF
+		[Unit]
+		Description=Access point and authentication server for Wi-Fi and Ethernet
+		Documentation=man:hostapd(8)
+		After=network.target
+
+		[Service]
+		Type=forking
+		PIDFile=/run/hostapd.pid
+		Restart=on-failure
+		RestartSec=2
+		Environment=DAEMON_CONF=/etc/hostapd/hostapd.conf
+		EnvironmentFile=-/etc/default/hostapd
+		ExecStart=/usr/sbin/hostapd -B -P /run/hostapd.pid -B \\\$DAEMON_OPTS \\\${DAEMON_CONF}
+
+		[Install]
+		WantedBy=multi-user.target
+	EOF
+	cat > ${PKG_PKGPATH}/lib/systemd/system/hostapd\@.service <<-EOF
+		[Unit]
+		Description=Access point and authentication server for Wi-Fi and Ethernet (%I)
+		Documentation=man:hostapd(8)
+		After=network.target
+		BindsTo=sys-subsystem-net-devices-%i.device
+
+		[Service]
+		Type=forking
+		PIDFile=/run/hostapd.%i.pid
+		Restart=on-failure
+		RestartSec=2
+		EnvironmentFile=-/etc/default/hostapd
+		ExecStart=/usr/sbin/hostapd -B -P /run/hostapd.%i.pid \\\$DAEMON_OPTS /etc/hostapd/%i.conf
+
+		[Install]
+		WantedBy=multi-user.target sys-subsystem-net-devices-%i.device
+	EOF
+
+	mkdir -pv ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default
+	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default/hostapd <<-EOF
+		# Defaults for hostapd initscript
+		#
+		# WARNING: The DAEMON_CONF setting has been deprecated and will be removed
+		#          in future package releases.
+		#
+		# See /usr/share/doc/hostapd/README.Debian for information about alternative
+		# methods of managing hostapd.
+		#
+		# Uncomment and set DAEMON_CONF to the absolute path of a hostapd configuration
+		# file and hostapd will be started during system boot. An example configuration
+		# file can be found at /usr/share/doc/hostapd/examples/hostapd.conf.gz
+		#
+		#DAEMON_CONF=\"\"
+
+		# Additional daemon options to be appended to hostapd command:-
+		#       -d   show more debug messages (-dd for even more)
+		#       -K   include key data in debug messages
+		#       -t   include timestamps in some debug messages
+		#
+		# Note that -B (daemon mode) and -P (pidfile) options are automatically
+		# configured by the init.d script and must not be added to DAEMON_OPTS.
+		#
+		#DAEMON_OPTS=\"\"
+	EOF
+	"
+PKG_POSTINSTALL="systemctl disable hostapd.service"

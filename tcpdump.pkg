@@ -1,0 +1,9 @@
+# tcpdump
+PKG_VER=4.99.3
+PKG_URL="https://www.tcpdump.org/release/tcpdump-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/D-Bus lfs/libpcap lfs/openssl"
+BUILD_PROCESS=cmakebuild
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install/strip"
+
+PKG_OVERRIDELTO=0

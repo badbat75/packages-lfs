@@ -1,0 +1,7 @@
+# autoconf
+PKG_SUFFIX=_${AUTOCONF_VER}
+PKG_URL="https://ftp.gnu.org/gnu/autoconf/autoconf-${AUTOCONF_VER}.tar.gz"
+PKG_DEPS="lfs/m4 lfs/autoconf-archive"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

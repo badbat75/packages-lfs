@@ -1,0 +1,38 @@
+# perl5
+PKG_VER=5.36.0
+PKG_PERL_LIBVER=$(echo ${PKG_VER} | cut -d. -f1,2)
+# perl-cross_1.4+f842531
+PKG_PERLCROSS_VER=f842531ca3198ac30dddfd36f881b947cbffebdd
+PKG_URL="https://www.cpan.org/src/5.0/perl-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/gdbm lfs/expat"
+BUILD_PROCESS=custom
+PKG_COPYSRC=1
+PKG_FAULTYCFLAGS=1
+PKG_PREBUILD="NODELETEDESTDIR=1 download_uncompress https://github.com/arsv/perl-cross/archive/${PKG_PERLCROSS_VER}.tar.gz \${PKG_SRCPATH}"
+PKG_BUILDSCRIPT="
+	[ -d ${SRC_PATH}/perl ] && cp -frpv ${SRC_PATH}/perl/* . || true
+	\${PKG_SRCPATH}/configure \
+		--prefix=/usr --target=${HARCH} --sysroot=${BIN_PATH} \
+		--host-cc=${TOOLCHAIN_PATH}/bin/toolchain_build_cc \
+		--host-cpp=${TOOLCHAIN_PATH}/bin/toolchain_build_cxx \
+		--host-ranlib=${TOOLCHAIN_PATH}/bin/toolchain_build_ranlib \
+		--with-cc=${TOOLCHAIN_PATH}/bin/toolchain_cc \
+		--with-cpp=${TOOLCHAIN_PATH}/bin/toolchain_cpp \
+		--with-ranlib=${TOOLCHAIN_PATH}/bin/toolchain_ranlib \
+		-Dccflags=\"\${PLATFORM_CFLAGS}\"\ \
+		-Doptimize=\"\${OPTCOMP_FLAGS}\" \
+		-Dldflags=\"\${OPTLINK_FLAGS}\" \
+		-Dpager='${INSTALL_PREFIX}/bin/less -isR' \
+		-Duseshrplib \
+		-Dusethreads \
+		-Dmyhostname=localhost \
+		-Dperladmin=root@localhost \
+        -Dprivlib=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/perl5/${PKG_PERL_LIBVER}/core_perl      \
+        -Darchlib=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/perl5/${PKG_PERL_LIBVER}/core_perl      \
+        -Dsitelib=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/perl5/${PKG_PERL_LIBVER}/site_perl      \
+        -Dsitearch=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/perl5/${PKG_PERL_LIBVER}/site_perl     \
+        -Dvendorlib=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/perl5/${PKG_PERL_LIBVER}/vendor_perl  \
+        -Dvendorarch=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/perl5/${PKG_PERL_LIBVER}/vendor_perl
+	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} crosspatch miniperl dynaloader perl cflags nonxs_ext utilities
+	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} -j1 extensions pods
+	make ${PKG_MAKEVARS} V=${MAKEVERBOSE:-0} DESTDIR=${PKG_PKGPATH} install"

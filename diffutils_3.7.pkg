@@ -1,5 +1,0 @@
-# diffutils_3.7
-PKG_URL="http://ftp.gnu.org/gnu/diffutils/diffutils-3.7.tar.xz"
-BUILD_PROCESS=configmake
-CONF_FLAGS=""
-INST_CMD="install-strip"

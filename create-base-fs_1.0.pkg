@@ -1,10 +1,27 @@
 BUILD_PROCESS=none
-PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/{dev,proc,sys,run,etc,usr/bin,usr/lib,usr/sbin,var}
-	ln -sfv usr/bin ${PKG_PKGPATH}
-	ln -sfv usr/lib ${PKG_PKGPATH}
-	ln -sfv usr/sbin ${PKG_PKGPATH}
+PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/{dev,proc,sys,run,etc,var}
+	if [ ! -z "${INSTALL_PREFIX}" ]
+	then
+		local PREFIX=$(echo ${INSTALL_PREFIX} | sed 's|^/||')
+		mkdir -pv ${PKG_PKGPATH}/{\${PREFIX}/bin,\${PREFIX}/lib,\${PREFIX}/sbin}
+		if [ ${LFS_SPLITUSR} -eq 0 ]
+		then
+			ln -sfv \${PREFIX}/bin ${PKG_PKGPATH}
+			ln -sfv \${PREFIX}/lib ${PKG_PKGPATH}
+			ln -sfv \${PREFIX}/sbin ${PKG_PKGPATH}
+		else
+			mkdir -pv ${PKG_PKGPATH}/bin
+			mkdir -pv ${PKG_PKGPATH}/lib
+			mkdir -pv ${PKG_PKGPATH}/sbin
+		fi
+		if [ "${HARCH_LIB}" == "64" ]
+		then
+			mkdir -pv ${PKG_PKGPATH}/\${PREFIX}/lib64
+			ln -sfv \${PREFIX}/lib64 ${PKG_PKGPATH}
+		fi
+	fi
 	[ ! -f ${PKG_PKGPATH}/dev/console ] && sudo mknod -m 600 ${PKG_PKGPATH}/dev/console c 5 1 || true
-	[ ! -f ${PKG_PKGPATH}/dev/console ] && sudo mknod -m 666 ${PKG_PKGPATH}/dev/null c 1 3 || true
+	[ ! -f ${PKG_PKGPATH}/dev/null ] && sudo mknod -m 666 ${PKG_PKGPATH}/dev/null c 1 3 || true
 	ln -snfv ../run ${PKG_PKGPATH}/var/run
 	ln -snfv ../run/lock ${PKG_PKGPATH}/var/lock
 	install -dv -m 0750 ${PKG_PKGPATH}/root
@@ -12,7 +29,8 @@ PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/{dev,proc,sys,run,etc,usr/bin,usr/lib,us
 	ln -sfv /proc/self/mounts ${PKG_PKGPATH}/etc/mtab
 	mkdir -pv ${PKG_PKGPATH}/var/log
 	touch ${PKG_PKGPATH}/var/log/{btmp,lastlog,faillog,wtmp}
-	#chgrp -v utmp ${PKG_PKGPATH}/var/log/lastlog
 	chmod -v 664 ${PKG_PKGPATH}/var/log/lastlog
 	chmod -v 600 ${PKG_PKGPATH}/var/log/btmp
 "
+
+PKG_POSTINSTALL="chgrp -v utmp /var/log/lastlog"

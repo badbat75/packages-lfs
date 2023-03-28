@@ -1,0 +1,15 @@
+# cracklib
+PKG_VER=2.9.8
+PKG_URL="https://github.com/cracklib/cracklib/releases/download/v2.9.8/cracklib-words-2.9.8.bz2"
+BUILD_PROCESS=downloadonly
+
+PKG_PREBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_SHAREDIR}/dict
+	bunzip2 -cdv cracklib-words-${PKG_VER}.bz2 > ${PKG_PKGPATH}${INSTALL_SHAREDIR}/dict/cracklib-words
+	ln -v -sf cracklib-words ${PKG_PKGPATH}${INSTALL_SHAREDIR}/dict/words"
+
+PKG_POSTINSTALL="touch ${INSTALL_SHAREDIR}/dict/cracklib-extra-words
+LFS_HOSTNAME=\"\$(cat ${INSTALL_SYSCONFDIR}/hostname 2>/dev/null)\"
+if [ ! -z \${LFS_HOSTNAME} ] && ! grep -q \${LFS_HOSTNAME} ${INSTALL_SHAREDIR}/dict/cracklib-extra-words; then
+	echo \${LFS_HOSTNAME} >> ${INSTALL_SHAREDIR}/dict/cracklib-extra-words
+fi
+create-cracklib-dict ${INSTALL_SHAREDIR}/dict/cracklib-words ${INSTALL_SHAREDIR}/dict/cracklib-extra-words"

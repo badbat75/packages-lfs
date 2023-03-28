@@ -1,0 +1,12 @@
+# libgpg-error
+PKG_VER=1.46
+PKG_URL="https://www.gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-${PKG_VER}.tar.bz2"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--enable-install-gpg-error-config --disable-rpath"
+PKG_MAKETARGETS="all,install-strip"
+PKG_DEPS=
+PKG_TOOLCHAIN=gnu
+
+# Dependencies:
+

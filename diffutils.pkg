@@ -1,0 +1,6 @@
+# diffutils
+PKG_VER=3.8
+PKG_URL="http://ftp.gnu.org/gnu/diffutils/diffutils-${PKG_VER}.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

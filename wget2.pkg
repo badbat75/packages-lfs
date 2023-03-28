@@ -1,0 +1,7 @@
+# wget
+PKG_VER=2.0.1
+PKG_URL="https://ftp.gnu.org/gnu/wget/wget2-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/openssl lfs/make-ca lfs/libidn2 lfs/pcre2 lfs/zlib"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--with-ssl=openssl"
+PKG_MAKETARGETS="all,install-strip"

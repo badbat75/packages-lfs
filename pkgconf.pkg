@@ -1,0 +1,35 @@
+# pkgconf
+PKG_VER=1.9.3
+PKG_URL="https://github.com/pkgconf/pkgconf/archive/refs/tags/pkgconf-${PKG_VER}.tar.gz"
+PKG_AUTOCONF=1
+BUILD_PROCESS=configmake
+case "${PKG_TARGET}" in
+	native)
+		CONF_FLAGS="--with-pkg-config-dir=${LIBRARY_PATH_FOR_BUILD}/pkgconfig:${INSTALL_PREFIX}/share/pkgconfig \
+			--with-system-include-path=${INCLUDE_PATH_FOR_BUILD} \
+			--with-system-library-path=${LIBRARY_PATH_FOR_BUILD}"
+		PKG_CHECK="[ x\$( ${INSTALL_EXECPREFIX}/bin/pkgconf --version ) == x${PKG_VER} ]"
+		PKG_POSTBUILD="ln -fsv pkgconf ${INSTALL_EXECPREFIX}/bin/pkg-config"
+	;;
+	cross)
+		CONF_FLAGS="--program-prefix=${HARCH}- \
+			--with-pkg-config-dir=${BIN_PATH}${TARGET_LIBDIR}${TARGET_LIBSUFFIX}/pkgconfig:${BIN_PATH}${TARGET_PREFIX}/share/pkgconfig \
+			--with-system-include-path=${BIN_PATH}${TARGET_INCLUDEDIR} \
+			--with-system-library-path=${BIN_PATH}${TARGET_LIBDIR}${TARGET_LIBSUFFIX}"
+		PKG_CHECK="[ x\$( ${INSTALL_EXECPREFIX}/bin/${HARCH}-pkgconf --version ) == x${PKG_VER} ]"
+		PKG_POSTBUILD="ln -fsv ${HARCH}-pkgconf ${INSTALL_EXECPREFIX}/bin/${HARCH}-pkg-config"
+	;;
+	*)
+		CONF_FLAGS="--with-pkg-config-dir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig:${INSTALL_PREFIX}/share/pkgconfig \
+			--with-system-include-path=${INSTALL_INCLUDEDIR} \
+			--with-system-library-path=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+		PKG_POSTBUILD="ln -fsv pkgconf ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/pkg-config
+			mv -v ${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal ${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal.2bmoved"
+		PKG_POSTINSTALL="if [ -d ${INSTALL_PREFIX}/share/aclocal.2bmoved ]
+		then
+			cp -fprv ${INSTALL_PREFIX}/share/aclocal.2bmoved/* ${INSTALL_PREFIX}/share/aclocal/
+			rm -rfv ${INSTALL_PREFIX}/share/aclocal.2bmoved
+		fi"
+	;;
+esac
+PKG_MAKETARGETS="all,install-strip"

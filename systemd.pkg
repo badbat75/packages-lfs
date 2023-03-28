@@ -1,0 +1,180 @@
+# systemd
+PKG_VER=253.1
+PKG_URL="https://github.com/systemd/systemd-stable/archive/refs/tags/v${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/zlib lfs/xz lfs/bzip2 lfs/zstd lfs/libxml2:bootstrap"
+BUILD_PROCESS=mesonninja
+CONF_FLAGS="-Drootlibdir=/lib${HARCH_LIB}${INSTALL_LIBSUFFIX}"
+CONF_FLAGS+=" -Dfirstboot=false"
+CONF_FLAGS+=" -Dtests=false"
+CONF_FLAGS+=" -Dslow-tests=false"
+CONF_FLAGS+=" -Dfuzz-tests=false"
+CONF_FLAGS+=" -Dinstall-tests=false"
+CONF_FLAGS+=" -Dldconfig=false"
+CONF_FLAGS+=" -Dsysusers=false"
+CONF_FLAGS+=" -Drpmmacrosdir=no"
+CONF_FLAGS+=" -Dhomed=false"
+CONF_FLAGS+=" -Dsysupdate=false"
+CONF_FLAGS+=" -Dnscd=false"
+CONF_FLAGS+=" -Dmode=release"
+CONF_FLAGS+=" -Dsplit-usr=true"
+CONF_FLAGS+=" -Duserdb=false"
+CONF_FLAGS+=" -Dservice-watchdog="
+CONF_FLAGS+=" -Dstandalone-binaries=true"
+CONF_FLAGS+=" -Ddefault-kill-user-processes=false"
+CONF_FLAGS+=" -Dfirst-boot-full-preset=true"
+CONF_FLAGS+=" -Ddns-servers="
+CONF_FLAGS+=" -Ddefault-dnssec=no"
+CONF_FLAGS+=" -Ddefault-dns-over-tls=no"
+CONF_FLAGS+=" -Ddefault-mdns=no"
+CONF_FLAGS+=" -Ddefault-llmnr=resolve"
+### To be tested
+CONF_FLAGS+=" -Dnss-myhostname=true"
+CONF_FLAGS+=" -Dnss-mymachines=true"
+CONF_FLAGS+=" -Dnss-resolve=true"
+CONF_FLAGS+=" -Dnss-systemd=true"
+CONF_FLAGS+=" -Doomd=true"
+case ${TOOLCHAIN} in
+	llvm) PKG_MAKEENV="LD_LIBRARY_PATH=${GLOBAL_TOOLCHAIN_PATH}/llvm-${LLVM_VER}/lib";;
+esac
+###
+case "${PKG_TARGET}" in
+	bootstrap) LIBAUDIT_TARGET=bootstrap
+		PKG_DEPS+=" lfs/libcap2:bootstrap"
+		CONF_FLAGS+=" -Daudit=false"
+		CONF_FLAGS+=" -Ddbus=false"
+		CONF_FLAGS+=" -Dcoredump=false"
+		CONF_FLAGS+=" -Delfutils=false"
+		CONF_FLAGS+=" -Dlibidn2=false"
+		CONF_FLAGS+=" -Dlibiptc=false"
+		CONF_FLAGS+=" -Dlibcurl=false"
+		CONF_FLAGS+=" -Dimportd=false"
+		CONF_FLAGS+=" -Dmicrohttpd=false"
+		CONF_FLAGS+=" -Dopenssl=false"
+		CONF_FLAGS+=" -Dpam=false"
+		CONF_FLAGS+=" -Dpcre2=false"
+		CONF_FLAGS+=" -Dtpm2=false"
+	;;
+	*)
+		PKG_DEPS+=" lfs/libcap2 lfs/libaudit lfs/openssl lfs/Linux-PAM lfs/polkit lfs/GLib lfs/kmod lfs/util-linux"
+		### Optional packages
+		PKG_DEPS+=" lfs/gnutls"
+		PKG_DEPS+=" lfs/btrfs-progs"
+		PKG_DEPS+=" lfs/curl"
+		PKG_DEPS+=" lfs/cryptsetup"
+		PKG_DEPS+=" lfs/elfutils"
+		PKG_DEPS+=" lfs/libgcrypt"
+		#PKG_DEPS+=" lfs/libidn"
+		PKG_DEPS+=" lfs/libidn2"
+		PKG_DEPS+=" lfs/libmicrohttpd"
+		PKG_DEPS+=" lfs/libpwquality"
+		PKG_DEPS+=" lfs/libseccomp"
+		PKG_DEPS+=" lfs/libxkbcommon"
+		PKG_DEPS+=" lfs/lz4"
+		PKG_DEPS+=" lfs/make-ca"
+		PKG_DEPS+=" lfs/p11-kit"
+		PKG_DEPS+=" lfs/pcre2"
+		PKG_DEPS+=" lfs/quota-tools"
+		PKG_DEPS+=" lfs/libbpf"
+		PKG_DEPS+=" lfs/iptables"
+		PKG_DEPS+=" lfs/qrencode"
+		PKG_DEPS+=" lfs/libfido2"
+		PKG_DEPS+=" lfs/tpm2-tss"
+		PKG_DEPS+=" lfs/kexec-tools"
+		PKG_DEPS+=" lfs/rsync"
+		###
+		CONF_FLAGS+=" -Dblkid=true"
+		CONF_FLAGS+=" -Dcryptolib=openssl"
+		CONF_FLAGS+=" -Dman=auto"
+		CONF_FLAGS+=" -Ddbus=true"
+		CONF_FLAGS+=" -Dpam=true"
+		CONF_FLAGS+=" -Dpamlibdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/security"
+		CONF_FLAGS+=" -Dpamconfdir=${INSTALL_SYSCONFDIR}/pam.d"
+		CONF_FLAGS+=" -Ddbussystemservicedir=${INSTALL_SHAREDIR}/dbus-1/system-services"
+		CONF_FLAGS+=" -Ddbussessionservicedir=${INSTALL_SHAREDIR}/dbus-1/services"
+		CONF_FLAGS+=" -Ddbuspolicydir=${INSTALL_SHAREDIR}/dbus-1/system.d"
+		CONF_FLAGS+=" -Ddbus-interfaces-dir=${INSTALL_SHAREDIR}/dbus-1/interfaces"
+		CONF_FLAGS+=" -Dbashcompletiondir=${INSTALL_SHAREDIR}/bash-completion/completions/"
+		CONF_FLAGS+=" -Dquotaon-path=${INSTALL_EXECPREFIX}/sbin/quotaon"
+		CONF_FLAGS+=" -Dquotacheck-path=${INSTALL_EXECPREFIX}/sbin/quotacheck"
+		CONF_FLAGS+=" -Dkexec-path=${INSTALL_EXECPREFIX}/sbin/kexec"
+
+		case "${HM}" in
+			x86_64|aarch64)
+				PKG_DEPS+=" lfs/gnu-efi"
+				CONF_FLAGS+=" -Defi=true"
+				# possible to add -lgcc_s to efi-cflags
+				CONF_FLAGS+=" -Defi-cflags=\"--sysroot=${BIN_PATH}\""
+				CONF_FLAGS+=" -Defi-includedir=${BIN_PATH}${INSTALL_INCLUDEDIR}/efi"
+				CONF_FLAGS+=" -Defi-libdir=${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+			;;
+		esac
+		
+		PKG_POSTBUILD="install -v -m755 -d ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d
+			cat >> ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/system-session <<-EOF
+				# Begin Systemd addition
+
+				session  required    pam_unix.so
+				session  required    pam_loginuid.so
+				session  optional    pam_systemd.so
+
+				# End Systemd addition
+			EOF
+
+			cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/systemd-user <<-EOF
+				# Begin ${INSTALL_SYSCONFDIR}/pam.d/systemd-user
+
+				account  required    pam_access.so
+				account  include     system-account
+
+				session  required    pam_env.so
+				session  required    pam_limits.so
+				session  include     system-session
+				session  optional    pam_keyinit.so force revoke
+				session  required    pam_namespace.so
+
+				auth     required    pam_deny.so
+				password required    pam_deny.so
+
+				# End ${INSTALL_SYSCONFDIR}/pam.d/systemd-user
+			EOF
+
+			install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/getty@tty1.service.d
+			cat >> ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/getty@tty1.service.d/noclear.conf <<-EOF
+				[Service]
+				TTYVTDisallocate=no			
+			EOF
+
+			cat >> ${PKG_PKGPATH}/lib/udev/rules.d/60-block-scheduler.rules <<-EOF
+				ACTION==\"add\", SUBSYSTEM==\"block\", ENV{DEVTYPE}==\"disk\", \
+				  KERNEL==\"mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|sd*[!0-9]|sr*\", \
+				  ATTR{queue/scheduler}=\"bfq\"
+			EOF
+
+			ln -sfv /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/tmp.mount
+			"
+		PKG_POSTINSTALL="mkdir -pv ${INSTALL_LOCALSTATEDIR}/log/journal
+journalctl --update-catalog
+# systemd-sysusers
+# systemd-tmpfiles --create
+
+systemd-machine-id-setup
+systemctl preset-all
+systemctl --global preset-all
+
+systemd-hwdb update
+/lib/systemd/systemd-random-seed save"
+		PKG_POSTINSTALL_PRIO="10"
+		;;
+esac
+PKG_CFLAGS="-Wno-error=return-type"
+PKG_PREBUILD="sed -i -e 's/GROUP=\"render\"/GROUP=\"video\"/' -e 's/GROUP=\"sgx\", //' rules.d/50-udev-default.rules.in
+	sed 's/-ftrivial-auto-var-init=zero//' -i meson.build"
+### Python modules does not pass sysroot flags...
+#PKG_FAULTYCFLAGS=1
+
+case ${TOOLCHAIN} in
+	gnu)
+		PKG_OVERRIDELD=bfd
+		PKG_LDFLAGS="-Wl,-rpath-link -Wl,${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+	;;
+esac

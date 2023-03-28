@@ -1,8 +1,0 @@
-# D-Bus_1.12.20
-PKG_URL="https://dbus.freedesktop.org/releases/dbus/dbus-1.12.20.tar.gz"
-PKG_DEPS="lfs/expat_2.2.10 lfs/systemd_247"
-BUILD_PROCESS=configmake
-CONF_FLAGS="-with-console-auth-dir=/run/console --with-system-pid-file=/run/dbus/pid --with-system-socket=/run/dbus/system_bus_socket"
-INST_CMD="install-strip"
-
-PKG_POSTBUILD="ln -sfv /etc/machine-id ${PKG_PKGPATH}/var/lib/dbus"

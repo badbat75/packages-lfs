@@ -1,0 +1,15 @@
+# alsa-lib
+PKG_VER=1.2.8
+PKG_URL="https://github.com/alsa-project/alsa-lib/archive/refs/tags/v${PKG_VER}.tar.gz"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+PKG_DEPS="lfs/alsa-ucmconf"
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"
+[ "${LTOENABLE:-0}" != "0" ] && PKG_OVERRIDELTO=fat || true
+PKG_PREBUILD="sed -i 's/ln -s/ln -fs/g' include/Makefile.am"
+
+case ${TOOLCHAIN} in
+    gnu) PKG_CFLAGS="-flto-partition=none";;
+    llvm) ;;
+esac

@@ -1,5 +1,0 @@
-# dosfstools_4.2
-PKG_URL="https://github.com/dosfstools/dosfstools/releases/download/v4.2/dosfstools-4.2.tar.gz"
-BUILD_PROCESS=configmake
-CONF_FLAGS="--enable-compat-symlinks"
-INST_CMD="install-strip"

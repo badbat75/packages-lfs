@@ -1,0 +1,14 @@
+# pcre2
+PKG_VER=10.42
+PKG_URL="https://github.com/PCRE2Project/pcre2/releases/download/pcre2-${PKG_VER}/pcre2-${PKG_VER}.tar.bz2"
+PKG_DEPS="lfs/readline lfs/libedit lfs/zlib"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--enable-unicode                    \
+            --enable-jit                        \
+            --enable-pcre2-16                   \
+            --enable-pcre2-32                   \
+            --enable-pcre2grep-libz             \
+            --enable-pcre2grep-libbz2           \
+            --enable-pcre2test-libreadline"
+PKG_MAKETARGETS="all,install-strip"
+#PATCHDEB=""

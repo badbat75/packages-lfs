@@ -1,0 +1,11 @@
+# libpng
+PKG_VER=1.6.39
+PKG_URL="https://downloads.sourceforge.net/libpng/libpng-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/zlib"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"
+
+PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libpng-${PKG_VER}
+    install -vDm644 \${PKG_SRCPATH}/{README,libpng-manual.txt} ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libpng-${PKG_VER}"

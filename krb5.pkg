@@ -1,0 +1,38 @@
+# krb5
+PKG_VER=1.20.1
+PKG_URL="https://kerberos.org/dist/krb5/$(echo ${PKG_VER} | cut -d. -f1,2)/krb5-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/e2fsprogs:bootstrap"
+BUILD_PROCESS=configmake
+#PKG_AUTOCONF=1
+#AUTOCONF_PATH=src
+CONF_PATH=src
+CONF_FLAGS="--localstatedir=/var/lib \
+			--with-system-et \
+			--with-system-ss \
+			--with-system-verto=no \
+			--enable-dns-for-realm"
+CONF_VARS="krb5_cv_attr_constructor_destructor=yes,yes \
+			ac_cv_func_regcomp=yes \
+			ac_cv_printf_positional=yes"
+PKG_MAKETARGETS="all,install-strip"
+
+PKG_PREBUILD="sed -i 's/(MAKE) install INSTALL_STRIP=-s/(MAKE) install INSTALL_STRIP='\''-s --strip-program=\\\$(STRIP)'\''/g' src/Makefile.in
+	sed -i -e '/eq 0/{N;s/12 //}'    src/plugins/kdb/db2/libdb2/test/run.test
+	sed -i '/t_kadm5.py/d'           src/lib/kadm5/Makefile.in"
+
+case ${PKG_TARGET} in
+	bootstrap)
+		PKG_PREBUILD+=";sed -e '/^SUBDIRS=/ s/\$/\\n__BEGIN_DELETE/' \
+			-e '/^WINSUBDIRS=/ s/^/__END_DELETE\\n/' -i src/Makefile.in
+			sed '/^__BEGIN_DELETE/,/^__END_DELETE/d' -i src/Makefile.in
+			sed 's/^SUBDIRS=.*/SUBDIRS=util include lib build-tools/' -i src/Makefile.in"
+	;;
+	*)
+		PKG_DEPS+=" lfs/libedit"
+		PKG_DEPS+=" lfs/openldap:bootstrap"
+		PKG_DEPS+=" lfs/bind9:bootstrap"
+		CONF_FLAGS+=" --with-ldap"
+		PKG_POSTBUILD="install -v -dm755 ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/krb5-${PKG_VER} &&
+			cp -vfr \${PKG_SRCPATH}/doc/*  ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/krb5-${PKG_VER}"
+	;;
+esac

@@ -1,0 +1,38 @@
+# bs_kernel
+PKG_VER=${KERNEL_VER}
+PKG_URL="https://cdn.kernel.org/pub/linux/kernel/v$( echo ${PKG_VER} | cut -d'.' -f1 ).x/linux-${PKG_VER}.tar.xz"
+case ${PKG_TARGET} in
+	headers) ;;
+	*) PKG_DEPS="lfs/elfutils:cross lfs/dracut" ;;
+esac
+BUILD_PROCESS=kernelbuild
+PKG_MAKEVARS="INSTALL_MOD_STRIP=1"
+CONF_FLAGS="-d WERROR"
+CONF_FLAGS+=" -d DEBUG_INFO_BTF"
+### To enable systemd oom support
+CONF_FLAGS+=" -e MEMCG -e PSI"
+### To enable systemd iptables support
+CONF_FLAGS+=" -e BPF_SYSCALL -e CGROUP_BPF"
+### To enable BFQ scheduler
+CONF_FLAGS+=" -m IOSCHED_BFQ"
+### To enable BTRFS and F2FS at boot
+CONF_FLAGS+=" -m BTRFS_FS -e BTRFS_FS_POSIX_ACL"
+CONF_FLAGS+=" -m F2FS_FS -e F2FS_FS_SECURITY -e F2FS_FS_COMPRESSION"
+
+case ${WITH_RT:-0} in
+	yes|1)
+	# Enable preemptive/realtime kernel
+		CONF_FLAGS+=" -d PREEMPT_NONE -d PREEMPT_VOLUNTARY -e PREEMPT"
+	;;
+esac
+
+case ${PLATFORM_NAME} in
+	generic-*)
+		CONF_FLAGS+=" -m VIRTIO_MEM -m CONFIG_VIRTIO_BALLOON -m CONFIG_VIRTIO_MMIO -m VIRTIO_FS"
+		CONF_FLAGS+=" -m VIRTIO_PCI -m DRM -m DRM_VIRTIO_GPU -m VIRTIO_INPUT -m HW_RANDOM_VIRTIO -m SND_VIRTIO "
+		#CONF_FLAGS+=" -d DRM_NOUVEAU -d DRM_ROCKCHIP -d DRM_SUN4I -d DRM_MSM -d DRM_TEGRA"
+		PKG_KERNEL_INITRAMFS_DRIVERS="virtio_input"
+	;;
+esac
+
+PKG_KERNEL_INITRAMFS=1

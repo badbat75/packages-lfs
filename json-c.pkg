@@ -1,0 +1,7 @@
+# json-c
+PKG_VER=0.16-20220414
+PKG_URL="https://github.com/json-c/json-c/archive/refs/tags/json-c-${PKG_VER}.tar.gz"
+PKG_DEPS=""
+BUILD_PROCESS=cmakebuild
+CONF_FLAGS="-DDISABLE_WERROR=true -DENABLE_THREADING=true"
+PKG_MAKETARGETS="all,install/strip"

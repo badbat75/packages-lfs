@@ -1,0 +1,6 @@
+# m4
+PKG_VER=1.4.19
+PKG_URL="https://ftp.gnu.org/gnu/m4/m4-${PKG_VER}.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

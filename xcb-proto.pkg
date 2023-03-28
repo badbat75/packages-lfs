@@ -1,0 +1,7 @@
+# xcb-proto
+PKG_VER=1.15.2
+PKG_URL="https://xorg.freedesktop.org/archive/individual/proto/xcb-proto-1.15.2.tar.xz"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

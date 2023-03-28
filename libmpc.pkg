@@ -1,0 +1,7 @@
+# libmpc
+PKG_SUFFIX=_${MPC_VER}
+PKG_URL="https://ftp.gnu.org/gnu/mpc/mpc-${MPC_VER}.tar.gz"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--docdir=/usr/share/doc/mpc-${MPC_VER}"
+PKG_MAKETARGETS="all,install-strip"

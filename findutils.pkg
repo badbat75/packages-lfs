@@ -1,0 +1,6 @@
+# findutils
+PKG_VER=4.9.0
+PKG_URL="http://ftp.gnu.org/gnu/findutils/findutils-${PKG_VER}.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

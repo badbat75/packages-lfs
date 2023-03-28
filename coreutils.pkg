@@ -1,0 +1,12 @@
+# coreutils
+PKG_VER=9.2
+PKG_URL="https://ftp.gnu.org/gnu/coreutils/coreutils-${PKG_VER}.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--enable-install-program=hostname --enable-no-install-program=kill,uptime"
+PKG_MAKETARGETS="all,install-strip"
+
+if [ ${LFS_SPLITUSR} -eq 1 ]
+then
+  PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/bin
+    ln -s ../usr/bin/{false,true} ${PKG_PKGPATH}/bin"
+fi

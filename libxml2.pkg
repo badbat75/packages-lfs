@@ -1,0 +1,21 @@
+# libxml2
+PKG_VER=2.10.3
+PKG_URL="https://gitlab.gnome.org/GNOME/libxml2/-/archive/v${PKG_VER}/libxml2-v${PKG_VER}.tar.bz2"
+PKG_DEPS="lfs/ncurses lfs/readline"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--with-history --with-threads"
+PKG_MAKETARGETS="all,install-strip"
+PKG_PREBUILD="sed -i '/if Py/{s/Py/(Py/;s/)/))/}' python/{types.c,libxml.c}
+    sed -i 's/ TRUE/ true/' encoding.c"
+#PATCHDEB=""
+
+case ${PKG_TARGET} in
+    bootstrap)
+        CONF_FLAGS+=" --without-python"
+    ;;
+    *)
+        PKG_DEPS+=" lfs/python3 lfs/icu"
+        CONF_FLAGS+="--with-icu PYTHON=cross-python3"
+    ;;
+esac

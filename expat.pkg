@@ -1,0 +1,6 @@
+# expat
+PKG_VER=2.5.0
+PKG_URL="https://altushost-swe.dl.sourceforge.net/project/expat/expat/${PKG_VER}/expat-${PKG_VER}.tar.xz"
+BUILD_PROCESS=configmake
+CONF_FLAGS="--docdir=${INSTALL_SHAREDIR}/doc/expat-${PKG_VER}"
+PKG_MAKETARGETS="all,install-strip"

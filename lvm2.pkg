@@ -1,0 +1,28 @@
+# lvm2
+PKG_VER=2.03.19
+PKG_URL="https://sourceware.org/ftp/lvm2/LVM2.${PKG_VER}.tgz"
+PKG_DEPS="lfs/libaio lfs/systemd:bootstrap"
+### Optional packages
+# PKG_DEPS+=" lfs/thin-provisioning"
+# PKG_DEPS+=" lfs/vdo"
+###
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--with-usrlibdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+CONF_FLAGS+=" --with-systemdsystemunitdir=/lib/systemd/system"
+CONF_FLAGS+=" --enable-cmdlib"
+CONF_FLAGS+=" --enable-pkgconfig"
+CONF_FLAGS+=" --enable-udev_sync"
+PKG_MAKETARGETS="all,install,install_systemd_units"
+PKG_COPYSRC=1
+
+PKG_PREBUILD="sed 's@../../include/cmds.h@../include/cmds.h@' -i lib/commands/cmd_enum.h"
+
+PKG_POSTBUILD="sed -e '/locking_dir =/{s/#//;s/var/run/}' \
+    -i ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/lvm/lvm.conf"
+
+if [ ${TOOLCHAIN} == gnu ]
+then
+    PKG_OVERRIDELD=bfd
+    PKG_LDFLAGS="-Wl,-rpath-link -Wl,\${SYSROOT}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+fi

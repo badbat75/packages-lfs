@@ -1,0 +1,6 @@
+# libusb
+PKG_VER=1.0.26
+PKG_URL="https://github.com/libusb/libusb/releases/download/v${PKG_VER}/libusb-${PKG_VER}.tar.bz2"
+BUILD_PROCESS=configmake
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

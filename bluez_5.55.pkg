@@ -1,9 +1,0 @@
-# bluez_5.55
-PKG_URL="http://www.kernel.org/pub/linux/bluetooth/bluez-5.55.tar.xz"
-PKG_DEPS="lfs/readline_8.1 lfs/glib_2.66.7 lfs/libical_3.0.9"
-BUILD_PROCESS=configmake
-CONF_FLAGS="--enable-library --enable-deprecated"
-INST_CMD="install-strip"
-PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}${BUILD_EXECPREFIX}/sbin
-    ln -sv ${BUILD_LIBDIR}/bluetooth/bluetoothd ${PKG_PKGPATH}${BUILD_EXECPREFIX}/sbin/
-    ln -sv ${BUILD_LIBDIR}/bluetooth/obexd ${PKG_PKGPATH}${BUILD_EXECPREFIX}/sbin/"
