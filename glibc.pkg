@@ -6,12 +6,8 @@ case ${GLIBC_VER} in
 		PATCHES=glibc/glibc_2.37+590d0e089b.patch
 		;;
 	2.36)
-		PKG_VER=2.36+fb1bd9f003
-		PATCHES=glibc/glibc_2.36+fb1bd9f003.patch
-		;;
-	2.35)
-		PKG_VER=2.35+3f63f9dfe1
-		PATCHES=glibc/glibc_2.35+3f63f9dfe1.patch
+		PKG_VER=2.36+f3991fec80
+		PATCHES=glibc/glibc_2.36+f3991fec80.patch
 		;;
 	*)
 		PKG_VER=${GLIBC_VER}

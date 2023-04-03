@@ -1,0 +1,13 @@
+# libinput
+PKG_VER=1.22.1
+PKG_URL="https://gitlab.freedesktop.org/libinput/libinput/-/archive/${PKG_VER}/libinput-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/libevdev"
+PKG_DEPS+=" lfs/mtdev"
+#PKG_DEPS+=" lfs/GTK+"
+PKG_DEPS+=" lfs/libwacom"
+BUILD_PROCESS=mesonninja
+CONF_FLAGS="-Ddebug-gui=false"
+CONF_FLAGS+=" -Dtests=false"
+CONF_FLAGS+=" -Dudev-dir=/lib/udev"
+CONF_FLAGS+=" -Dstrip=true"
+#PKG_MAKETARGETS="all,install-strip"

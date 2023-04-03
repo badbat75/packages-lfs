@@ -6,7 +6,7 @@ case "${PKG_TARGET}" in
     native)
         PKG_CHECK="[ x\$( ${INSTALL_EXECPREFIX}/bin/make -v | head -n1 | awk '{print \$3}' ) == x${PKG_VER} ]"
         BUILD_PROCESS=custom
-        PKG_BUILDSCRIPT="\${PKG_SRCPATH}/configure --prefix=${INSTALL_EXECPREFIX} --with-guile
+        PKG_BUILDSCRIPT="./configure --prefix=${INSTALL_EXECPREFIX} --with-guile
             ./build.sh
             ./make V=${MAKEVERBOSE:-0} install"
     ;;

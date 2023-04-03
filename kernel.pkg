@@ -39,3 +39,7 @@ case ${PLATFORM_NAME} in
 esac
 
 PKG_KERNEL_INITRAMFS=1
+if [ "${GCC_DEFAULT_LD}" == gold ]
+then
+	GCC_DEFAULT_LD=bfd
+fi

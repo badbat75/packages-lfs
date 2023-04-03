@@ -1,0 +1,11 @@
+# libXfont2
+PKG_VER=2.0.6
+PKG_URL="https://www.x.org/archive/individual/lib/libXfont2-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/xorgproto"
+PKG_DEPS+=" lfs/xtrans"
+PKG_DEPS+=" lfs/fontsproto"
+PKG_DEPS+=" lfs/libfontenc"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

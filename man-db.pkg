@@ -1,5 +1,5 @@
 # man-db
-PKG_VER=2.11.1
+PKG_VER=2.11.2
 PKG_URL="https://gitlab.com/man-db/man-db/-/archive/${PKG_VER}/man-db-${PKG_VER}.tar.bz2"
 PKG_DEPS="lfs/libpipeline lfs/gdbm lfs/zlib lfs/gzip lfs/bzip2 lfs/xz lfs/zstd"
 BUILD_PROCESS=configmake

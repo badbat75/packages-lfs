@@ -1,0 +1,20 @@
+# Xwayland
+PKG_VER=22.1.8
+PKG_URL="https://www.x.org/pub/individual/xserver/xwayland-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/wayland-protocols"
+PKG_DEPS+=" lfs/xorgproto"
+PKG_DEPS+=" lfs/xkbcomp"
+PKG_DEPS+=" lfs/libXfont2"
+PKG_DEPS+=" lfs/libxcvt"
+PKG_DEPS+=" lfs/Pixman"
+PKG_DEPS+=" lfs/font-util"
+PKG_DEPS+=" lfs/libepoxy"
+PKG_DEPS+=" lfs/libtirpc"
+PKG_DEPS+=" lfs/Mesa"
+PKG_DEPS+=" lfs/libgcrypt"
+PKG_DEPS+=" lfs/nettle"
+#PKG_DEPS+=" lfs/xmlto"
+BUILD_PROCESS=mesonninja
+CONF_FLAGS="-Dxkb_output_dir=/var/lib/xkb"
+CONF_FLAGS+=" -Dstrip=true"
+#PKG_MAKETARGETS="all,install"

@@ -12,7 +12,7 @@ case ${PKG_TARGET} in
 	bootstrap)
 	;;
 	*)
-		PKG_DEPS="lfs/Linux-PAM"
+		PKG_DEPS="lfs/libcap2:bootstrap lfs/Linux-PAM"
 		PKG_MAKETARGETS+=",-C pam_cap"
 		PKG_POSTBUILD="install -v -m755 -d ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/security
 			install -v -m755 pam_cap/pam_cap.so ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/security

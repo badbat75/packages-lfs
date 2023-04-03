@@ -1,0 +1,7 @@
+# libvdpau-va-gl
+PKG_VER=0.4.0
+PKG_URL="https://github.com/i-rinat/libvdpau-va-gl/archive/v${PKG_VER}/libvdpau-va-gl-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/libvdpau lfs/libva lfs/Mesa"
+BUILD_PROCESS=cmakebuild
+CONF_FLAGS=
+#PKG_MAKETARGETS="all,install"

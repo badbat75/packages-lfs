@@ -1,5 +1,5 @@
 # sccache
-PKG_VER=0.3.3
+PKG_VER=0.4.1
 PKG_URL="https://github.com/mozilla/sccache/archive/refs/tags/v${PKG_VER}.tar.gz"
 BUILD_PROCESS=cargobuild
 PKG_OVERRIDELTO=0

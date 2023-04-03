@@ -1,0 +1,39 @@
+# Xserver
+PKG_VER=21.1.7
+PKG_URL="https://www.x.org/pub/individual/xserver/xorg-server-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/wayland-protocols"
+PKG_DEPS+=" lfs/xorgproto"
+PKG_DEPS+=" lfs/xkbcomp"
+PKG_DEPS+=" lfs/libXfont2"
+PKG_DEPS+=" lfs/libxcvt"
+PKG_DEPS+=" lfs/Pixman"
+PKG_DEPS+=" lfs/Mesa"
+PKG_DEPS+=" lfs/font-util"
+PKG_DEPS+=" lfs/xkeyboard-config"
+PKG_DEPS+=" lfs/libepoxy"
+PKG_DEPS+=" lfs/libtirpc"
+PKG_DEPS+=" lfs/libunwind"
+PKG_DEPS+=" lfs/libgcrypt"
+PKG_DEPS+=" lfs/nettle"
+PKG_DEPS+=" lfs/libvdpau-va-gl"
+PKG_DEPS+=" lfs/xcb-util-keysyms"
+PKG_DEPS+=" lfs/xcb-util-image"
+PKG_DEPS+=" lfs/xcb-util-renderutil"
+PKG_DEPS+=" lfs/xcb-util-wm"
+#PKG_DEPS+=" lfs/xmlto"
+BUILD_PROCESS=mesonninja
+CONF_FLAGS="-Dsuid_wrapper=true"
+CONF_FLAGS+=" -Dxkb_dir=${INSTALL_SHAREDIR}/X11/xkb"
+CONF_FLAGS+=" -Dxkb_output_dir=/var/lib/xkb"
+CONF_FLAGS+=" -Dxkb_bin_dir=${INSTALL_EXECPREFIX}/bin"
+CONF_FLAGS+=" -Ddri_driver_dir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/dri"
+CONF_FLAGS+=" -Dstrip=true"
+PKG_PREBUILD="sed -e \"/conf_data.set_quoted('DRI_DRIVER_PATH',/ s@dri_dep.get_pkgconfig_variable('dridriverdir')@get_option('dri_driver_dir')@\" -i include/meson.build
+	cat >>meson_options.txt <<-EOF
+		option('dri_driver_dir', type: 'string')	
+	EOF
+	"
+#PKG_MAKETARGETS="all,install-strip"
+
+PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/{X11/xorg.conf.d,profile.d}
+	echo \"export VDPAU_DRIVER=va_gl\" >> \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/profile.d/xorg.sh"

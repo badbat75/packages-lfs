@@ -6,11 +6,10 @@ PKG_PERLCROSS_VER=f842531ca3198ac30dddfd36f881b947cbffebdd
 PKG_URL="https://www.cpan.org/src/5.0/perl-${PKG_VER}.tar.xz"
 PKG_DEPS="lfs/gdbm lfs/expat"
 BUILD_PROCESS=custom
-PKG_COPYSRC=1
 PKG_FAULTYCFLAGS=1
 PKG_PREBUILD="NODELETEDESTDIR=1 download_uncompress https://github.com/arsv/perl-cross/archive/${PKG_PERLCROSS_VER}.tar.gz \${PKG_SRCPATH}"
 PKG_BUILDSCRIPT="
-	[ -d ${SRC_PATH}/perl ] && cp -frpv ${SRC_PATH}/perl/* . || true
+	[ -d \${SRC_PATH}/perl ] && cp -frpv \${SRC_PATH}/perl/* . || true
 	\${PKG_SRCPATH}/configure \
 		--prefix=/usr --target=${HARCH} --sysroot=${BIN_PATH} \
 		--host-cc=${TOOLCHAIN_PATH}/bin/toolchain_build_cc \

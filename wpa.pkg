@@ -1,5 +1,0 @@
-# wpa
-PKG_VER=2.10
-PKG_URL="https://w1.fi/cgit/hostap/snapshot/hostap_$(echo ${PKG_VER} | sed 's/\./_/g').tar.gz"
-BUILD_PROCESS=downloadonly
-

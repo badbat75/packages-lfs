@@ -1,0 +1,8 @@
+# xf86-input-libinput
+PKG_VER=1.2.1
+PKG_URL="https://www.x.org/pub/individual/driver/xf86-input-libinput-1.2.1.tar.xz"
+PKG_DEPS="lfs/libinput lfs/xorg-server lfs/xorgproto"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS=""
+PKG_MAKETARGETS="all,install-strip"

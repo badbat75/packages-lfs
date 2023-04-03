@@ -1,5 +1,5 @@
 # openssl
-PKG_VER=3.0.8
+PKG_VER=3.1.0
 PKG_URL="https://www.openssl.org/source/openssl-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/zlib"
 CONF_COPYRSC=1

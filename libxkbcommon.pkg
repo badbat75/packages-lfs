@@ -5,4 +5,5 @@ PKG_DEPS="lfs/xkeyboard-config lfs/libxcb"
 #PKG_DEPS+=" lfs/Wayland lfs/waylandprotocols"
 BUILD_PROCESS=mesonninja
 CONF_FLAGS="-Denable-wayland=false"
+CONF_FLAGS+=" -Dxkb-config-extra-path=${INSTALL_SHAREDIR}/X11/xkb"
 #PKG_MAKETARGETS="all,install"

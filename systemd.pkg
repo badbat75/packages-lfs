@@ -1,5 +1,5 @@
 # systemd
-PKG_VER=253.1
+PKG_VER=253.2
 PKG_URL="https://github.com/systemd/systemd-stable/archive/refs/tags/v${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/zlib lfs/xz lfs/bzip2 lfs/zstd lfs/libxml2:bootstrap"
 BUILD_PROCESS=mesonninja
@@ -55,6 +55,7 @@ case "${PKG_TARGET}" in
 		CONF_FLAGS+=" -Dtpm2=false"
 	;;
 	*)
+		PKG_DEPS+=" lfs/systemd:bootstrap"
 		PKG_DEPS+=" lfs/libcap2 lfs/libaudit lfs/openssl lfs/Linux-PAM lfs/polkit lfs/GLib lfs/kmod lfs/util-linux"
 		### Optional packages
 		PKG_DEPS+=" lfs/gnutls"
@@ -176,5 +177,9 @@ case ${TOOLCHAIN} in
 	gnu)
 		PKG_OVERRIDELD=bfd
 		PKG_LDFLAGS="-Wl,-rpath-link -Wl,${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+	;;
+	llvm)
+		### Python modules does not pass sysroot flags...
+		PKG_FAULTYCFLAGS=1
 	;;
 esac

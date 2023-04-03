@@ -1,7 +1,6 @@
 # util-linux
 PKG_VER=2.38.1
 PKG_URL="https://github.com/util-linux/util-linux/archive/refs/tags/v${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/zlib lfs/bzip2 lfs/ncurses lfs/readline"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="ADJTIME_PATH=/var/lib/hwclock/adjtime \
@@ -32,6 +31,7 @@ case ${PKG_TARGET} in
             install -vm755 .libs/{libuuid.so,libblkid.so} ${TOOLCHAIN_PATH}/lib"
     ;;
     *)
+        PKG_DEPS="lfs/zlib lfs/bzip2 lfs/ncurses lfs/readline"
         PKG_DEPS+=" lfs/util-linux:cross"
         INST_CMD="install-strip"
     ;;
