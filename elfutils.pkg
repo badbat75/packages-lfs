@@ -12,37 +12,7 @@ BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="--program-prefix=eu- --disable-debuginfod --disable-werror --enable-libdebuginfod=dummy"
 PKG_MAKETARGETS="all,install-strip"
-#PKG_OVERRIDELTO=0 ### LLVM build successfully
-PKG_PREBUILD='cat <<EOF | patch -s -p1 || true
-diff -Naur elfutils.182.orig/config/eu.am elfutils.182/config/eu.am
---- elfutils.182.orig/config/eu.am$(echo -e "\\t")2020-10-31 23:38:55.000000000 +0100
-+++ elfutils.182/config/eu.am$(echo -e "\\t")2021-02-10 14:21:19.679718200 +0100
-@@ -73,7 +73,7 @@
- $(echo -e "\\t")    -Wold-style-definition -Wstrict-prototypes -Wtrampolines \\
- $(echo -e "\\t")    \$(LOGICAL_OP_WARNING) \$(DUPLICATED_COND_WARNING) \\
- $(echo -e "\\t")    \$(NULL_DEREFERENCE_WARNING) \$(IMPLICIT_FALLTHROUGH_WARNING) \\
--$(echo -e "\\t")    \$(if \$(\$(*F)_no_Werror),,-Werror) \\
-+$(echo -e "\\t")    \$(if \$(\$(*F)_no_Werror),,\$(WERROR)) \\
- $(echo -e "\\t")    \$(if \$(\$(*F)_no_Wunused),,-Wunused -Wextra) \\
- $(echo -e "\\t")    \$(if \$(\$(*F)_no_Wstack_usage),,\$(STACK_USAGE_WARNING)) \\
- $(echo -e "\\t")    \$(if \$(\$(*F)_no_Wpacked_not_aligned),-Wno-packed-not-aligned,) \\
-diff -Naur elfutils.182.orig/configure.ac elfutils.182/configure.ac
---- elfutils.182.orig/configure.ac$(echo -e "\\t")2020-10-31 23:38:55.000000000 +0100
-+++ elfutils.182/configure.ac$(echo -e "\\t")2021-02-10 14:20:33.429718200 +0100
-@@ -65,6 +65,14 @@
- 
- AC_CANONICAL_HOST
- 
-+AC_ARG_ENABLE(werror,
-+[AS_HELP_STRING([--disable-werror],
-+                [turn off -Werror @<:@default=enabled@:>@])])
-+if test "x\$enable_werror" != "xno"; then
-+  WERROR="-Werror"
-+fi
-+AC_SUBST(WERROR)
-+
- AC_ARG_ENABLE(deterministic-archives,
- [AS_HELP_STRING([--enable-deterministic-archives],
- $(echo -e "\\t")$(echo -e "\\t")[ar and ranlib default to -D behavior])], [
-EOF
-'
+case ${TOOLCHAIN} in
+    gnu) PKG_CFLAGS="-Wno-stack-usage";;
+    llvm) PKG_CFLAGS="-Wno-unused-parameter";;
+esac
