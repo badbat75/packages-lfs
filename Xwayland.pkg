@@ -1,5 +1,5 @@
 # Xwayland
-PKG_VER=22.1.8
+PKG_VER=23.1.1
 PKG_URL="https://www.x.org/pub/individual/xserver/xwayland-${PKG_VER}.tar.xz"
 PKG_DEPS="lfs/wayland-protocols"
 PKG_DEPS+=" lfs/xorgproto"

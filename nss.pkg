@@ -1,5 +1,5 @@
 # nss
-PKG_VER=3.88.1
+PKG_VER=3.89
 PKG_URL="https://archive.mozilla.org/pub/security/nss/releases/NSS_$(echo ${PKG_VER} | sed 's/\./_/g')_RTM/src/nss-${PKG_VER}.tar.gz"
 PATCHES="https://www.linuxfromscratch.org/patches/blfs/svn/nss-${PKG_VER}-standalone-1.patch"
 PKG_DEPS="lfs/zlib lfs/nspr lfs/p11-kit:bootstrap"

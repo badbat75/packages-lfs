@@ -1,5 +1,5 @@
 # wayland
-PKG_VER=1.21.0
+PKG_VER=1.22.0
 PKG_URL="https://gitlab.freedesktop.org/wayland/wayland/-/releases/${PKG_VER}/downloads/wayland-${PKG_VER}.tar.xz"
 BUILD_PROCESS=mesonninja
 CONF_FLAGS="-Dtests=false"

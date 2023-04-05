@@ -1,5 +1,5 @@
 # cracklib
-PKG_VER=2.9.8
+PKG_VER=2.9.11
 PKG_URL="https://github.com/cracklib/cracklib/releases/download/v${PKG_VER}/cracklib-${PKG_VER}.tar.bz2"
 PKG_DEPS="lfs/cracklib-words lfs/zlib"
 BUILD_PROCESS=configmake

@@ -1,5 +1,5 @@
 # libcap2
-PKG_VER=2.67
+PKG_VER=2.68
 PKG_URL="https://www.kernel.org/pub/linux/libs/security/linux-privs/libcap2/libcap-${PKG_VER}.tar.xz"
 BUILD_PROCESS=simplemake
 PKG_MAKEVARS="lib=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} BUILD_CC=\"\${CC_FOR_BUILD}\" COPTS=\"\${CFLAGS_FOR_BUILD}\" BUILD_LDFLAGS=\"\${LDFLAGS_FOR_BUILD}\""

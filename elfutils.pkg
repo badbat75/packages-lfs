@@ -1,5 +1,5 @@
 # elfutils
-PKG_VER=0.188
+PKG_VER=0.189
 PKG_URL="https://sourceware.org/ftp/elfutils/${PKG_VER}/elfutils-${PKG_VER}.tar.bz2"
 case ${PKG_TARGET} in
     cross|native) ;;

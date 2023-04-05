@@ -1,5 +1,5 @@
 # cracklib
-PKG_VER=2.9.8
+PKG_VER=2.9.11
 PKG_URL="https://github.com/cracklib/cracklib/releases/download/v2.9.8/cracklib-words-2.9.8.bz2"
 BUILD_PROCESS=downloadonly
 

@@ -1,6 +1,6 @@
 # ncurses
-PKG_VER=6.4p20230225
-PKG_URL="https://github.com/mirror/ncurses/archive/6315e1a380ecdb706d4f6518d2e8c7eb0db8fbe2.tar.gz"
+PKG_VER=6.4p20230311
+PKG_URL="https://github.com/mirror/ncurses/archive/87c2c84cbd2332d6d94b12a1dcaf12ad1a51a938.tar.gz"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--with-pkg-config-libdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig \
 	--without-debug --without-ada --without-normal --enable-widec --enable-pc-files"

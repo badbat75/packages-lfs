@@ -1,5 +1,5 @@
 # pkgconf
-PKG_VER=1.9.3
+PKG_VER=1.9.4
 PKG_URL="https://github.com/pkgconf/pkgconf/archive/refs/tags/pkgconf-${PKG_VER}.tar.gz"
 PKG_AUTOCONF=1
 BUILD_PROCESS=configmake

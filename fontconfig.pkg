@@ -1,5 +1,5 @@
 # fontconfig
-PKG_VER=2.14.1
+PKG_VER=2.14.2
 PKG_URL="https://www.freedesktop.org/software/fontconfig/release/fontconfig-${PKG_VER}.tar.xz"
 PKG_DEPS="lfs/FreeType lfs/json-c"
 BUILD_PROCESS=mesonninja

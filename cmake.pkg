@@ -1,5 +1,5 @@
 # cmake
-PKG_VER=3.25.2
+PKG_VER=3.26.2
 PKG_URL="https://github.com/Kitware/CMake/releases/download/v${PKG_VER}/cmake-${PKG_VER}.tar.gz"
 PKG_DEPS=
 PKG_MAKETARGETS="all,install/strip"
