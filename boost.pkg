@@ -1,0 +1,68 @@
+# boost
+PKG_VER=1.82.0
+PKG_URL="https://boostorg.jfrog.io/artifactory/main/release/${PKG_VER}/source/boost_${PKG_VER//./_}.tar.bz2"
+PKG_DEPS="lfs/zstd lfs/xz lfs/bzip2 lfs/zlib"
+BUILD_PROCESS=custom
+
+PKG_PREBUILD="sed 's@pkg-config@\${PKG_CONFIG:-pkg-config}@g' -i bootstrap.sh
+	sed 's@: \"--target=.*\"@: \"\"@g' -i tools/build/src/tools/clang.jam"
+
+PKG_LDFLAGS="-lstdc++"
+
+case ${TOOLCHAIN} in
+	llvm) BBTC=clang ;;
+	gnu)
+		BBTC=gcc
+		PKG_CFLAGS="-Wno-deprecated-declarations"
+	;;
+esac
+
+PKG_BUILDSCRIPT="./bootstrap.sh \\
+		--prefix=\"\${PKG_PKGPATH}${INSTALL_PREFIX}\" \\
+		--exec-prefix=\"\${PKG_PKGPATH}${INSTALL_EXECPREFIX}\" \\
+		--libdir=\"\${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}\" \\
+		--includedir=\"\${PKG_PKGPATH}${INSTALL_INCLUDEDIR}\" \\
+		--with-icu \\
+		--with-python-version=${PYTHONBIN_VER} \\
+		--with-toolset=${BBTC}
+	sed -i \"s|using ${BBTC} ;|using ${BBTC} : : \${CC} ;|\" project-config.jam
+	./b2 -q -j${NPROCS} $(
+			if [ "${MAKEVERBOSE}" -eq 1 ]
+			then
+				echo -n "-d+2"
+			else
+				echo -n "-d+1"
+			fi
+		) \\
+		$(
+			case ${HM} in
+				arm|aarch64)	echo -n "architecture=arm abi=aapcs" ;;
+				x86|x86_64)		echo -n "architecture=x86 abi=sysv" ;;
+				*)				trow_error "${ERROR_GENERIC}" "Missing architecture mapping for ${HM}" ;;
+			esac
+		) \\
+		address-model=${HARCH_BITWIDTH} \\
+		$(
+			case ${HOS} in
+				linux|android)  echo -n "binary-format=elf" ;;
+				windows)        echo -n "binary-format=pe" ;;
+				macosx|ios)     echo -n "binary-format=mach-o" ;;
+			esac
+		) \\
+		target-os=${HOS} \\
+		variant=release \\
+		$(
+			case ${OPTLEVEL} in
+				2)	echo -n "optimization=minimal" ;;
+				3)	echo -n "optimization=speed" ;;
+				s)	echo -n "optimization=space" ;;
+				*)	echo -n "optimization=off" ;;
+			esac
+		) \\
+		threading=multi \\
+		toolset=${BBTC} \\
+		pch=off \\
+		cflags=\"\${CFLAGS}\" \\
+		cxxflags=\"\${CXXFLAGS}\" \\
+		linkflags=\"\${LDFLAGS}\" \\
+		install"

@@ -1,8 +1,7 @@
 # libwacom
 PKG_VER=2.6.0
 PKG_URL="https://github.com/linuxwacom/libwacom/releases/download/libwacom-${PKG_VER}/libwacom-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/libgudev lfs/libevdev"
+PKG_DEPS="lfs/doxygen:native lfs/libgudev lfs/libevdev"
 BUILD_PROCESS=mesonninja
 CONF_FLAGS="-Dtests=disabled -Dstrip=true"
 #PKG_MAKETARGETS="all,install-strip"
-PKG_MAKEENV="LD_LIBRARY_PATH=${TOOLCHAIN_PATH}/lib"

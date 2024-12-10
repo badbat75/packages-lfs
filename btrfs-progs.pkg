@@ -1,10 +1,23 @@
 # btrfs-progs
-PKG_VER=6.2.2
+PKG_VER=6.8.1
 PKG_URL="https://mirrors.edge.kernel.org/pub/linux/kernel/people/kdave/btrfs-progs/btrfs-progs-v${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/util-linux lfs/e2fsprogs lfs/zlib lfs/lzo lfs/acl lfs/systemd:bootstrap"
+PKG_DEPS="lfs/xmlto:native lfs/util-linux lfs/e2fsprogs lfs/zlib lfs/lzo lfs/acl lfs/systemd:bootstrap lfs/libgcrypt"
+PKG_AUTOCONF=1
 PKG_COPYSRC=1
 BUILD_PROCESS=configmake
-CONF_FLAGS="--disable-documentation"
+CONF_FLAGS="--with-crypto=libgcrypt --disable-documentation"
+#########################################
+### error: 'i_atime_extra' undeclared ###
+#########################################
+CONF_FLAGS+=" --disable-convert"
+#########################################
+CONF_ENV="PYTHON=cross-python3"
 PKG_TWOSTEPSBUILD=1
 PKG_MAKEVARS="bindir=${INSTALL_EXECPREFIX}/sbin udevdir=/lib/udev"
 #PKG_MAKETARGETS="all,install"
+PKG_CFLAGS="-I\${SYSROOT}${INSTALL_INCLUDEDIR}/ext2fs"
+PKG_LDFLAGS="-s"
+case ${TOOLCHAIN} in
+    gnu) PKG_CFLAGS+=" -Wno-implicit-function-declaration";;
+    llvm) ;;
+esac

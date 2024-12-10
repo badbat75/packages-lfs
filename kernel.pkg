@@ -1,9 +1,10 @@
 # bs_kernel
 PKG_VER=${KERNEL_VER}
 PKG_URL="https://cdn.kernel.org/pub/linux/kernel/v$( echo ${PKG_VER} | cut -d'.' -f1 ).x/linux-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/bison:native lfs/flex:native"
 case ${PKG_TARGET} in
-	headers) ;;
-	*) PKG_DEPS="lfs/elfutils:cross lfs/dracut" ;;
+	headers) PKG_TOOLCHAIN=gnu ;;
+	*) PKG_DEPS+=" lfs/elfutils:cross lfs/dracut" ;;
 esac
 BUILD_PROCESS=kernelbuild
 PKG_MAKEVARS="INSTALL_MOD_STRIP=1"
@@ -39,7 +40,6 @@ case ${PLATFORM_NAME} in
 esac
 
 PKG_KERNEL_INITRAMFS=1
-if [ "${GCC_DEFAULT_LD}" == gold ]
-then
-	GCC_DEFAULT_LD=bfd
-fi
+case ${TOOLCHAIN} in
+	gnu) PKG_OVERRIDELD=bfd;;
+esac

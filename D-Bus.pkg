@@ -1,7 +1,8 @@
 # D-Bus
-PKG_VER=1.14.6
+PKG_VER=1.14.10
 PKG_URL="https://dbus.freedesktop.org/releases/dbus/dbus-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/expat lfs/libX11"
+PKG_DEPS="lfs/doxygen:native lfs/xmlto:native"
+PKG_DEPS+=" lfs/expat lfs/libX11"
 PKG_DEPS+=" lfs/systemd:bootstrap"
 PKG_DEPS+=" lfs/libaudit:bootstrap"
 PKG_DEPS+=" lfs/libcap2:bootstrap"
@@ -25,7 +26,7 @@ CONF_FLAGS+=" --docdir=${INSTALL_SHAREDIR}/doc/dbus-${PKG_VER}"
 PKG_MAKETARGETS="all,install-strip"
 
 PKG_PREBUILD="sed 's/static dbus_bool_t fatal_warnings_on_check_failed = TRUE/static dbus_bool_t fatal_warnings_on_check_failed = FALSE/' -i dbus/dbus-internals.c"
-PKG_POSTBUILD="cat >>${PKG_PKGPATH}/lib/systemd/system/dbus.service <<-EOF
+PKG_POSTBUILD="cat >>\${PKG_PKGPATH}/lib/systemd/system/dbus.service <<-EOF
 
 		[Install]
 		# Make sure that services can still refer to this under the name of the
@@ -34,31 +35,31 @@ PKG_POSTBUILD="cat >>${PKG_PKGPATH}/lib/systemd/system/dbus.service <<-EOF
 		WantedBy=multi-user.target
 	EOF
 
-	cat >>${PKG_PKGPATH}/lib/systemd/system/dbus.socket <<-EOF
+	cat >>\${PKG_PKGPATH}/lib/systemd/system/dbus.socket <<-EOF
 
 		[Install]
 		WantedBy=sockets.target
 	EOF
 
-	cat >>${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/user/dbus.service <<-EOF
+	cat >>\${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/user/dbus.service <<-EOF
 
 		[Install]
 	EOF
 
-	cat >>${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/user/dbus.socket <<-EOF
+	cat >>\${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/user/dbus.socket <<-EOF
 
 		[Install]
 		WantedBy=sockets.target
 	EOF
 
-	install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/X11/xinit/xinitrc.d/
-	cat >>${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/X11/xinit/xinitrc.d/00-start-message-bus.sh <<-EOF
+	install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/X11/xinit/xinitrc.d/
+	cat >>\${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/X11/xinit/xinitrc.d/00-start-message-bus.sh <<-EOF
 		#!/bin/sh
 		if [ -z \"\\\$DBUS_SESSION_BUS_ADDRESS\" ]; then
 		   eval \\\`dbus-launch --sh-syntax --exit-with-session\\\`
 		fi
 	EOF
-	chmod +x ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/X11/xinit/xinitrc.d/00-start-message-bus.sh
+	chmod +x \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/X11/xinit/xinitrc.d/00-start-message-bus.sh
 	"
 
 PKG_POSTINSTALL="ln -sfv /etc/machine-id ${INSTALL_LOCALSTATEDIR}/lib/dbus/machine-id

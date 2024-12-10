@@ -1,6 +1,7 @@
 # cpio
-PKG_VER=2.13
+PKG_VER=2.14
 PKG_URL="https://ftp.gnu.org/gnu/cpio/cpio-${PKG_VER}.tar.bz2"
+PKG_DEPS="lfs/flex:native"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="--enable-mt --with-rmt=${INSTALL_EXECPREFIX}/libexec/rmt"
@@ -13,7 +14,7 @@ PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/cpio-${PKG
     install -v -m644 doc/cpio.{html,txt} \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/cpio-${PKG_VER}"
 
 case ${TOOLCHAIN} in
-    llvm) PKG_CFLAGS="-Wno-incompatible-function-pointer-types" ;;
+    llvm) PKG_CFLAGS="-Wno-incompatible-function-pointer-types -Wno-implicit-function-declaration" ;;
 esac
 
 if texi2dvi >/dev/null 2>&1

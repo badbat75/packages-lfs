@@ -1,5 +1,5 @@
 # gzip
-PKG_VER=1.12
+PKG_VER=1.13
 PKG_URL="http://ftp.gnu.org/gnu/gzip/gzip-${PKG_VER}.tar.xz"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""

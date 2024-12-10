@@ -1,7 +1,7 @@
 # sudo
-PKG_VER=1.9.13p3
+PKG_VER=1.9.15p5
 PKG_URL="https://www.sudo.ws/dist/sudo-${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/Linux-PAM lfs/krb5 lfs/zlib"
+PKG_DEPS="lfs/bison:native lfs/flex:native lfs/Linux-PAM lfs/krb5 lfs/zlib"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--libexecdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} \
 			--with-secure-path \
@@ -11,13 +11,13 @@ CONF_FLAGS="--libexecdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} \
 			--with-passprompt='[sudo] password for %p: '"
 #PKG_MAKETARGETS="all,install"
 PKG_MAKEVARS="install_uid=$(id -u) install_gid=$(id -g)"
-PKG_POSTBUILD="cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sudoers.d/sudo <<-EOF
+PKG_POSTBUILD="cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sudoers.d/sudo <<-EOF
 		Defaults secure_path=\"/usr/bin:/bin:/usr/sbin:/sbin\"
 		#%wheel ALL=(ALL) ALL
 		%wheel ALL=(ALL) NOPASSWD: ALL
 	EOF
-	install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/sudo <<-EOF
+	install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/sudo <<-EOF
 		# Begin /etc/pam.d/sudo
 
 		# include the default auth settings
@@ -34,5 +34,5 @@ PKG_POSTBUILD="cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sudoers.d/sudo <<-EOF
 
 		# End /etc/pam.d/sudo
 	EOF
-	chmod 644 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/sudo
+	chmod 644 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/sudo
 "

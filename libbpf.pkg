@@ -1,9 +1,9 @@
 # libbpf
-PKG_VER=1.1.0
+PKG_VER=1.2.0
 PKG_URL="https://github.com/libbpf/libbpf/archive/refs/tags/v${PKG_VER}.tar.gz"
 BUILD_PROCESS=simplemake
 PKG_MAKEVARS="-C src LIBSUBDIR=/lib${HARCH_LIB}${INSTALL_LIBSUFFIX}"
 #PKG_MAKETARGETS="all,install"
 
-PKG_POSTBUILD="\${STRIP} --strip-unneeded ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libbpf.so.${PKG_VER}
-    install -vm644 \${PKG_SRCPATH}/src/{hashmap.h,libbpf_internal.h,relo_core.h,nlattr.h} ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/bpf"
+PKG_POSTBUILD="\${STRIP} --strip-unneeded \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libbpf.so.${PKG_VER}
+    install -vm644 \${PKG_SRCPATH}/src/{hashmap.h,libbpf_internal.h,relo_core.h,nlattr.h} \${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/bpf"

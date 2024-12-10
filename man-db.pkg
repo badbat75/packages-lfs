@@ -1,7 +1,7 @@
 # man-db
-PKG_VER=2.11.2
+PKG_VER=2.12.1
 PKG_URL="https://gitlab.com/man-db/man-db/-/archive/${PKG_VER}/man-db-${PKG_VER}.tar.bz2"
-PKG_DEPS="lfs/libpipeline lfs/gdbm lfs/zlib lfs/gzip lfs/bzip2 lfs/xz lfs/zstd"
+PKG_DEPS="lfs/flex:native lfs/groff:native lfs/libpipeline lfs/gdbm lfs/zlib lfs/gzip lfs/bzip2 lfs/xz lfs/zstd"
 BUILD_PROCESS=configmake
 CONF_FLAGS="--with-systemdsystemunitdir=/lib/systemd/system --with-systemduserunitdir=${INSTALL_PREFIX}/lib/systemd/user \
     --with-systemdtmpfilesdir=${INSTALL_LIBDIR}/tmpfiles.d \
@@ -9,5 +9,5 @@ CONF_FLAGS="--with-systemdsystemunitdir=/lib/systemd/system --with-systemduserun
     --disable-setuid --enable-cache-owner=bin"
 PKG_MAKETARGETS="all,install-strip"
 
-PKG_PREBUILD="ACLOCAL_FLAGS=\"--include=${AUTOTOOLS_PATH}/share/autoconf --include=${TOOLCHAIN_PATH}/share/aclocal\" ./bootstrap || true
+PKG_PREBUILD="ACLOCAL_FLAGS=\"--include=${TOOLCHAIN_PATH}/share/autoconf --include=${TOOLCHAIN_PATH}/share/aclocal\" ./bootstrap || true
     sed -i '/find/s@/usr@@' -i init/systemd/man-db.service.in"

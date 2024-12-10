@@ -1,7 +1,7 @@
 # kbd
-PKG_VER=2.5.1
+PKG_VER=2.6.4
 PKG_URL="https://www.kernel.org/pub/linux/utils/kbd/kbd-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/gzip"
+PKG_DEPS="lfs/bison:native lfs/flex:native lfs/doxygen:native lfs/gzip"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="--disable-vlock"

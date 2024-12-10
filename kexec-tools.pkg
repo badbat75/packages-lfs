@@ -10,6 +10,6 @@ CONF_FLAGS="--sbindir=${INSTALL_EXECPREFIX}/sbin --without-xen"
 
 PKG_PREBUILD="rm -fv include/config.h"
 
-PKG_POSTBUILD="\${STRIP} --strip-unneeded ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/{kexec,vmcore-dmesg}"
+PKG_POSTBUILD="\${STRIP} --strip-unneeded \${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/{kexec,vmcore-dmesg}"
 
 PKG_FAULTYCFLAGS=1

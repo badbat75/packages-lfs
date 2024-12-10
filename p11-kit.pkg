@@ -1,5 +1,5 @@
 # p11-kit
-PKG_VER=0.24.1
+PKG_VER=0.25.5
 PKG_URL="https://github.com/p11-glue/p11-kit/releases/download/${PKG_VER}/p11-kit-${PKG_VER}.tar.xz"
 PKG_DEPS="lfs/libtasn1 lfs/libffi"
 BUILD_PROCESS=configmake
@@ -25,6 +25,6 @@ case ${PKG_TARGET} in
 	;;
 	*)
 		PKG_DEPS+=" lfs/nss"
-		PKG_POSTBUILD="ln -sfv /usr/libexec/p11-kit/trust-extract-compat ${PKG_PKGPATH}/usr/bin/update-ca-certificates"
+		PKG_POSTBUILD="ln -sfv /usr/libexec/p11-kit/trust-extract-compat \${PKG_PKGPATH}/usr/bin/update-ca-certificates"
 	;;
 esac

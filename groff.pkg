@@ -1,12 +1,13 @@
 # groff
-PKG_VER=1.22.4
+PKG_VER=1.23.0
 PKG_URL="http://ftp.gnu.org/gnu/groff/groff-${PKG_VER}.tar.gz"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="PAGE=A4"
 PKG_MAKETARGETS="all,install-strip"
 case ${PKG_TARGET} in
-    cross)
+    cross|native)
+        PKG_CHECK="[ x\$( ${INSTALL_EXECPREFIX}/bin/groff -V | awk 'NR==1{print \$4}' || true ) == x${PKG_VER} ]"
     ;;
     *)
         PKG_DEPS="lfs/groff:cross"

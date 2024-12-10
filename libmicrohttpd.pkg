@@ -1,7 +1,7 @@
 # libmicrohttpd
 PKG_VER=0.9.76
 PKG_URL="https://ftp.gnu.org/gnu/libmicrohttpd/libmicrohttpd-${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/libgcrypt lfs/curl"
+PKG_DEPS="lfs/doxygen:native lfs/libgcrypt lfs/curl"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="--enable-https --disable-examples"

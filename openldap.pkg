@@ -1,5 +1,5 @@
 # openldap
-PKG_VER=2.6.4
+PKG_VER=2.6.8
 PKG_URL="https://www.openldap.org/software/download/OpenLDAP/openldap-release/openldap-${PKG_VER}.tgz"
 PKG_DEPS="lfs/openssl"
 BUILD_PROCESS=configmake

@@ -1,5 +1,5 @@
 # libaudit
-PKG_VER=3.1
+PKG_VER=3.1.1
 PKG_URL="https://github.com/linux-audit/audit-userspace/archive/refs/tags/v${PKG_VER}.tar.gz"
 PKG_AUTOCONF=1
 BUILD_PROCESS=configmake
@@ -53,7 +53,7 @@ diff -urp audit-3.0.8.orig/lib/libaudit.h audit-3.0.8/lib/libaudit.h
 Only in audit-3.0.8/lib: libaudit.h.orig
 	EOF
 "
-PKG_POSTBUILD="pushd ${PKG_PKGPATH}${INSTALL_PREFIX}
+PKG_POSTBUILD="pushd \${PKG_PKGPATH}${INSTALL_PREFIX}
 patch -p1 <<-EOF
 diff -urp usr.orig/include/libaudit.h.orig usr/include/libaudit.h
 --- usr.orig/include/libaudit.h.orig	2022-02-14 14:14:08.000000000 -0500

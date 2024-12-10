@@ -1,28 +1,28 @@
 # shadow
-PKG_VER=4.13
-PKG_URL="https://github.com/shadow-maint/shadow/releases/download/${PKG_VER}/shadow-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/Linux-PAM"
+PKG_VER=4.15.1
+PKG_URL="https://github.com/shadow-maint/shadow/archive/refs/tags/${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/bison:native lfs/Linux-PAM"
 ### Optional packages
 PKG_DEPS+=" lfs/cracklib"
 ###
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
-CONF_FLAGS="--with-group-name-max-length=32"
+CONF_FLAGS="--without-libbsd --with-{b,yes}crypt"
 PKG_MAKEVARS="exec_prefix=${INSTALL_EXECPREFIX}"
 PKG_MAKETARGETS="all,install-strip"
 
-PKG_PREBUILD="sed -i 's/groups\\\$(EXEEXT) //' src/Makefile.in
-	find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \;
-	find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;
-	find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \;"
-PKG_POSTBUILD="install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/shadow
-	sed -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD SHA512@' \
-		-e 's@#\(SHA_CRYPT_..._ROUNDS 5000\)@\100@'       \
+PKG_PREBUILD="sed -i '/AM_GNU_GETTEXT_VERSION/ s/0.19/0.20/g' configure.ac"
+#	sed -i 's/groups\\\$(EXEEXT) //' src/Makefile.in
+#	find man -name Makefile.in -exec sed -i 's/groups\.1 / /'   {} \;
+#	find man -name Makefile.in -exec sed -i 's/getspnam\.3 / /' {} \;
+#	find man -name Makefile.in -exec sed -i 's/passwd\.5 / /'   {} \;"
+PKG_POSTBUILD="install -v -m640 /dev/null \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/shadow
+	sed -e 's@#ENCRYPT_METHOD DES@ENCRYPT_METHOD YESCRYPT@' \
 		-e 's@/var/spool/mail@/var/mail@'                 \
 		-e '/PATH=/{s@/sbin:@@;s@/bin:@@}'                \
-		-i ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs
-	mkdir -pv ${PKG_PKGPATH}/var/mail
-	install -v -m644 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs.orig &&
+		-i \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs
+	mkdir -pv \${PKG_PKGPATH}/var/mail
+	install -v -m644 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs.orig &&
 	for FUNCTION in FAIL_DELAY               \
 					FAILLOG_ENAB             \
 					LASTLOG_ENAB             \
@@ -40,9 +40,9 @@ PKG_POSTBUILD="install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sh
 					CHFN_AUTH ENCRYPT_METHOD \
 					ENVIRON_FILE
 	do
-		sed -i \"s/^\${FUNCTION}/# &/\" ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs
+		sed -i \"s/^\${FUNCTION}/# &/\" \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/login.defs
 	done
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/login <<-EOF
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/login <<-EOF
 		# Begin /etc/pam.d/login
 
 		# Set failure delay before next prompt to 3 seconds
@@ -90,7 +90,7 @@ PKG_POSTBUILD="install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sh
 		# End /etc/pam.d/login
 	EOF
 	
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/passwd <<-EOF
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/passwd <<-EOF
 		# Begin /etc/pam.d/passwd
 
 		password  include     system-password
@@ -98,7 +98,7 @@ PKG_POSTBUILD="install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sh
 		# End /etc/pam.d/passwd
 	EOF
 	
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/su <<-EOF
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/su <<-EOF
 		# Begin /etc/pam.d/su
 
 		# always allow root
@@ -127,7 +127,7 @@ PKG_POSTBUILD="install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sh
 		# End /etc/pam.d/su
 	EOF
 
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chpasswd <<-EOF
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chpasswd <<-EOF
 		# Begin /etc/pam.d/chpasswd
 
 		# always allow root
@@ -140,9 +140,9 @@ PKG_POSTBUILD="install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sh
 
 		# End /etc/pam.d/chpasswd
 	EOF
-	sed -e s/chpasswd/newusers/ ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chpasswd >${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/newusers
+	sed -e s/chpasswd/newusers/ \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chpasswd >\${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/newusers
 
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chage <<-EOF
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chage <<-EOF
 		# Begin /etc/pam.d/chage
 
 		# always allow root
@@ -157,15 +157,15 @@ PKG_POSTBUILD="install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/sh
 	for PROGRAM in chfn chgpasswd chsh groupadd groupdel \
                groupmems groupmod useradd userdel usermod
 	do
-		install -v -m644 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chage ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/\${PROGRAM}
-		sed -i \"s/chage/\$PROGRAM/\" ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/\${PROGRAM}
+		install -v -m644 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/chage \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/\${PROGRAM}
+		sed -i \"s/chage/\$PROGRAM/\" \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/\${PROGRAM}
 	done"
 
 if [ ${LFS_SPLITUSR} -eq 1 ]
 then
-	PKG_POSTBUILD+=";install -vdm755 ${PKG_PKGPATH}/sbin
-		ln -s ../usr/sbin/nologin ${PKG_PKGPATH}/sbin
-		install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default"
+	PKG_POSTBUILD+=";install -vdm755 \${PKG_PKGPATH}/sbin
+		ln -s ../usr/sbin/nologin \${PKG_PKGPATH}/sbin
+		install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default"
 fi
 
 PKG_POSTINSTALL="/usr/sbin/pwconv

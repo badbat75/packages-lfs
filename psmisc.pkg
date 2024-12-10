@@ -1,5 +1,5 @@
 # psmisc
-PKG_VER=23.6
+PKG_VER=23.7
 PKG_URL="https://sourceforge.net/projects/psmisc/files/psmisc/psmisc-${PKG_VER}.tar.xz"
 PKG_DEPS="lfs/ncurses"
 BUILD_PROCESS=configmake

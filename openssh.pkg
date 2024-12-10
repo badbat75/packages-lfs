@@ -1,5 +1,5 @@
 # openssh
-PKG_VER=9.3p1
+PKG_VER=9.7p1
 PKG_URL="http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/Linux-PAM lfs/krb5 lfs/net-tools lfs/Linux-PAM lfs/libedit lfs/sysstat lfs/xauth lfs/zlib"
 BUILD_PROCESS=configmake
@@ -16,8 +16,8 @@ CONF_FLAGS="--sysconfdir=${INSTALL_SYSCONFDIR}/ssh \
 PKG_MAKETARGETS=",install"
 PKG_PREBUILD="sed -i '/^STRIP_OPT/ s/-s$/\"-s --strip-program=\$STRIP\"/' configure.ac
 	sed -e '/INSTALLKEYS_SH/s/)//' -e '260a\  )' -i contrib/ssh-copy-id"
-PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
-	cat <<-EOF >${PKG_PKGPATH}/lib/systemd/system/sshd.service
+PKG_POSTBUILD="mkdir -pv \${PKG_PKGPATH}/lib/systemd/system
+	cat <<-EOF >\${PKG_PKGPATH}/lib/systemd/system/sshd.service
 		[Unit]
 		Description=OpenSSH Daemon
 
@@ -30,7 +30,7 @@ PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
 		[Install]
 		WantedBy=multi-user.target
 	EOF
-	cat <<-EOF >${PKG_PKGPATH}/lib/systemd/system/sshd.socket
+	cat <<-EOF >\${PKG_PKGPATH}/lib/systemd/system/sshd.socket
 		[Unit]
 		Conflicts=sshd.service
 
@@ -41,7 +41,7 @@ PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
 		[Install]
 		WantedBy=sockets.target
 	EOF
-	cat <<-EOF >${PKG_PKGPATH}/lib/systemd/system/sshd\@.service
+	cat <<-EOF >\${PKG_PKGPATH}/lib/systemd/system/sshd\@.service
 		[Unit]
 		Description=SSH Per-Connection Server
 
@@ -51,8 +51,8 @@ PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
 	EOF
 	"
 #### Pam configuration (pam.d module copied from shadow package)
-PKG_POSTBUILD+="install -vdm755 ${PKG_PKGPATH}/etc/pam.d
-	cat <<-'EOF' >${PKG_PKGPATH}/etc/pam.d/sshd
+PKG_POSTBUILD+="install -vdm755 \${PKG_PKGPATH}/etc/pam.d
+	cat <<-'EOF' >\${PKG_PKGPATH}/etc/pam.d/sshd
 		# Begin /etc/pam.d/sshd
 
 		# Set failure delay before next prompt to 3 seconds
@@ -102,7 +102,7 @@ PKG_POSTBUILD+="install -vdm755 ${PKG_PKGPATH}/etc/pam.d
 	sed -e 's/#UsePAM no/UsePAM yes/' \
 		-e 's/#PermitRootLogin prohibit-password/PermitRootLogin prohibit-password/' \
 		-e 's/#KbdInteractiveAuthentication yes/KbdInteractiveAuthentication no/' \
-		-i ${PKG_PKGPATH}/etc/ssh/sshd_config
+		-i \${PKG_PKGPATH}/etc/ssh/sshd_config
 	"
 ### This is too restrictive
 ## -e 's/#PasswordAuthentication yes/PasswordAuthentication no/' \

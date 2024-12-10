@@ -1,7 +1,7 @@
 # systemd
-PKG_VER=253.2
+PKG_VER=253.20
 PKG_URL="https://github.com/systemd/systemd-stable/archive/refs/tags/v${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/zlib lfs/xz lfs/bzip2 lfs/zstd lfs/libxml2:bootstrap"
+PKG_DEPS="lfs/flex:native lfs/zlib lfs/xz lfs/bzip2 lfs/zstd lfs/libxml2:bootstrap"
 BUILD_PROCESS=mesonninja
 CONF_FLAGS="-Drootlibdir=/lib${HARCH_LIB}${INSTALL_LIBSUFFIX}"
 CONF_FLAGS+=" -Dfirstboot=false"
@@ -33,9 +33,6 @@ CONF_FLAGS+=" -Dnss-mymachines=true"
 CONF_FLAGS+=" -Dnss-resolve=true"
 CONF_FLAGS+=" -Dnss-systemd=true"
 CONF_FLAGS+=" -Doomd=true"
-case ${TOOLCHAIN} in
-	llvm) PKG_MAKEENV="LD_LIBRARY_PATH=${GLOBAL_TOOLCHAIN_PATH}/llvm-${LLVM_VER}/lib";;
-esac
 ###
 case "${PKG_TARGET}" in
 	bootstrap) LIBAUDIT_TARGET=bootstrap
@@ -110,8 +107,8 @@ case "${PKG_TARGET}" in
 			;;
 		esac
 		
-		PKG_POSTBUILD="install -v -m755 -d ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d
-			cat >> ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/system-session <<-EOF
+		PKG_POSTBUILD="install -v -m755 -d \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d
+			cat >> \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/system-session <<-EOF
 				# Begin Systemd addition
 
 				session  required    pam_unix.so
@@ -121,7 +118,7 @@ case "${PKG_TARGET}" in
 				# End Systemd addition
 			EOF
 
-			cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/systemd-user <<-EOF
+			cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/pam.d/systemd-user <<-EOF
 				# Begin ${INSTALL_SYSCONFDIR}/pam.d/systemd-user
 
 				account  required    pam_access.so
@@ -139,19 +136,19 @@ case "${PKG_TARGET}" in
 				# End ${INSTALL_SYSCONFDIR}/pam.d/systemd-user
 			EOF
 
-			install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/getty@tty1.service.d
-			cat >> ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/getty@tty1.service.d/noclear.conf <<-EOF
+			install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/getty@tty1.service.d
+			cat >> \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/getty@tty1.service.d/noclear.conf <<-EOF
 				[Service]
 				TTYVTDisallocate=no			
 			EOF
 
-			cat >> ${PKG_PKGPATH}/lib/udev/rules.d/60-block-scheduler.rules <<-EOF
+			cat >> \${PKG_PKGPATH}/lib/udev/rules.d/60-block-scheduler.rules <<-EOF
 				ACTION==\"add\", SUBSYSTEM==\"block\", ENV{DEVTYPE}==\"disk\", \
 				  KERNEL==\"mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|sd*[!0-9]|sr*\", \
 				  ATTR{queue/scheduler}=\"bfq\"
 			EOF
 
-			ln -sfv /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/tmp.mount
+			ln -sfv /dev/null \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/tmp.mount
 			"
 		PKG_POSTINSTALL="mkdir -pv ${INSTALL_LOCALSTATEDIR}/log/journal
 journalctl --update-catalog
@@ -169,7 +166,9 @@ systemd-hwdb update
 esac
 PKG_CFLAGS="-Wno-error=return-type"
 PKG_PREBUILD="sed -i -e 's/GROUP=\"render\"/GROUP=\"video\"/' -e 's/GROUP=\"sgx\", //' rules.d/50-udev-default.rules.in
-	sed 's/-ftrivial-auto-var-init=zero//' -i meson.build"
+	#sed 's/-ftrivial-auto-var-init=zero//' -i meson.build
+	# commit 9374860 solved ^ - To be removed in next releases.
+	sed '/^int bus_message_type_from_string/ s/ _pure_;/;/' -i src/libsystemd/sd-bus/bus-internal.h"
 ### Python modules does not pass sysroot flags...
 #PKG_FAULTYCFLAGS=1
 

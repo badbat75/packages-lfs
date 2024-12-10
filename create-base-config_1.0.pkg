@@ -1,7 +1,7 @@
 BUILD_PROCESS=none
 ####### Basic configuration files ##########
-PKG_POSTBUILD="install -d -m755 ${PKG_PKGPATH}/etc
-	cat > ${PKG_PKGPATH}/etc/hosts <<-EOF
+PKG_POSTBUILD="install -d -m755 \${PKG_PKGPATH}/etc
+	cat > \${PKG_PKGPATH}/etc/hosts <<-EOF
 		# Begin /etc/hosts
 		127.0.0.1 localhost.localdomain localhost
 		::1       localhost ip6-localhost ip6-loopback
@@ -9,7 +9,7 @@ PKG_POSTBUILD="install -d -m755 ${PKG_PKGPATH}/etc
 		ff02::2   ip6-allrouters
 		# End /etc/hosts
 	EOF
-	cat > ${PKG_PKGPATH}/etc/passwd <<-EOF
+	cat > \${PKG_PKGPATH}/etc/passwd <<-EOF
 		root:x:0:0:root:/root:/bin/bash
 		bin:x:1:1:bin:/dev/null:/usr/bin/false
 		daemon:x:6:6:Daemon User:/dev/null:/usr/bin/false
@@ -25,7 +25,7 @@ PKG_POSTBUILD="install -d -m755 ${PKG_PKGPATH}/etc
 		systemd-oom:x:81:81:systemd Out Of Memory Daemon:/:/usr/bin/false
 		nobody:x:65534:65534:Unprivileged User:/dev/null:/usr/bin/false
 	EOF
-	cat > ${PKG_PKGPATH}/etc/group <<-EOF
+	cat > \${PKG_PKGPATH}/etc/group <<-EOF
 		root:x:0:
 		bin:x:1:daemon
 		sys:x:2:
@@ -61,21 +61,21 @@ PKG_POSTBUILD="install -d -m755 ${PKG_PKGPATH}/etc
 		users:x:999:
 		nogroup:x:65534:
 	EOF
-	echo 20210214-systemd > ${PKG_PKGPATH}/etc/lfs-release
-	cat > ${PKG_PKGPATH}/etc/lsb-release <<-EOF
+	echo 20210214-systemd > \${PKG_PKGPATH}/etc/lfs-release
+	cat > \${PKG_PKGPATH}/etc/lsb-release <<-EOF
 		DISTRIB_ID=\"Linux From Scratch\"
 		DISTRIB_RELEASE=\"20230217-systemd\"
 		DISTRIB_CODENAME=\"Gabriele\"
 		DISTRIB_DESCRIPTION=\"Linux From Scratch\"
 	EOF
-	cat > ${PKG_PKGPATH}/etc/os-release <<-EOF
+	cat > \${PKG_PKGPATH}/etc/os-release <<-EOF
 		NAME=\"Linux From Scratch\"
 		VERSION=\"20230217-systemd\"
 		ID=lfs
 		PRETTY_NAME=\"Linux From Scratch 20230217-systemd\"
 		VERSION_CODENAME=\"Gabriele\"
 	EOF
-	cat > ${PKG_PKGPATH}/etc/shells <<-EOF
+	cat > \${PKG_PKGPATH}/etc/shells <<-EOF
 		# Begin /etc/shells
 
 		/bin/sh
@@ -84,7 +84,7 @@ PKG_POSTBUILD="install -d -m755 ${PKG_PKGPATH}/etc
 
 		# End /etc/shells
 	EOF
-	sudo cat > ${PKG_PKGPATH}/etc/inputrc <<-EOF
+	sudo cat > \${PKG_PKGPATH}/etc/inputrc <<-EOF
 		# Begin /etc/inputrc
 		# Modified by Chris Lynn <roryo@roryo.dynup.net>
 
@@ -128,3 +128,5 @@ PKG_POSTBUILD="install -d -m755 ${PKG_PKGPATH}/etc
 		# End /etc/inputrc
 	EOF
 	"
+
+PKG_TOOLCHAIN=gnu

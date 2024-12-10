@@ -1,7 +1,7 @@
 # libidn
 PKG_VER=1.41
 PKG_URL="https://ftp.gnu.org/gnu/libidn/libidn-${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/Pth"
+PKG_DEPS="lfs/doxygen:native lfs/Pth"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 PKG_AUTOCONF=1
@@ -9,8 +9,8 @@ PKG_MAKETARGETS="all,install-strip"
 
 PKG_POSTBUILD="find doc -name "Makefile*" -delete
     rm -rf -v doc/{gdoc,idn.1,stamp-vti,man,texi}
-    install -vdm755 ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libidn-${PKG_VER}
-    cp -r -v doc/* ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libidn-${PKG_VER}"
+    install -vdm755 \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libidn-${PKG_VER}
+    cp -r -v doc/* \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libidn-${PKG_VER}"
 
 # Dependencies:
 

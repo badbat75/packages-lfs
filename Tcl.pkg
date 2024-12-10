@@ -1,5 +1,5 @@
 # Tcl
-PKG_VER=8.6.13
+PKG_VER=8.6.14
 PKG_URL="https://downloads.sourceforge.net/tcl/tcl${PKG_VER}-src.tar.gz"
 PKG_DEPS=
 BUILD_PROCESS=configmake
@@ -11,8 +11,8 @@ PKG_LDFLAGS="-lm -s"
 
 PKG_MAKETARGETS=",install,install-private-headers"
 
-PKG_POSTBUILD="sed -e \"s@${PKG_BLDPATH}/unix@${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}@g\" -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/{tclConfig.sh,tdbc1.1.5/tdbcConfig.sh,itcl4.2.3/itclConfig.sh}
+PKG_POSTBUILD="#sed -e \"s@\${PKG_BLDPATH}/unix@${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}@g\" -i \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/{tclConfig.sh,tdbc1.1.5/tdbcConfig.sh,itcl4.2.3/itclConfig.sh}
 
-	ln -v -sfv tclsh8.6 ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/tclsh
-	mv ${PKG_PKGPATH}${INSTALL_SHAREDIR}/man/man3/{Thread,Tcl_Thread}.3
-	chmod -v 755 ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libtcl8.6.so"
+	ln -v -sfv tclsh8.6 \${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/tclsh
+	mv \${PKG_PKGPATH}${INSTALL_SHAREDIR}/man/man3/{Thread,Tcl_Thread}.3
+	chmod -v 755 \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libtcl8.6.so"

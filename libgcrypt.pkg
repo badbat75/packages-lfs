@@ -1,9 +1,9 @@
 # libgcrypt
-PKG_VER=1.10.1
+PKG_VER=1.10.3
 PKG_URL="https://www.gnupg.org/ftp/gcrypt/libgcrypt/libgcrypt-${PKG_VER}.tar.bz2"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
-CONF_FLAGS="--disable-instrumentation-munging --with-gpg-error-prefix=${BIN_PATH}${INSTALL_PREFIX}"
+CONF_FLAGS="--disable-instrumentation-munging --with-gpg-error-prefix=\${SYSROOT}${INSTALL_PREFIX}"
 PKG_MAKETARGETS="all,install-strip"
 PKG_DEPS="lfs/libgpg-error"
 PKG_DEPS+=" lfs/Pth"

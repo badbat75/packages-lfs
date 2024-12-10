@@ -1,5 +1,5 @@
 # libmpdec
-PKG_VER=2.5.1
+PKG_VER=4.0.0
 PKG_URL="https://www.bytereef.org/software/mpdecimal/releases/mpdecimal-${PKG_VER}.tar.gz"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1

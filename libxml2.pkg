@@ -1,5 +1,5 @@
 # libxml2
-PKG_VER=2.10.3
+PKG_VER=2.11.2
 PKG_URL="https://gitlab.gnome.org/GNOME/libxml2/-/archive/v${PKG_VER}/libxml2-v${PKG_VER}.tar.bz2"
 PKG_DEPS="lfs/ncurses lfs/readline"
 BUILD_PROCESS=configmake

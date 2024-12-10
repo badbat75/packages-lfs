@@ -1,7 +1,7 @@
 # Mesa
-PKG_VER=23.0.1
+PKG_VER=23.0.3
 PKG_URL="https://mesa.freedesktop.org/archive/mesa-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/libX11 lfs/libXfixes lfs/libxshmfence lfs/libXxf86vm lfs/libxcb lfs/libXrandr"
+PKG_DEPS="lfs/bison:native lfs/flex:native lfs/libX11 lfs/libXfixes lfs/libxshmfence lfs/libXxf86vm lfs/libxcb lfs/libXrandr"
 PKG_DPES+=" lfs/libdrm"
 PKG_DEPS+=" lfs/wayland-protocols"
 BUILD_PROCESS=mesonninja

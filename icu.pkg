@@ -1,6 +1,7 @@
 # icu
-PKG_VER=72.1
+PKG_VER=74.2
 PKG_URL="https://github.com/unicode-org/icu/archive/refs/tags/release-$(echo ${PKG_VER} | sed 's/\./-/g').tar.gz"
+PKG_DEPS="lfs/doxygen:native"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 AUTOCONF_PATH="icu4c/source"

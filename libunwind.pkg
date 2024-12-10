@@ -6,3 +6,7 @@ BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS=""
 PKG_MAKETARGETS="all,install-strip"
+
+case ${TOOLCHAIN} in
+    llvm) PKG_CFLAGS="-Wno-implicit-function-declaration" ;;
+esac

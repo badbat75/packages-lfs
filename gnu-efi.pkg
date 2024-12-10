@@ -1,5 +1,5 @@
 # gnu-efi
-PKG_VER=3.0.15
+PKG_VER=3.0.17
 PKG_URL="https://netix.dl.sourceforge.net/project/gnu-efi/gnu-efi-${PKG_VER}.tar.bz2"
 PKG_OVERRIDELTO=0
 BUILD_PROCESS=simplemake

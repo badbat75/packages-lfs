@@ -2,7 +2,7 @@
 PKG_VER=0.8
 PKG_URL="https://github.com/lathiat/avahi/releases/download/v${PKG_VER}/avahi-${PKG_VER}.tar.gz"
 PATCHES="https://www.linuxfromscratch.org/patches/blfs/svn/avahi-0.8-ipv6_race_condition_fix-1.patch"
-PKG_DEPS="lfs/systemd lfs/D-Bus lfs/GLib lfs/gobject-introspection lfs/libdaemon"
+PKG_DEPS="lfs/doxygen:native lfs/xmlto:native lfs/systemd lfs/D-Bus lfs/GLib lfs/gobject-introspection lfs/libdaemon"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="--disable-libevent \
@@ -19,8 +19,6 @@ CONF_FLAGS="--disable-libevent \
     --with-distro=none \
     --with-systemdsystemunitdir=/lib/systemd/system \
     --with-dbus-system-address="'unix:path=/run/dbus/system_bus_socket'
-PKG_MAKEENV="LD_LIBRARY_PATH=${TOOLCHAIN_PATH}/lib"
-PKG_MAKEENV+=":${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
 PKG_MAKETARGETS="all,install-strip"
 
 PKG_PREBUILD="sed '426a if (events & AVAHI_WATCH_HUP) { \\
@@ -34,3 +32,12 @@ fi
 if ! getent passwd avahi; then
     useradd --system -c \"Avahi Daemon Owner\" -d /run/avahi-daemon -u 84 -g avahi -s /sbin/nologin avahi
 fi"
+
+case ${TOOLCHAIN} in
+    llvm)
+        PKG_MAKEENV="LD_LIBRARY_PATH=$(llvm-config --libdir):\${SYSROOT}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+    ;;
+    gnu)
+        PKG_MAKEENV="LD_LIBRARY_PATH=\${SYSROOT}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+    ;;
+esac

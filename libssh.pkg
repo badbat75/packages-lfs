@@ -1,7 +1,7 @@
 # libssh
 PKG_VER=0.10.4
 PKG_URL="https://git.libssh.org/projects/libssh.git/snapshot/libssh-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/zlib lfs/openssl lfs/p11-kit"
+PKG_DEPS="lfs/doxygen:native lfs/zlib lfs/openssl lfs/p11-kit"
 PKG_AUTOCONF=1
 BUILD_PROCESS=cmakebuild
 CONF_FLAGS=

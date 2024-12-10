@@ -1,0 +1,17 @@
+# libtiff
+PKG_VER=4.5.0 
+PKG_URL="https://download.osgeo.org/libtiff/tiff-${PKG_VER}.tar.gz"
+BUILD_PROCESS=cmakebuild
+CONF_FLAGS="-DWITH_JPEG8=ON -DCMAKE_INSTALL_DOCDIR=${INSTALL_SHAREDIR}/doc/libtiff-${PKG_VER}"
+#PKG_MAKETARGETS="all,install"
+
+case ${PKG_TARGET} in
+    bootstrap) ;;
+    *)
+        PKG_DEPS="lfs/Freeglut"
+        PKG_DEPS+=" lfs/libjpeg-turbo"
+        PKG_DEPS+=" lfs/libwebp"
+        #PKG_DEPS+=" lfs/JBIG-KIT"
+        #PKG_DEPS+=" lfs/LERC"
+    ;;
+esac

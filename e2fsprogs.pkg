@@ -1,5 +1,5 @@
 # e2fsprogs
-PKG_VER=1.47.0
+PKG_VER=1.47.1
 PKG_URL="https://downloads.sourceforge.net/project/e2fsprogs/e2fsprogs/v${PKG_VER}/e2fsprogs-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/util-linux"
 BUILD_PROCESS=configmake

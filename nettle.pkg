@@ -1,12 +1,10 @@
 # nettle
-PKG_VER=3.8.1
+PKG_VER=3.9
 PKG_URL="https://ftp.gnu.org/gnu/nettle/nettle-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/libgmp"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 #PKG_MAKETARGETS="all,install"
-PKG_POSTBUILD="chmod -v 755 ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/lib{hogweed,nettle}.so
-install -v -m755 -d ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/nettle-${PKG_VER} &&
-install -v -m644 \${PKG_SRCPATH}/nettle.html ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/nettle-3.8.1"
-# Dependencies:
-
+PKG_POSTBUILD="chmod -v 755 \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/lib{hogweed,nettle}.so
+install -v -m755 -d \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/nettle-${PKG_VER} &&
+install -v -m644 \${PKG_SRCPATH}/nettle.html \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/nettle-3.8.1"

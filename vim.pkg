@@ -1,5 +1,5 @@
 # vim
-PKG_VER=9.0.1386
+PKG_VER=9.1.0447
 #PKG_URL="https://anduin.linuxfromscratch.org/LFS/vim-${PKG_VER}.tar.gz"
 PKG_URL="https://github.com/vim/vim/archive/refs/tags/v${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/ncurses lfs/elfutils lfs/acl lfs/attr lfs/libX11 lfs/libSM"
@@ -15,12 +15,12 @@ CONF_VARS="vim_cv_toupper_broken=no vim_cv_terminfo=yes vim_cv_tgetent=non-zero 
 
 PKG_PREBUILD="sed -i 's/ln -s/ln -fsv/g' src/Makefile
 	echo '#define SYS_VIMRC_FILE \"/etc/vimrc\"' >> src/feature.h"
-PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
-	ln -sfv vim ${PKG_PKGPATH}${INSTALL_PREFIX}/bin/vi
-	for L in ${PKG_PKGPATH}/usr/share/man/{,*/}man1/vim.1; do
+PKG_POSTBUILD="mkdir -pv \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
+	ln -sfv vim \${PKG_PKGPATH}${INSTALL_PREFIX}/bin/vi
+	for L in \${PKG_PKGPATH}/usr/share/man/{,*/}man1/vim.1; do
     	ln -sfv vim.1 \$(dirname \$L)/vi.1
 	done
-	cat > ${PKG_PKGPATH}/etc/vimrc <<-EOF
+	cat > \${PKG_PKGPATH}/etc/vimrc <<-EOF
 		\" Begin /etc/vimrc
 
 		\" Ensure defaults are set before customizing settings, not after

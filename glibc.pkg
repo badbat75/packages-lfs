@@ -1,13 +1,26 @@
 # glibc
 PKG_URL="https://ftp.gnu.org/gnu/libc/glibc-${GLIBC_VER}.tar.xz"
+PKG_DEPS="lfs/bison:native"
 case ${GLIBC_VER} in
+	2.39)
+		PKG_VER=2.39+aa8768999e
+		PATCHES=glibc/glibc_2.39+aa8768999e.patch
+		;;
+	2.38)
+		PKG_VER=2.38+37ded328c4
+		PATCHES=glibc/glibc_2.38+37ded328c4.patch
+		;;
 	2.37)
-		PKG_VER=2.37+590d0e089b
-		PATCHES=glibc/glibc_2.37+590d0e089b.patch
+		PKG_VER=2.37+b2ab6ce0f5
+		PATCHES=glibc/glibc_2.37+b2ab6ce0f5.patch
 		;;
 	2.36)
-		PKG_VER=2.36+f3991fec80
-		PATCHES=glibc/glibc_2.36+f3991fec80.patch
+		PKG_VER=2.36+314419978f
+		PATCHES=glibc/glibc_2.36+314419978f.patch
+		;;
+	2.31)
+		PKG_VER=2.31+7b27c450c3
+		PATCHES=glibc/glibc_2.31+7b27c450c3.patch
 		;;
 	*)
 		PKG_VER=${GLIBC_VER}
@@ -15,37 +28,49 @@ case ${GLIBC_VER} in
 esac
 PATCHES="${PATCHES:+${PATCHES},}http://www.linuxfromscratch.org/patches/lfs/development/glibc-${GLIBC_VER}-fhs-1.patch"
 
+if [ -z "${OPTLEVEL}" ] || [ "${OPTLEVEL}" -lt 2 ]
+then
+	PKG_CFLAGS="-O2"
+fi
+
 PKG_OVERRIDELTO=0
 BUILD_PROCESS=configmake
-CONF_VARS="libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes libc_cv_slibdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
-PKG_MAKEVARS="cross-compiling=yes"
+CONF_VARS="libc_cv_forced_unwind=yes libc_cv_c_cleanup=yes"
+PKG_MAKEVARS="cross-compiling=yes -j${NPROCS}"
+PKG_MAKEENV="PARALLELMFLAGS=-j${NPROCS}"
 PKG_TOOLCHAIN=gnu
 PKG_OVERRIDELD=bfd
+### Got issues with sccache because overwrite /dev/null during glibc build. Issues with gcc -o /dev/null.
+PKG_DISABLECCWRAPPER=1
+###
 PKG_PREBUILD="mkdir -pv \${PKG_BLDPATH}"
 ### Configuration
 case ${PKG_TARGET} in
 	cross)
+		STD_CONF_FLAGS=0
 		PKG_PREBUILD+="
 			cat <<-EOF > \${PKG_BLDPATH}/configparms
-				rootsbindir=${INSTALL_EXECPREFIX}/bin
 				complocaledir=${TARGET_LIBDIR}/locale
 				datadir=${TARGET_SHAREDIR}
 			EOF
-			"
-		CONF_FLAGS="--libdir=${INSTALL_LIBDIR} \
+			"		
+		CONF_FLAGS="--build=${BARCH} --host=${BARCH} --target=${BARCH} \
+			--prefix=${INSTALL_PREFIX}/glibc${GLIBC_VER} \
 			--disable-profile --disable-crypt \
 			--disable-build-nscd --disable-nscd \
-			--disable-werror --disable-sanity-checks --without-cvs"
+			--disable-werror --disable-sanity-checks --without-cvs -without-selinux"
+		CONF_VARS+=" libc_cv_slibdir=${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib"
 	;;
 	headers)
-		PKG_DEPS="lfs/kernel:headers"
+		PKG_DEPS+=" lfs/kernel:headers"
 		STD_CONF_FLAGS=0
 		CONF_FLAGS="--build=${BARCH} --host=${HARCH} --target=${HARCH} --prefix=${INSTALL_PREFIX} --includedir=${INSTALL_INCLUDEDIR} \
 			--with-headers=${BIN_PATH}${INSTALL_INCLUDEDIR}"
+		CONF_VARS+=" libc_cv_compiler_ok=yes"
 		CONF_ENV="unset CXX CXXFLAGS; CC=\"${CC_FOR_BUILD}\" CFLAGS=\"${CFLAGS_FOR_BUILD}\" CC=\"${CPP_FOR_BUILD}\" CPPFLAGS=\"${CPPLAGS_FOR_BUILD}\""
 	;;
 	*)
-		PKG_DEPS="lfs/kernel:headers"
+		PKG_DEPS+=" lfs/kernel:headers"
 		PKG_PREBUILD+="
 			cat <<-EOF > \${PKG_BLDPATH}/configparms
 				rootsbindir=${INSTALL_EXECPREFIX}/sbin
@@ -58,6 +83,7 @@ case ${PKG_TARGET} in
 			--enable-pt_chown --enable-tunables --enable-bind-now \
 			--disable-profile --disable-crypt \
 			--disable-werror --disable-sanity-checks --without-cvs"
+		CONF_VARS+=" libc_cv_slibdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
 		if [ ${LFS_ENABLENSCD:-0} -eq 1 ]
 		then
 			CONF_FLAGS+=" --enable-build-nscd --enable-nscd"
@@ -89,8 +115,10 @@ esac
 ### Make
 case ${PKG_TARGET} in
 	cross)
-		PKG_MAKETARGETS="lib,elf/subdir_lib,locale/others,elf/ldso_install,${TOOLCHAIN_PATH}/lib/libc.so.6,${TOOLCHAIN_PATH}/lib/libc.so,locale/subdir_install"
-		PKG_POSTBUILD="patchelf --remove-rpath ${INSTALL_LIBDIR}/ld-linux*.so.*;"
+		PKG_MAKETARGETS="lib,elf/subdir_lib,locale/others,elf/ldso_install,${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib/libc.so.6,${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib/libc.so,locale/subdir_install"
+		PKG_POSTBUILD="ln -sfv ${INSTALL_PREFIX}/glibc${GLIBC_VER}/bin/localedef ${INSTALL_PREFIX}/bin
+			install -vdm755 ${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib/locale
+			patchelf --remove-rpath ${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib/ld-linux*.so.*;"
 	;;
 	headers)
 		PKG_MAKEVARS+=" install-bootstrap-headers=yes"
@@ -106,14 +134,14 @@ case ${PKG_TARGET} in
 	*)
 		if [ -n "${INSTALL_LIBSUFFIX}" ]
 		then
-			PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/lib
+			PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}/lib
 				LD_LINUX_NAME=\$(basename elf/ld-linux-*.so.*)
-				ln -sfv \"${INSTALL_LIBSUFFIX/#\//}/\${LD_LINUX_NAME}\" \"${PKG_PKGPATH}/lib\"
+				ln -sfv \"${INSTALL_LIBSUFFIX/#\//}/\${LD_LINUX_NAME}\" \"\${PKG_PKGPATH}/lib\"
 				"
 		fi
-		PKG_POSTBUILD+="touch ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf
+		PKG_POSTBUILD+="install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf.d
 
-			cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/nsswitch.conf <<-EOF
+			cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/nsswitch.conf <<-EOF
 				# Begin /etc/nsswitch.conf
 
 				passwd: files
@@ -131,47 +159,58 @@ case ${PKG_TARGET} in
 				# End /etc/nsswitch.conf
 			EOF
 
-			cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf <<-EOF
-			# Begin /etc/ld.so.conf
-			# Add an include directory
+			cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf <<-EOF
+				# Begin /etc/ld.so.conf
+				# Add an include directory
 
-			include /etc/ld.so.conf.d/*.conf
+				include /etc/ld.so.conf.d/*.conf
 
-			# End /etc/ld.so.conf
+				# End /etc/ld.so.conf
 			EOF
-			install -vdm755 ${PKG_PKGPATH}${INSTALL_LIBDIR}/locale
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i POSIX -f UTF-8 C.UTF-8 2>&1 || true
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i cs_CZ -f UTF-8 cs_CZ.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE -f ISO-8859-1 de_DE
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE@euro -f ISO-8859-15 de_DE@euro
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i de_DE -f UTF-8 de_DE.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i el_GR -f ISO-8859-7 el_GR
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_GB -f UTF-8 en_GB.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_HK -f ISO-8859-1 en_HK
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_PH -f ISO-8859-1 en_PH
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_US -f ISO-8859-1 en_US
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i en_US -f UTF-8 en_US.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i es_MX -f ISO-8859-1 es_MX
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fa_IR -f UTF-8 fa_IR
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR -f ISO-8859-1 fr_FR
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR@euro -f ISO-8859-15 fr_FR@euro
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i fr_FR -f UTF-8 fr_FR.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i it_IT -f ISO-8859-1 it_IT
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i it_IT -f UTF-8 it_IT.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f EUC-JP ja_JP
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f SHIFT_JIS ja_JP.SIJS --no-warnings=ascii
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ja_JP -f UTF-8 ja_JP.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ru_RU -f KOI8-R ru_RU.KOI8-R
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i ru_RU -f UTF-8 ru_RU.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i tr_TR -f UTF-8 tr_TR.UTF-8
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i zh_CN -f GB18030 zh_CN.GB18030
-			I18NPATH=${PKG_PKGPATH}/usr/share/i18n localedef --prefix=${PKG_PKGPATH} -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS;"
+
+			install -vdm755 \${PKG_PKGPATH}${INSTALL_LIBDIR}/locale
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i C -f UTF-8 C.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i cs_CZ -f UTF-8 cs_CZ.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i de_DE -f ISO-8859-1 de_DE
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i de_DE@euro -f ISO-8859-15 de_DE@euro
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i de_DE -f UTF-8 de_DE.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i el_GR -f ISO-8859-7 el_GR
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i en_GB -f ISO-8859-1 en_GB
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i en_GB -f UTF-8 en_GB.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i en_HK -f ISO-8859-1 en_HK
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i en_PH -f ISO-8859-1 en_PH
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i en_US -f ISO-8859-1 en_US
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i en_US -f UTF-8 en_US.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i es_ES -f ISO-8859-15 es_ES@euro
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i es_MX -f ISO-8859-1 es_MX
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i fa_IR -f UTF-8 fa_IR
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i fr_FR -f ISO-8859-1 fr_FR
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i fr_FR@euro -f ISO-8859-15 fr_FR@euro
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i fr_FR -f UTF-8 fr_FR.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i is_IS -f ISO-8859-1 is_IS
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i is_IS -f UTF-8 is_IS.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i it_IT -f ISO-8859-1 it_IT
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i it_IT -f ISO-8859-15 it_IT@euro
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i it_IT -f UTF-8 it_IT.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i ja_JP -f EUC-JP ja_JP
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i ja_JP -f SHIFT_JIS ja_JP.SJIS --no-warnings=ascii
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i ja_JP -f UTF-8 ja_JP.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i nl_NL@euro -f ISO-8859-15 nl_NL@euro
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i ru_RU -f KOI8-R ru_RU.KOI8-R
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i ru_RU -f UTF-8 ru_RU.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i se_NO -f UTF-8 se_NO.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i ta_IN -f UTF-8 ta_IN.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i tr_TR -f UTF-8 tr_TR.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i zh_CN -f GB18030 zh_CN.GB18030
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i zh_HK -f BIG5-HKSCS zh_HK.BIG5-HKSCS
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i zh_TW -f UTF-8 zh_TW.UTF-8;"
+		
 		if [ ${LFS_ENABLENSCD:-0} -eq 1 ]
 		then
-			PKG_POSTBUILD+="cp -fv \${PKG_SRCPATH}/nscd/nscd.conf ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/nscd.conf
-				install -vdm755 ${PKG_PKGPATH}/var/cache/nscd
-				install -vDm644 \${PKG_SRCPATH}/nscd/nscd.tmpfiles ${PKG_PKGPATH}${INSTALL_LIBDIR}/tmpfiles.d/nscd.conf
-				install -vDm644 \${PKG_SRCPATH}/nscd/nscd.service ${PKG_PKGPATH}/lib/systemd/system/nscd.service;"
+			PKG_POSTBUILD+="cp -fv \${PKG_SRCPATH}/nscd/nscd.conf \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/nscd.conf
+				install -vdm755 \${PKG_PKGPATH}/var/cache/nscd
+				install -vDm644 \${PKG_SRCPATH}/nscd/nscd.tmpfiles \${PKG_PKGPATH}${INSTALL_LIBDIR}/tmpfiles.d/nscd.conf
+				install -vDm644 \${PKG_SRCPATH}/nscd/nscd.service \${PKG_PKGPATH}/lib/systemd/system/nscd.service;"
 			PKG_POSTINSTALL+="systemctl disable nscd"
 		fi
 		PKG_POSTINSTALL_PRIO=01
@@ -183,5 +222,5 @@ then
 fi
 PKG_POSTBUILD+="if [ ! -f \${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/gnu/stubs.h ]
 	then
-		install -vDm644 /dev/null ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/gnu/stubs.h
+		install -vDm644 /dev/null \${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/gnu/stubs.h
 	fi"

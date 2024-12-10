@@ -11,8 +11,8 @@ CONF_FLAGS="--without-included-zlib"
 PKG_LDFLAGS="-s"
 PKG_MAKETARGETS=",install"
 
-PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/rsyncd.conf <<-EOF
+PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/rsyncd.conf <<-EOF
 		# This is a basic rsync configuration file
 		# It exports a single module without user authentication.
 
@@ -29,8 +29,8 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
 		
 	EOF
 
-	install -vdm755 ${PKG_PKGPATH}/lib/systemd/system
-	cat > ${PKG_PKGPATH}/lib/systemd/system/rsyncd.socket <<-EOF
+	install -vdm755 \${PKG_PKGPATH}/lib/systemd/system
+	cat > \${PKG_PKGPATH}/lib/systemd/system/rsyncd.socket <<-EOF
 		[Unit]
 		Description=Rsync Socket
 		Conflicts=rsyncd.service
@@ -43,7 +43,7 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
 		WantedBy=sockets.target
 	EOF
 
-	cat > ${PKG_PKGPATH}/lib/systemd/system/rsyncd.service <<-EOF
+	cat > \${PKG_PKGPATH}/lib/systemd/system/rsyncd.service <<-EOF
 		[Unit]
 		Description=A file transfer program to keep remote files in sync
 		ConditionPathExists=/etc/rsyncd.conf
@@ -56,7 +56,7 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
 		WantedBy=multi-user.target
 	EOF
 
-	cat > ${PKG_PKGPATH}/lib/systemd/system/rsyncd@.service <<-EOF
+	cat > \${PKG_PKGPATH}/lib/systemd/system/rsyncd@.service <<-EOF
 		[Unit]
 		Description=A file transfer program to keep remote files in sync
 		ConditionPathExists=/etc/rsyncd.conf

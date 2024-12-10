@@ -1,7 +1,8 @@
 # Xwayland
 PKG_VER=23.1.1
 PKG_URL="https://www.x.org/pub/individual/xserver/xwayland-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/wayland-protocols"
+PKG_DEPS="lfs/xmlto:native"
+PKG_DEPS+=" lfs/wayland-protocols"
 PKG_DEPS+=" lfs/xorgproto"
 PKG_DEPS+=" lfs/xkbcomp"
 PKG_DEPS+=" lfs/libXfont2"

@@ -1,6 +1,7 @@
 # sharutils
 PKG_VER=4.15.2
 PKG_URL="https://ftp.gnu.org/gnu/sharutils/sharutils-${PKG_VER}.tar.xz"
+PKG_DEPS="lfs/bison:native lfs/flex:native"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 PKG_MAKETARGETS="all,install-strip"

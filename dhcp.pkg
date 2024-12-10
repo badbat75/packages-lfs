@@ -1,6 +1,7 @@
 # dhcp
 PKG_VER=4.4.3-P1
 PKG_URL="https://downloads.isc.org/isc/dhcp/${PKG_VER}/dhcp-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/flex:native"
 PKG_AUTOCONF=1
 AUTOCONF_PATH=autoscan
 BUILD_PROCESS=configmake
@@ -20,12 +21,12 @@ CONF_FLAGS="--with-randomdev=/dev/urandom \
 	--with-bind-extra-config=\"--build=${BARCH}\" BUILD_CC=\"\${CC_FOR_BUILD}\" BUILD_CFLAGS=\"\${CFLAGS_FOR_BUILD}\""
 PKG_MAKEVARS="AR=\"\${AR_FOR_BUILD}\""
 PKG_MAKETARGETS="DESTDIR= all,install-strip"
-PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/sbin
-	install -vdm755  ${PKG_PKGPATH}/var/lib/dhclient
-	install -vm755 \${PKG_SRCPATH}/client/scripts/linux ${PKG_PKGPATH}/sbin/dhclient-script
+PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}/sbin
+	install -vdm755  \${PKG_PKGPATH}/var/lib/dhclient
+	install -vm755 \${PKG_SRCPATH}/client/scripts/linux \${PKG_PKGPATH}/sbin/dhclient-script
 
-	install -vdm755 ${PKG_PKGPATH}/lib/systemd/system
-	cat >${PKG_PKGPATH}/lib/systemd/system/dhclient@.service <<-EOF
+	install -vdm755 \${PKG_PKGPATH}/lib/systemd/system
+	cat >\${PKG_PKGPATH}/lib/systemd/system/dhclient@.service <<-EOF
 		[Unit]
 		Description=ISC DHCP Client on %I
 		Wants=network.target
@@ -43,8 +44,8 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/sbin
 		WantedBy=multi-user.target
 	EOF
 
-	install -vdm755 ${PKG_PKGPATH}/etc/dhcp
-	cat > ${PKG_PKGPATH}/etc/dhcp/dhclient.conf <<-EOF
+	install -vdm755 \${PKG_PKGPATH}/etc/dhcp
+	cat > \${PKG_PKGPATH}/etc/dhcp/dhclient.conf <<-EOF
 		# Begin /etc/dhcp/dhclient.conf
 		#
 		# Basic dhclient.conf(5)
@@ -64,7 +65,7 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/sbin
 		# End /etc/dhcp/dhclient.conf
 	EOF
 
-	cat > ${PKG_PKGPATH}/etc/dhcp/dhcpd.conf <<-EOF
+	cat > \${PKG_PKGPATH}/etc/dhcp/dhcpd.conf <<-EOF
 		# Begin /etc/dhcp/dhcpd.conf
 		#
 		# Example dhcpd.conf(5)

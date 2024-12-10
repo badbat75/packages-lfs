@@ -10,8 +10,8 @@ BUILD_PROCESS=configmake
 CONF_FLAGS="--disable-nftables --enable-libipq"
 PKG_MAKETARGETS="all,install-strip"
 
-PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/lib/systemd/system
-	cat <<-EOF > ${PKG_PKGPATH}/lib/systemd/system/iptables.services
+PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}/lib/systemd/system
+	cat <<-EOF > \${PKG_PKGPATH}/lib/systemd/system/iptables.services
 		[Unit]
 		Description=Load Iptables Rules
 		ConditionFileIsExecutable=/etc/systemd/scripts/iptables
@@ -26,8 +26,8 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/lib/systemd/system
 		[Install]
 		WantedBy=multi-user.target
 	EOF
-	install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts
-	cat <<-EOF > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts/iptables.personalfw
+	install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts
+	cat <<-EOF > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts/iptables.personalfw
 		#!/bin/sh
 
 		# Begin /etc/systemd/scripts/iptables
@@ -101,7 +101,7 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/lib/systemd/system
 
 		# End /etc/systemd/scripts/iptables
 	EOF
-	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts/iptables.masquerading <<-EOF
+	cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts/iptables.masquerading <<-EOF
 		#!/bin/sh
 
 		# Begin /etc/systemd/scripts/iptables
@@ -209,4 +209,4 @@ PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}/lib/systemd/system
 
 		# End /etc/systemd/scripts/iptables
 	EOF
-	chmod 700 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts/iptables*"
+	chmod 700 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/scripts/iptables*"

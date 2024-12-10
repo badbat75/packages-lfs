@@ -10,7 +10,7 @@ case ${PKG_TARGET} in
         CONF_FLAGS+=" -Ddocumentation=false"
     ;;
     *)
-        PKG_DEPS="lfs/libxml2 lfs/expat lfs/wayland:cross"
+        PKG_DEPS="lfs/doxygen:native lfs/xmlto:native lfs/libxml2 lfs/expat lfs/wayland:cross"
         CONF_ENV="PKG_CONFIG_SYSROOT_DIR= PKG_CONFIG_LIBDIR+=:${TOOLCHAIN_PATH}/lib/pkgconfig"
     ;;
 esac

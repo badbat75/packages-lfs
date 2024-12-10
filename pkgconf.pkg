@@ -1,5 +1,5 @@
 # pkgconf
-PKG_VER=1.9.4
+PKG_VER=2.2.0
 PKG_URL="https://github.com/pkgconf/pkgconf/archive/refs/tags/pkgconf-${PKG_VER}.tar.gz"
 PKG_AUTOCONF=1
 BUILD_PROCESS=configmake
@@ -23,8 +23,8 @@ case "${PKG_TARGET}" in
 		CONF_FLAGS="--with-pkg-config-dir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig:${INSTALL_PREFIX}/share/pkgconfig \
 			--with-system-include-path=${INSTALL_INCLUDEDIR} \
 			--with-system-library-path=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
-		PKG_POSTBUILD="ln -fsv pkgconf ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/pkg-config
-			mv -v ${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal ${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal.2bmoved"
+		PKG_POSTBUILD="ln -fsv pkgconf \${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/pkg-config
+			mv -v \${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal \${PKG_PKGPATH}${INSTALL_PREFIX}/share/aclocal.2bmoved"
 		PKG_POSTINSTALL="if [ -d ${INSTALL_PREFIX}/share/aclocal.2bmoved ]
 		then
 			cp -fprv ${INSTALL_PREFIX}/share/aclocal.2bmoved/* ${INSTALL_PREFIX}/share/aclocal/

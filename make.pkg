@@ -18,4 +18,4 @@ case "${PKG_TARGET}" in
     ;;
 esac
 
-PKG_POSTBUILD="ln -fsv make ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/gmake"
+PKG_POSTBUILD="ln -fsv make \${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/gmake"

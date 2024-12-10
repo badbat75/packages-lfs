@@ -1,7 +1,7 @@
 # krb5
-PKG_VER=1.20.1
+PKG_VER=1.21.2
 PKG_URL="https://kerberos.org/dist/krb5/$(echo ${PKG_VER} | cut -d. -f1,2)/krb5-${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/e2fsprogs:bootstrap"
+PKG_DEPS="lfs/bison:native lfs/e2fsprogs:bootstrap"
 BUILD_PROCESS=configmake
 #PKG_AUTOCONF=1
 #AUTOCONF_PATH=src
@@ -32,7 +32,7 @@ case ${PKG_TARGET} in
 		PKG_DEPS+=" lfs/openldap:bootstrap"
 		PKG_DEPS+=" lfs/bind9:bootstrap"
 		CONF_FLAGS+=" --with-ldap"
-		PKG_POSTBUILD="install -v -dm755 ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/krb5-${PKG_VER} &&
-			cp -vfr \${PKG_SRCPATH}/doc/*  ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/krb5-${PKG_VER}"
+		PKG_POSTBUILD="install -v -dm755 \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/krb5-${PKG_VER} &&
+			cp -vfr \${PKG_SRCPATH}/doc/*  \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/krb5-${PKG_VER}"
 	;;
 esac

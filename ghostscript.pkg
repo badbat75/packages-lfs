@@ -1,0 +1,36 @@
+# ghostscript
+PKG_VER=10.01.1
+PKG_URL="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PKG_VER//./}/ghostscript-${PKG_VER}.tar.xz"
+#PKG_DEPS="lfs/cups:bootstrap"
+PKG_DEPS+=" lfs/fontconfig"
+PKG_DEPS+=" lfs/FreeType"
+PKG_DEPS+=" lfs/LittleCMS"
+PKG_DEPS+=" lfs/libjpeg-turbo"
+PKG_DEPS+=" lfs/libpng"
+PKG_DEPS+=" lfs/libtiff"
+PKG_DEPS+=" lfs/OpenJPEG"
+PKG_DEPS+=" lfs/Cairo:bootstrap"
+#PKG_DEPS+=" lfs/GTK+"
+PKG_DEPS+=" lfs/libidn"
+#PKG_DEPS+=" lfs/libpaper"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--with-system-libtiff"
+PKG_MAKETARGETS="so,install,soinstall"
+
+PKG_PREBUILD="rm -rf freetype lcms2mt jpeg libpng openjpeg zlib"
+
+#PKG_CFLAGS="-I\$(\${PKG_CONFIG} --cflags libopenjp2)"
+
+PKG_POSTBUILD="install -v -m644 base/*.h \${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/ghostscript &&
+ln -sfvn ghostscript \${PKG_PKGPATH}${INSTALL_INCLUDEDIR}//ps
+mv -v \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/ghostscript/${PKG_VER} \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/ghostscript-${PKG_VER}  &&
+rm -rfv \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/ghostscript &&
+cp -r examples/ \${PKG_PKGPATH}${INSTALL_SHAREDIR}/ghostscript/${PKG_VER}"
+
+PKG_COPYSRC=1
+PKG_FAULTYCFLAGS=1
+
+case ${TOOLCHAIN} in
+    llvm) PKG_CFLAGS="-Wno-shift-negative-value" ;;
+esac

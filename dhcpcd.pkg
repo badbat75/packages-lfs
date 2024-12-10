@@ -1,6 +1,6 @@
 # dhcpcd
-PKG_VER=9.4.1
-PKG_URL="https://roy.marples.name/downloads/dhcpcd/dhcpcd-${PKG_VER}.tar.xz"
+PKG_VER=10.0.8
+PKG_URL="https://github.com/NetworkConfiguration/dhcpcd/releases/download/v${PKG_VER}/dhcpcd-${PKG_VER}.tar.xz"
 PKG_COPYSRC=1
 BUILD_PROCESS=configmake
 CONF_FLAGS="--runstatedir=/run/dhcpcd --dbdir=/var/lib/dhcpcd --privsepuser=dhcpcd"
@@ -8,9 +8,9 @@ CONF_FLAGS="--runstatedir=/run/dhcpcd --dbdir=/var/lib/dhcpcd --privsepuser=dhcp
 
 PKG_PREBUILD="sed '/Deny everything else/i SECCOMP_ALLOW(__NR_getrandom),' -i src/privsep-linux.c
 	sed '/^if \\[ -n \"\$INCLUDEDIR\" \\]; then/,+2d' -i configure"
-PKG_POSTBUILD="install  -v -m700 -d ${PKG_PKGPATH}/var/lib/dhcpcd
-    mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
-    cat >${PKG_PKGPATH}/lib/systemd/system/dhcpcd5.dhcpcd.service <<-EOF
+PKG_POSTBUILD="install  -v -m700 -d \${PKG_PKGPATH}/var/lib/dhcpcd
+    mkdir -pv \${PKG_PKGPATH}/lib/systemd/system
+    cat >\${PKG_PKGPATH}/lib/systemd/system/dhcpcd5.dhcpcd.service <<-EOF
 		[Unit]
 		Description=DHCP Client Daemon on all interfaces
 		Wants=network.target
@@ -47,7 +47,7 @@ PKG_POSTBUILD="install  -v -m700 -d ${PKG_PKGPATH}/var/lib/dhcpcd
 		[Install]
 		WantedBy=multi-user.target
 	EOF
-    cat >${PKG_PKGPATH}/lib/systemd/system/dhcpcd5.dhcpcd@.service <<-EOF
+    cat >\${PKG_PKGPATH}/lib/systemd/system/dhcpcd5.dhcpcd@.service <<-EOF
 		[Unit]
 		Description=DHCP Client Daemon on %I
 		Wants=network.target

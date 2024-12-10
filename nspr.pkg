@@ -1,5 +1,5 @@
 # nspr
-PKG_VER=4.35
+PKG_VER=4.36
 PKG_URL="https://archive.mozilla.org/pub/nspr/releases/v${PKG_VER}/src/nspr-${PKG_VER}.tar.gz"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
@@ -14,3 +14,4 @@ fi
 
 PKG_PREBUILD="sed -ri '/^RELEASE/s/^/#/' nspr/pr/src/misc/Makefile.in"
 PKG_FAULTYCFLAGS=1
+PKG_TOOLCHAIN=gnu

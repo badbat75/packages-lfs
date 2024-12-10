@@ -1,7 +1,7 @@
 # wpa2
-PKG_VER=2.10+bb945b9
-#PKG_URL="https://w1.fi/cgit/hostap/snapshot/hostap_$(echo ${PKG_VER} | sed 's/\./_/g').tar.gz"
-PKG_URL="https://w1.fi/cgit/hostap/snapshot/hostap-bb945b98fefc64887dffb40773a19d77585cee42.tar.bz2"
+PKG_VER=2.10
+PKG_URL="https://w1.fi/cgit/hostap/snapshot/hostap_$(echo ${PKG_VER} | sed 's/\./_/g').tar.gz"
+#PKG_URL="https://w1.fi/cgit/hostap/snapshot/hostap-bb945b98fefc64887dffb40773a19d77585cee42.tar.bz2"
 
 case ${PKG_TARGET} in
 	wpa_supplicant)
@@ -96,21 +96,21 @@ case ${PKG_TARGET} in
 			EOF
 			"
 
-		PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}/sbin ${PKG_PKGPATH}/lib/systemd/system
-			install -d ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/wpa_supplicant
-			install -v -m755 -s --strip-program=${HARCH:+${HARCH}-}strip -D wpa_supplicant/{wpa_cli,wpa_passphrase,wpa_supplicant} ${PKG_PKGPATH}/sbin/
-			install -vdm755 ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/pm-utils/sleep.d
-			install -v -m644 -D wpa_supplicant/examples/60_wpa_supplicant ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/pm-utils/sleep.d/
-			install -v -m644 -D wpa_supplicant/systemd/*.service ${PKG_PKGPATH}/lib/systemd/system/"
+		PKG_POSTBUILD="mkdir -pv \${PKG_PKGPATH}/sbin \${PKG_PKGPATH}/lib/systemd/system
+			install -d \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/wpa_supplicant
+			install -v -m755 -s --strip-program=${HARCH:+${HARCH}-}strip -D wpa_supplicant/{wpa_cli,wpa_passphrase,wpa_supplicant} \${PKG_PKGPATH}/sbin/
+			install -vdm755 \${PKG_PKGPATH}${INSTALL_PREFIX}/lib/pm-utils/sleep.d
+			install -v -m644 -D wpa_supplicant/examples/60_wpa_supplicant \${PKG_PKGPATH}${INSTALL_PREFIX}/lib/pm-utils/sleep.d/
+			install -v -m644 -D wpa_supplicant/systemd/*.service \${PKG_PKGPATH}/lib/systemd/system/"
 
 		if false
 		then
 			PKG_POST_BUILD+=";make -C wpa_supplicant/doc/docbook
-				cp wpa_supplicant/doc/docbook/wpa_background.8 ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_background.8
-				cp wpa_supplicant/doc/docbook/wpa_cli.8 ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_cli.8
-				cp wpa_supplicant/doc/docbook/wpa_passphrase.8 ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_passphrase.8
-				cp wpa_supplicant/doc/docbook/wpa_supplicant.8 ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_supplicant.8
-				cp wpa_supplicant/doc/docbook/wpa_supplicant.conf.5 ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man5/ && gzip -f ${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man5/wpa_supplicant.conf.5"
+				cp wpa_supplicant/doc/docbook/wpa_background.8 \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_background.8
+				cp wpa_supplicant/doc/docbook/wpa_cli.8 \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_cli.8
+				cp wpa_supplicant/doc/docbook/wpa_passphrase.8 \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_passphrase.8
+				cp wpa_supplicant/doc/docbook/wpa_supplicant.8 \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/ && gzip -f \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man8/wpa_supplicant.8
+				cp wpa_supplicant/doc/docbook/wpa_supplicant.conf.5 \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man5/ && gzip -f \${PKG_PKGPATH}\${INSTALL_PREFIX}/share/man/man5/wpa_supplicant.conf.5"
 		fi
 
 		# Bug in Fedora OpenJade
@@ -128,10 +128,10 @@ case ${PKG_TARGET} in
 			CONFIG_CTRL_IFACE_DBUS_INTRO=y
 		EOF
 		"
-		PKG_POSTBUILD+=";install -vdm755 ${PKG_PKGPATH}${INSTALL_PREFIX}/share/dbus-1/system-services
-			install -v -m644 -D wpa_supplicant/dbus/fi.*.service ${PKG_PKGPATH}${INSTALL_PREFIX}/share/dbus-1/system-services/
-			install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/dbus-1/system.d
-			install -v -m644 -D wpa_supplicant/dbus/dbus-wpa_supplicant.conf ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/dbus-1/system.d/wpa_supplicant.conf"
+		PKG_POSTBUILD+=";install -vdm755 \${PKG_PKGPATH}${INSTALL_PREFIX}/share/dbus-1/system-services
+			install -v -m644 -D wpa_supplicant/dbus/fi.*.service \${PKG_PKGPATH}${INSTALL_PREFIX}/share/dbus-1/system-services/
+			install -vdm755 \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/dbus-1/system.d
+			install -v -m644 -D wpa_supplicant/dbus/dbus-wpa_supplicant.conf \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/dbus-1/system.d/wpa_supplicant.conf"
 
 		PKG_POSTINSTALL="# create bluetooth group if not already present
 if ! getent group netdev > /dev/null; then
@@ -190,17 +190,17 @@ fi
 				CONFIG_VLAN_NETLINK=y
 				EOF
 			"
-		PKG_POSTBUILD="install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/sbin
-			install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man1
-			install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8
-			install --mode=755 -s --strip-program=${HARCH:+${HARCH}-}strip -D hostapd/hostapd ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/
-			install --mode=755 -s --strip-program=${HARCH:+${HARCH}-}strip -D hostapd/hostapd_cli ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/
-			install -d ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man{5,8}
-			cp hostapd/hostapd.8 ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8/ && gzip -f ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8/hostapd.8
-			cp hostapd/hostapd_cli.1 ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man5/ && gzip -f ${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man5/hostapd_cli.1
+		PKG_POSTBUILD="install -d \${PKG_PKGPATH}${INSTALL_PREFIX}/sbin
+			install -d \${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man1
+			install -d \${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8
+			install --mode=755 -s --strip-program=${HARCH:+${HARCH}-}strip -D hostapd/hostapd \${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/
+			install --mode=755 -s --strip-program=${HARCH:+${HARCH}-}strip -D hostapd/hostapd_cli \${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/
+			install -d \${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man{5,8}
+			cp hostapd/hostapd.8 \${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8/ && gzip -f \${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man8/hostapd.8
+			cp hostapd/hostapd_cli.1 \${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man5/ && gzip -f \${PKG_PKGPATH}${INSTALL_PREFIX}/share/man/man5/hostapd_cli.1
 
-			mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
-			cat > ${PKG_PKGPATH}/lib/systemd/system/hostapd.service <<-EOF
+			mkdir -pv \${PKG_PKGPATH}/lib/systemd/system
+			cat > \${PKG_PKGPATH}/lib/systemd/system/hostapd.service <<-EOF
 				[Unit]
 				Description=Access point and authentication server for Wi-Fi and Ethernet
 				Documentation=man:hostapd(8)
@@ -218,7 +218,7 @@ fi
 				[Install]
 				WantedBy=multi-user.target
 			EOF
-			cat > ${PKG_PKGPATH}/lib/systemd/system/hostapd\@.service <<-EOF
+			cat > \${PKG_PKGPATH}/lib/systemd/system/hostapd\@.service <<-EOF
 				[Unit]
 				Description=Access point and authentication server for Wi-Fi and Ethernet (%I)
 				Documentation=man:hostapd(8)
@@ -237,8 +237,8 @@ fi
 				WantedBy=multi-user.target sys-subsystem-net-devices-%i.device
 			EOF
 
-			mkdir -pv ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default
-			cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default/hostapd <<-EOF
+			mkdir -pv \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default
+			cat > \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/default/hostapd <<-EOF
 				# Defaults for hostapd initscript
 				#
 				# WARNING: The DAEMON_CONF setting has been deprecated and will be removed

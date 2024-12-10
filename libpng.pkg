@@ -7,5 +7,5 @@ PKG_AUTOCONF=1
 CONF_FLAGS=""
 PKG_MAKETARGETS="all,install-strip"
 
-PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libpng-${PKG_VER}
-    install -vDm644 \${PKG_SRCPATH}/{README,libpng-manual.txt} ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libpng-${PKG_VER}"
+PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libpng-${PKG_VER}
+    install -vDm644 \${PKG_SRCPATH}/{README,libpng-manual.txt} \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libpng-${PKG_VER}"

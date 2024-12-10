@@ -16,7 +16,7 @@ CONF_FLAGS+=" -DLLVM_ENABLE_RTTI:BOOL=ON "
 CONF_FLAGS+=" -DLLVM_TARGETS_TO_BUILD:STRING=\"$(
 		case "${HM}" in
 			aarch64) echo -n AArch64 ;;
-			arm) echo -n Arm ;;
+			arm) echo -n ARM ;;
 			mips) echo -n Mips ;;
 			powerpc) echo -n PowerPC ;;
 			riscv) echo -n RISCV ;;
@@ -25,17 +25,35 @@ CONF_FLAGS+=" -DLLVM_TARGETS_TO_BUILD:STRING=\"$(
 		esac
 	);AMDGPU;BPF\""
 CONF_FLAGS+=" -DLLVM_BINUTILS_INCDIR:FILEPATH=\"\${SYSROOT}/usr/include\""
-CONF_FLAGS+=" -DLLVM_TABLEGEN:FILEPATH=${GLOBAL_TOOLCHAIN_PATH}/llvm-${LLVM_VER}/bin/llvm-tblgen"
+if "${GLOBAL_TOOLCHAIN_PATH}/llvm-${LLVM_VER}/bin/llvm-tblgen" --version >/dev/null 2>&1
+then
+	CONF_FLAGS+=" -DLLVM_TABLEGEN:FILEPATH=${GLOBAL_TOOLCHAIN_PATH}/llvm-${LLVM_VER}/bin/llvm-tblgen"
+else
+	if llvm-tblgen --version >/dev/null 2>&1
+	then
+		CONF_FLAGS+=" -DLLVM_TABLEGEN:FILEPATH=$(which llvm-tblgen)"
+	fi
+fi
 CONF_FLAGS+=" -DLLVM_LIBDIR_SUFFIX:STRING=${HARCH_LIB}${INSTALL_LIBSUFFIX}"
 CONF_FLAGS+=" -DLLVM_USE_HOST_TOOLS:BOOL=ON"
 CONF_FLAGS+=" -DLLVM_INCLUDE_BENCHMARKS:BOOL=OFF"
 CONF_FLAGS+=" -DLLVM_INCLUDE_TESTS:BOOL=OFF"
 CONF_FLAGS+=" -DLLVM_ENABLE_BINDINGS:BOOL=OFF"
+CONF_FLAGS+=" -DCCACHE_PROGRAM=${CCWRAPPER}"
 
 CONF_FLAGS+=" -Wno-dev"
 #CONF_FLAGS+=" -DCLANG_DEFAULT_PIE_ON_LINUX=ON"
-PKG_MAKETARGETS="install/strip"
 PKG_OVERRIDESHARED=0
+PKG_OVERRIDESTATIC=1
 PKG_PREBUILD="download_uncompress https://github.com/llvm/llvm-project/releases/download/llvmorg-${PKG_VER}/cmake-${PKG_VER}.src.tar.xz \${PKG_SRCPATH}/cmake-${PKG_VER}.src
 	sed '/LLVM_COMMON_CMAKE_UTILS/s@../cmake@cmake-${PKG_VER}.src@' -i CMakeLists.txt"
-PKG_TOOLCHAIN=llvm
+#PKG_TOOLCHAIN=llvm
+
+case ${PKG_TARGET} in
+	native)
+		PKG_MAKETARGETS="llvm-tblgen,install-llvm-tblgen-stripped"
+	;;
+	*)
+		PKG_MAKETARGETS="install/strip"
+	;;
+esac

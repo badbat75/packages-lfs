@@ -1,5 +1,5 @@
 # GLib
-PKG_VER=2.76.1
+PKG_VER=2.78.6
 PKG_URL="https://download.gnome.org/sources/glib/$(echo ${PKG_VER} | cut -d'.' -f1,2)/glib-${PKG_VER}.tar.xz"
 case "${PKG_TARGET}" in
 	bootstrap)

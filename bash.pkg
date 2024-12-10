@@ -1,7 +1,7 @@
 # bash
-PKG_VER=5.2p15
-PKG_URL="https://git.savannah.gnu.org/cgit/bash.git/snapshot/bash-ec8113b9861375e4e17b3307372569d429dec814.tar.gz"
-PKG_DEPS="lfs/ncurses lfs/readline"
+PKG_VER=5.2p37
+PKG_URL="https://git.savannah.gnu.org/cgit/bash.git/snapshot/bash-c5c97b371044a44b701b6efa35984a3e1956344e.tar.gz"
+PKG_DEPS="lfs/bison:native lfs/flex:native lfs/ncurses lfs/readline"
 
 BUILD_PROCESS=configmake
 #PKG_OVERRIDELTO=0
@@ -17,11 +17,11 @@ esac
 
 PKG_PREBUILD="sed -i 's/(INSTALL_PROGRAM) -s/(INSTALL_PROGRAM) --strip-program=\\\${STRIP} -s/' Makefile.in"
 
-PKG_POSTBUILD="mkdir -pv ${PKG_PKGPATH}${INSTALL_SYSCONFDIR} ${PKG_PKGPATH}/root
-ln -sfv bash ${PKG_PKGPATH}${INSTALL_PREFIX}/bin/sh
+PKG_POSTBUILD="mkdir -pv \${PKG_PKGPATH}${INSTALL_SYSCONFDIR} \${PKG_PKGPATH}/root
+ln -sfv bash \${PKG_PKGPATH}${INSTALL_PREFIX}/bin/sh
 #####################################################################################
 echo /etc/profile
-cat > ${PKG_PKGPATH}/etc/profile <<EOF
+cat > \${PKG_PKGPATH}/etc/profile <<EOF
 # Begin /etc/profile
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -103,10 +103,10 @@ unset script RED GREEN NORMAL
 
 # End /etc/profile
 EOF
-install --directory --mode=0755 ${PKG_PKGPATH}/etc/profile.d
+install --directory --mode=0755 \${PKG_PKGPATH}/etc/profile.d
 #####################################################################################
 echo /etc/profile.d/bash_completion.sh
-cat > ${PKG_PKGPATH}/etc/profile.d/bash_completion.sh <<EOF
+cat > \${PKG_PKGPATH}/etc/profile.d/bash_completion.sh <<EOF
 # Begin /etc/profile.d/bash_completion.sh
 # Import bash completion scripts
 
@@ -143,7 +143,7 @@ fi
 # End /etc/profile.d/bash_completion.sh
 EOF
 #####################################################################################
-cat > ${PKG_PKGPATH}/etc/profile.d/dircolors.sh <<EOF
+cat > \${PKG_PKGPATH}/etc/profile.d/dircolors.sh <<EOF
 # Setup for /bin/ls and /bin/grep to support color, the alias is in /etc/bashrc.
 if [ -f \"/etc/dircolors\" ] ; then
         eval \\\$(dircolors -b /etc/dircolors)
@@ -157,7 +157,7 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 EOF
 #####################################################################################
-cat > ${PKG_PKGPATH}/etc/profile.d/extrapaths.sh <<EOF
+cat > \${PKG_PKGPATH}/etc/profile.d/extrapaths.sh <<EOF
 if [ -d /usr/local/lib/pkgconfig ] ; then
         pathappend /usr/local/lib/pkgconfig PKG_CONFIG_PATH
 fi
@@ -173,7 +173,7 @@ pathappend /usr/share/man  MANPATH
 pathappend /usr/share/info INFOPATH
 EOF
 #####################################################################################
-cat > ${PKG_PKGPATH}/etc/profile.d/umask.sh <<EOF
+cat > \${PKG_PKGPATH}/etc/profile.d/umask.sh <<EOF
 # By default, the umask should be set.
 if [ \"\\\$(id -gn)\" = \"\\\$(id -un)\" -a \\\$EUID -gt 99 ] ; then
   umask 002
@@ -182,12 +182,12 @@ else
 fi
 EOF
 #####################################################################################
-cat > ${PKG_PKGPATH}/etc/profile.d/i18n.sh <<EOF
+cat > \${PKG_PKGPATH}/etc/profile.d/i18n.sh <<EOF
 # Set up i18n variables
 #export LANG=<ll>_<CC>.<charmap><@modifiers>
 EOF
 #####################################################################################
-cat > ${PKG_PKGPATH}/etc/bashrc<<EOF
+cat > \${PKG_PKGPATH}/etc/bashrc<<EOF
 # Begin /etc/bashrc
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -225,9 +225,9 @@ unset RED GREEN NORMAL
 # End /etc/bashrc
 EOF
 #####################################################################################
-mkdir -p ${PKG_PKGPATH}/etc/skel
+mkdir -p \${PKG_PKGPATH}/etc/skel
 
-cat > ${PKG_PKGPATH}/etc/skel/.bash_profile <<EOF
+cat > \${PKG_PKGPATH}/etc/skel/.bash_profile <<EOF
 # Begin ~/.bash_profile
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -255,7 +255,7 @@ fi
 # End ~/.bash_profile
 EOF
 #####################################################################################
-cat > ${PKG_PKGPATH}/etc/skel/.bashrc <<EOF
+cat > \${PKG_PKGPATH}/etc/skel/.bashrc <<EOF
 # Begin ~/.bashrc
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -277,7 +277,7 @@ fi
 # End ~/.bashrc
 EOF
 #####################################################################################
-cat > ${PKG_PKGPATH}/etc/skel/.bash_logout <<EOF
+cat > \${PKG_PKGPATH}/etc/skel/.bash_logout <<EOF
 # Begin ~/.bash_logout
 # Written for Beyond Linux From Scratch
 # by James Robertson <jameswrobertson@earthlink.net>
@@ -287,10 +287,10 @@ cat > ${PKG_PKGPATH}/etc/skel/.bash_logout <<EOF
 # End ~/.bash_logout
 EOF
 #####################################################################################
-find ${PKG_PKGPATH}/etc/skel/ -exec cp -fv {} ${PKG_PKGPATH}/root \;
+find \${PKG_PKGPATH}/etc/skel/ -exec cp -fv {} \${PKG_PKGPATH}/root \;
 "
-if [ ${LFS_SPLITUSR} -eq 1 ]
+if [ ${LFS_SPLITUSR:-0} -eq 1 ]
 then
-  PKG_POSTBUILD+="mkdir -pv ${PKG_PKGPATH}/bin
-    ln -s ../usr/bin/{bash,sh} ${PKG_PKGPATH}/bin"
+  PKG_POSTBUILD+="mkdir -pv \${PKG_PKGPATH}/bin
+    ln -s ../usr/bin/{bash,sh} \${PKG_PKGPATH}/bin"
 fi

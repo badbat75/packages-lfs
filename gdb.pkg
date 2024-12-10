@@ -3,9 +3,13 @@ GDB_VER=${GDB_VER:-13.1}
 PKG_URL="http://ftp.gnu.org/gnu/gdb/gdb-${GDB_VER}.tar.xz"
 PKG_DEPS="lfs/libgmp lfs/libmpfr lfs/libmpc"
 case ${GDB_VER} in
-	13.1)
-		PKG_VER=13.1+0d09cb53696
-		PATCHES=gdb/gdb_13.1+0d09cb53696.patch
+	14.2)
+		PKG_VER=14.2+b74fd1875e2
+		PATCHES=gdb/gdb_14.2+b74fd1875e2.patch
+		;;
+	13.2)
+		PKG_VER=13.2+c987953c102
+		PATCHES=gdb/gdb_13.2+c987953c102.patch
 		;;
 	12.1)
 		PKG_VER=12.1+a4418a9c6f9

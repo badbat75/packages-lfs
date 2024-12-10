@@ -1,10 +1,18 @@
 # binutils
 PKG_URL="https://github.com/gcc-mirror/gcc/archive/releases/gcc-${GCC_VER}.tar.gz"
-PKG_DEPS="lfs/libgmp lfs/libmpfr lfs/libmpc lfs/libisl lfs/zlib"
+PKG_DEPS="lfs/flex:native lfs/doxygen:native lfs/libgmp lfs/libmpfr lfs/libmpc lfs/libisl lfs/zlib"
 case ${GCC_VER} in
-	12.2.0)
-		PKG_VER=12.2.0+88792f04e5c
-		PATCHES=gcc/gcc_12.2.0+88792f04e5c.patch
+	14.1.0)
+		PKG_VER=14.1.0+2e0f832cf72
+		PATCHES=gcc/gcc_14.1.0+2e0f832cf72.patch
+		;;
+	13.3.0)
+		PKG_VER=13.3.0+513d0503f55
+		PATCHES=gcc/gcc_13.3.0+513d0503f55.patch
+		;;
+	12.3.0)
+		PKG_VER=12.3.0+0bd259af692
+		PATCHES=gcc/gcc_12.3.0+0bd259af692.patch
 		;;
 	*)
 		PKG_VER=${GCC_VER}
@@ -44,7 +52,7 @@ PKG_PREBUILD="sed '/all-build-libcpp/,/TARGET-build-libcpp/ s/\\\$(BASE_FLAGS_TO
 
 PKG_CXXFLAGS="-Wno-stringop-overflow -Wno-maybe-uninitialized"
 
-PKG_POSTBUILD="eval export PKG_PKGPATH=${PKG_PKGPATH}
+PKG_POSTBUILD="eval export PKG_PKGPATH=\${PKG_PKGPATH}
 	mkdir -pv \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
 	find \${PKG_PKGPATH}${INSTALL_PREFIX}/lib/gcc/${HARCH} -type f,l \\( -name \"*.so*\" -o -name \"*.a*\" -o -name \"*.la*\" -o -name \"crt*.o\" \\) \
 	| xargs -r -I{} bash -c 'ln -fsv \$(realpath --relative-to=\${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} {}) \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/\$(basename {})'"

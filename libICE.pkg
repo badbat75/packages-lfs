@@ -1,7 +1,7 @@
 # libICE
 PKG_VER=1.1.1
 PKG_URL="https://www.x.org/archive/individual/lib/libICE-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/xorg-sgml-doc-tools"
+PKG_DEPS="lfs/xmlto:native lfs/xorg-sgml-doc-tools"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 PKG_MAKETARGETS="all,install-strip"

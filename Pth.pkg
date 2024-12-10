@@ -15,8 +15,8 @@ PKG_PREBUILD="sed -i 's#\$(LOBJS): Makefile#\$(LOBJS): pth_p.h Makefile#' Makefi
 	   mkdir -pv \${PKG_BLDPATH}/la_libraries_backup
 	   mv -v ${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/*.la \${PKG_BLDPATH}/la_libraries_backup
 	fi"
-PKG_POSTBUILD="install -v -m755 -d ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/pth-2.0.7
-	install -v -m644 \${PKG_SRCPATH}/{README,PORTING,SUPPORT,TESTS} ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/pth-2.0.7
+PKG_POSTBUILD="install -v -m755 -d \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/pth-2.0.7
+	install -v -m644 \${PKG_SRCPATH}/{README,PORTING,SUPPORT,TESTS} \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/pth-2.0.7
 	if [ -d la_libraries_backup ]
 	then
 		mv -v la_libraries_backup/* ${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/

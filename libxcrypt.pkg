@@ -1,5 +1,5 @@
 # libxcrypt
-PKG_VER=${LIBXCRYPT_VER}
+PKG_VER=4.4.36
 PKG_URL="https://github.com/besser82/libxcrypt/archive/v${PKG_VER}.tar.gz"
 PKG_AUTOCONF=1
 BUILD_PROCESS=configmake
@@ -16,7 +16,6 @@ case ${PKG_TARGET} in
 		--enable-hashes=all --enable-obsolete-api=glibc --enable-obsolete-api-enosys=yes"
 		;;
 	*)	
-		PKG_DEPS=lfs/libxcrypt:compat
 		CONF_FLAGS="--disable-werror --disable-failure-tokens --disable-valgrind \
 		--enable-hashes=all --enable-obsolete-api=no --enable-obsolete-api-enosys=no"
 		PKG_MAKETARGETS="all,install-strip"

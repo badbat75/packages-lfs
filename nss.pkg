@@ -1,5 +1,5 @@
 # nss
-PKG_VER=3.89
+PKG_VER=3.107
 PKG_URL="https://archive.mozilla.org/pub/security/nss/releases/NSS_$(echo ${PKG_VER} | sed 's/\./_/g')_RTM/src/nss-${PKG_VER}.tar.gz"
 PATCHES="https://www.linuxfromscratch.org/patches/blfs/svn/nss-${PKG_VER}-standalone-1.patch"
 PKG_DEPS="lfs/zlib lfs/nspr lfs/p11-kit:bootstrap"
@@ -11,14 +11,21 @@ PKG_MAKEVARS+=" NSS_ENABLE_ECC=1 CHECKLOC= CC=\"\${CC}\" CXX=\"\${CXX}\" CCC=\"\
 PKG_MAKETARGETS="all"
 PKG_LDFLAGS="-s"
 
-case ${TOOLCHAIN} in
-    gnu)
-        PKG_MAKEVARS+=" NS_USE_GCC=1"
-        PKG_CFLAGS="-Wno-stringop-overflow"
-    ;;
-    llvm)
-    ;;
-esac
+##### Issues with LLVM toolchain, please re-check in future
+##### with x86_64 code.
+PKG_TOOLCHAIN=gnu
+PKG_MAKEVARS+=" NS_USE_GCC=1"
+PKG_CFLAGS="-Wno-stringop-overflow"
+## remove lines before and re-enable the code after
+#case ${TOOLCHAIN} in
+#    gnu)
+#        PKG_MAKEVARS+=" NS_USE_GCC=1"
+#        PKG_CFLAGS="-Wno-stringop-overflow"
+#    ;;
+#    llvm)
+#    ;;
+#esac
+############################################################
 
 if [ "${HARCH_BITWIDTH}" == 64 ]; then PKG_MAKEVARS+=" USE_64=1"; fi
 

@@ -1,6 +1,7 @@
 # libtasn1
 PKG_VER=4.19.0
 PKG_URL="https://ftp.gnu.org/gnu/libtasn1/libtasn1-${PKG_VER}.tar.gz"
+PKG_DEPS="lfs/bison:native"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 PKG_MAKETARGETS="all,install-strip"

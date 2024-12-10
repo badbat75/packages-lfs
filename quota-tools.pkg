@@ -3,7 +3,7 @@ PKG_VER=4.09
 PKG_URL="https://download.sourceforge.net/project/linuxquota/quota-tools/${PKG_VER}/quota-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/libtirpc lfs/openldap:client"
 BUILD_PROCESS=configmake
-PKG_AUTOCONF=1
+PKG_AUTOCONF=0
 CONF_FLAGS="--enable-rpc --enable-rpcsetquota"
 CONF_VARS="RPCGEN=\${SYSROOT}${INSTALL_EXECPREFIX}/bin/rpcgen"
 PKG_CFLAGS="-D_LARGEFILE64_SOURCE -D_FILE_OFFSET_BITS=64"

@@ -1,7 +1,7 @@
 # iproute2
-PKG_VER=6.2.0
+PKG_VER=6.9.0
 PKG_URL="https://www.kernel.org/pub/linux/utils/net/iproute2/iproute2-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/elfutils lfs/libmnl"
+PKG_DEPS="lfs/bison:native lfs/flex:native lfs/elfutils lfs/libmnl"
 PKG_CFLAGS="-fpic -fPIC -D_FILE_OFFSET_BITS=64"
 #PKG_LDFLAGS=
 BUILD_PROCESS=simplemake

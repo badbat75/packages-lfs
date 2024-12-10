@@ -1,5 +1,5 @@
 # FreeType
-PKG_VER=2.12.1
+PKG_VER=2.13.0
 PKG_URL="https://downloads.sourceforge.net/freetype/freetype-${PKG_VER}.tar.xz"
 PKG_DEPS="lfs/libpng lfs/which lfs/bzip2 lfs/zlib"
 case ${PKG_TARGET} in

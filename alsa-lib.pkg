@@ -1,5 +1,5 @@
 # alsa-lib
-PKG_VER=1.2.8
+PKG_VER=1.2.9
 PKG_URL="https://github.com/alsa-project/alsa-lib/archive/refs/tags/v${PKG_VER}.tar.gz"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1

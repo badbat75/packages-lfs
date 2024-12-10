@@ -1,5 +1,5 @@
 # libcbor
-PKG_VER=0.10.1
+PKG_VER=0.10.2
 PKG_URL="https://github.com/PJK/libcbor/archive/refs/tags/v${PKG_VER}.tar.gz"
 PKG_DEPS=
 BUILD_PROCESS=cmakebuild

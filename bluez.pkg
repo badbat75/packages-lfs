@@ -1,5 +1,5 @@
 # bluez
-PKG_VER=5.66
+PKG_VER=5.76
 PKG_URL="http://www.kernel.org/pub/linux/bluetooth/bluez-${PKG_VER}.tar.xz"
 PATCHES="https://www.linuxfromscratch.org/patches/blfs/svn/bluez-${PKG_VER}-obexd_without_systemd-1.patch"
 PKG_DEPS="lfs/D-Bus lfs/readline lfs/GLib lfs/libical lfs/ell lfs/json-c"
@@ -38,7 +38,7 @@ then
 fi
 PKG_MAKETARGETS="all,install-strip"
 
-PKG_POSTBUILD="install -vdm755 ${PKG_PKGPATH}${INSTALL_PREFIX}/sbin/
-	ln -svf ../libexec/bluetooth/bluetoothd ${PKG_PKGPATH}${INSTALL_PREFIX}/sbin/
-	install -vdm755 ${PKG_PKGPATH}/etc/bluetooth/
-	install -vm644 \${PKG_SRCPATH}/{src/main.conf,profiles/input/input.conf,profiles/network/network.conf} ${PKG_PKGPATH}/etc/bluetooth/"
+PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}${INSTALL_PREFIX}/sbin/
+	ln -svf ../libexec/bluetooth/bluetoothd \${PKG_PKGPATH}${INSTALL_PREFIX}/sbin/
+	install -vdm755 \${PKG_PKGPATH}/etc/bluetooth/
+	install -vm644 \${PKG_SRCPATH}/{src/main.conf,profiles/input/input.conf,profiles/network/network.conf} \${PKG_PKGPATH}/etc/bluetooth/"

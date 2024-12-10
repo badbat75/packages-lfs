@@ -8,4 +8,4 @@ PKG_OVERRIDELTO=0
 
 PKG_PREBUILD="sed 's/-Werror//' -i harness/Makefile"
 
-PKG_POSTBUILD="\${STRIP} --strip-unneeded ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libaio.so"
+PKG_POSTBUILD="\${STRIP} --strip-unneeded \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libaio.so"

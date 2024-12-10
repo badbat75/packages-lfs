@@ -1,8 +1,9 @@
 # gnutls
-PKG_VER=3.8.0
+PKG_VER=3.8.5
 PKG_URL="https://www.gnupg.org/ftp/gcrypt/gnutls/v$(echo ${PKG_VER} | cut -d. -f1,2)/gnutls-${PKG_VER}.tar.xz"
-PKG_DEPS="lfs/nettle lfs/make-ca lfs/p11-kit lfs/libtasn1 lfs/libunistring \
-    lfs/net-tools lfs/libidn2 lfs/libseccomp lfs/zlib lfs/brotli"
+PKG_DEPS="lfs/bison:native lfs/flex:native lfs/doxygen:native"
+PKG_DEPS+=" lfs/nettle lfs/make-ca lfs/p11-kit lfs/libtasn1 lfs/libunistring"
+PKG_DEPS+=" lfs/net-tools lfs/libidn2 lfs/libseccomp lfs/zlib lfs/brotli"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1
 CONF_FLAGS="--without-libiconv-prefix \
@@ -14,7 +15,8 @@ CONF_FLAGS="--without-libiconv-prefix \
     --without-libdl-prefix \
     --without-libz-prefix"
 PKG_MAKETARGETS="all,install-strip"
-PKG_CFLAGS="-Wno-analyzer-use-of-uninitialized-value"
 
-# Dependencies:
+case ${TOOLCHAIN} in
+    gnu) PKG_CFLAGS="-Wno-analyzer-use-of-uninitialized-value" ;;
+esac
 
