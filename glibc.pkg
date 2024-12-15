@@ -21,6 +21,7 @@ case ${GLIBC_VER} in
 	2.31)
 		PKG_VER=2.31+7b27c450c3
 		PATCHES=glibc/glibc_2.31+7b27c450c3.patch
+		I18N_C_VAR=POSIX
 		;;
 	*)
 		PKG_VER=${GLIBC_VER}
@@ -61,13 +62,12 @@ case ${PKG_TARGET} in
 			--disable-werror --disable-sanity-checks --without-cvs -without-selinux"
 		CONF_VARS+=" libc_cv_slibdir=${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib"
 	;;
-	headers)
+	stage1)
 		PKG_DEPS+=" lfs/kernel:headers"
 		STD_CONF_FLAGS=0
-		CONF_FLAGS="--build=${BARCH} --host=${HARCH} --target=${HARCH} --prefix=${INSTALL_PREFIX} --includedir=${INSTALL_INCLUDEDIR} \
-			--with-headers=${BIN_PATH}${INSTALL_INCLUDEDIR}"
-		CONF_VARS+=" libc_cv_compiler_ok=yes"
-		CONF_ENV="unset CXX CXXFLAGS; CC=\"${CC_FOR_BUILD}\" CFLAGS=\"${CFLAGS_FOR_BUILD}\" CC=\"${CPP_FOR_BUILD}\" CPPFLAGS=\"${CPPLAGS_FOR_BUILD}\""
+		CONF_FLAGS="--build=${BARCH} --host=${HARCH} --target=${HARCH} \
+			--prefix=${INSTALL_PREFIX} --includedir=${INSTALL_INCLUDEDIR} \
+			--with-headers=${BIN_PATH}${INSTALL_INCLUDEDIR} --disable-multilib --disable-werror"
 	;;
 	*)
 		PKG_DEPS+=" lfs/kernel:headers"
@@ -120,12 +120,8 @@ case ${PKG_TARGET} in
 			install -vdm755 ${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib/locale
 			patchelf --remove-rpath ${INSTALL_PREFIX}/glibc${GLIBC_VER}/lib/ld-linux*.so.*;"
 	;;
-	headers)
-		PKG_MAKEVARS+=" install-bootstrap-headers=yes"
-		PKG_MAKETARGETS="install-headers"
-	;;
 	stage1)
-		PKG_MAKETARGETS="csu/subdir_lib,install-headers"
+		PKG_MAKETARGETS="install-bootstrap-headers=yes install-headers,csu/subdir_lib"
 		PKG_POSTBUILD="mkdir -pv \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
 			install csu/crt1.o csu/crti.o csu/crtn.o \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
 			\${CC} \${CFLAGS} \${LDFLAGS} -nostdlib -nostartfiles -shared -x c /dev/null -o \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libc.so;"
@@ -169,7 +165,7 @@ case ${PKG_TARGET} in
 			EOF
 
 			install -vdm755 \${PKG_PKGPATH}${INSTALL_LIBDIR}/locale
-			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i C -f UTF-8 C.UTF-8
+			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i ${I18N_C_VAR:-C} -f UTF-8 C.UTF-8 || true
 			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i cs_CZ -f UTF-8 cs_CZ.UTF-8
 			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i de_DE -f ISO-8859-1 de_DE
 			I18NPATH=\${PKG_PKGPATH}/usr/share/i18n localedef --prefix=\${PKG_PKGPATH} -i de_DE@euro -f ISO-8859-15 de_DE@euro
