@@ -1,7 +1,7 @@
 # dracut
 PKG_VER=059
 PKG_URL="https://github.com/dracutdevs/dracut/archive/refs/tags/${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/kmod lfs/cpio lfs/bash lfs/gzip lfs/bzip2 lfs/xz lfs/lz4 lfs/zstd"
+PKG_DEPS="lfs/systemd lfs/kmod lfs/cpio lfs/bash lfs/gzip lfs/bzip2 lfs/xz lfs/lz4 lfs/zstd lfs/coreutils lfs/util-linux lfs/sed"
 PKG_COPYSRC=1
 BUILD_PROCESS=custom
 PKG_LDFLAGS="-s"

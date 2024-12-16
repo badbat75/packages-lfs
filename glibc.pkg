@@ -2,6 +2,10 @@
 PKG_URL="https://ftp.gnu.org/gnu/libc/glibc-${GLIBC_VER}.tar.xz"
 PKG_DEPS="lfs/bison:native"
 case ${GLIBC_VER} in
+	2.40)
+		PKG_VER=2.40+0b39fe8012
+		PATCHES=glibc/glibc_2.40+0b39fe8012.patch
+		;;
 	2.39)
 		PKG_VER=2.39+aa8768999e
 		PATCHES=glibc/glibc_2.39+aa8768999e.patch

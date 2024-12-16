@@ -1,5 +1,5 @@
 # util-linux
-PKG_VER=2.40.1
+PKG_VER=2.40.2
 PKG_URL="https://github.com/util-linux/util-linux/archive/refs/tags/v${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/bison:native lfs/gettext:cross"
 BUILD_PROCESS=configmake
@@ -37,8 +37,14 @@ case ${PKG_TARGET} in
             install -vm755 .libs/{libuuid.so,libblkid.so} ${TOOLCHAIN_PATH}/lib"
     ;;
     *)
+        if [ ${HARCH_BITWIDTH} = 32 ]
+        then
+            CONF_FLAGS+=" --disable-year2038"
+        fi
         PKG_DEPS+=" lfs/zlib lfs/bzip2 lfs/ncurses lfs/readline lfs/SQLite"
         PKG_DEPS+=" lfs/util-linux:cross"
         INST_CMD="install-strip"
     ;;
 esac
+
+#PKG_TOOLCHAIN=gnu

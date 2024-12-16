@@ -2,6 +2,10 @@
 PKG_URL="https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VER}.tar.bz2"
 PKG_DEPS="lfs/bison:native lfs/flex:native lfs/libgmp lfs/libmpfr lfs/libmpc lfs/libisl"
 case ${BINUTILS_VER} in
+	2.43)
+		PKG_VER=2.43+e2622c0a840
+		PATCHES=binutils/binutils_2.43+e2622c0a840.patch
+		;;
 	2.42)
 		PKG_VER=2.42+ef38693b8a4
 		PATCHES=binutils/binutils_2.42+ef38693b8a4.patch

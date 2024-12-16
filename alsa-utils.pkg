@@ -1,5 +1,5 @@
 # alsa-utils
-PKG_VER=1.2.9
+PKG_VER=1.2.13
 PKG_URL="https://github.com/alsa-project/alsa-utils/archive/refs/tags/v${PKG_VER}.tar.gz"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1

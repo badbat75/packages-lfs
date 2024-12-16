@@ -1,5 +1,5 @@
 # libisl
-PKG_VER=0.26
+PKG_VER=0.27
 PKG_URL="https://libisl.sourceforge.io/isl-${PKG_VER}.tar.xz"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
