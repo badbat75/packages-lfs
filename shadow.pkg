@@ -1,5 +1,5 @@
 # shadow
-PKG_VER=4.15.1
+PKG_VER=4.16.0
 PKG_URL="https://github.com/shadow-maint/shadow/archive/refs/tags/${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/bison:native lfs/Linux-PAM"
 ### Optional packages

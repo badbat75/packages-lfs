@@ -16,5 +16,6 @@ PKG_TOOLCHAIN=gnu
 PKG_OVERRIDELD=bfd
 PKG_LDFLAGS="-Wl,-rpath-link=${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
 
+PKG_PREBUILD="echo depends bli part_gpt > grub-core/extra_deps.lst"
 PKG_POSTBUILD="install -vdm755 \${PKG_PKGPATH}${INSTALL_SHAREDIR}/bash-completion/completions
     mv -v \${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/bash_completion.d/grub \${PKG_PKGPATH}${INSTALL_SHAREDIR}/bash-completion/completions"

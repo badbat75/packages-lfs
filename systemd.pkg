@@ -1,5 +1,5 @@
 # systemd
-PKG_VER=253.20
+PKG_VER=255.15
 PKG_URL="https://github.com/systemd/systemd-stable/archive/refs/tags/v${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/flex:native lfs/zlib lfs/xz lfs/bzip2 lfs/zstd lfs/libxml2:bootstrap"
 BUILD_PROCESS=mesonninja
@@ -101,9 +101,9 @@ case "${PKG_TARGET}" in
 				PKG_DEPS+=" lfs/gnu-efi"
 				CONF_FLAGS+=" -Defi=true"
 				# possible to add -lgcc_s to efi-cflags
-				CONF_FLAGS+=" -Defi-cflags=\"--sysroot=${BIN_PATH}\""
-				CONF_FLAGS+=" -Defi-includedir=${BIN_PATH}${INSTALL_INCLUDEDIR}/efi"
-				CONF_FLAGS+=" -Defi-libdir=${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
+				#CONF_FLAGS+=" -Defi-cflags=\"--sysroot=${BIN_PATH}\""
+				#CONF_FLAGS+=" -Defi-includedir=${BIN_PATH}${INSTALL_INCLUDEDIR}/efi"
+				#CONF_FLAGS+=" -Defi-libdir=${BIN_PATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"
 			;;
 		esac
 		
@@ -142,7 +142,7 @@ case "${PKG_TARGET}" in
 				TTYVTDisallocate=no			
 			EOF
 
-			cat >> \${PKG_PKGPATH}/lib/udev/rules.d/60-block-scheduler.rules <<-EOF
+			cat >> \${PKG_PKGPATH}${INSTALL_LIBDIR}/udev/rules.d/60-block-scheduler.rules <<-EOF
 				ACTION==\"add\", SUBSYSTEM==\"block\", ENV{DEVTYPE}==\"disk\", \
 				  KERNEL==\"mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|sd*[!0-9]|sr*\", \
 				  ATTR{queue/scheduler}=\"bfq\"

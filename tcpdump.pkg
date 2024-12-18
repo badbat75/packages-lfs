@@ -1,5 +1,5 @@
 # tcpdump
-PKG_VER=4.99.4
+PKG_VER=4.99.5
 PKG_URL="https://www.tcpdump.org/release/tcpdump-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/D-Bus lfs/libpcap lfs/openssl"
 BUILD_PROCESS=cmakebuild

@@ -27,7 +27,7 @@ PKG_BUILDSCRIPT="./bootstrap.sh \\
 		--with-toolset=${BBTC}
 	sed -i \"s|using ${BBTC} ;|using ${BBTC} : : \${CC} ;|\" project-config.jam
 	./b2 -q -j${NPROCS} $(
-			if [ "${MAKEVERBOSE}" -eq 1 ]
+			if [ "${MAKEVERBOSE:-0}" -eq 1 ]
 			then
 				echo -n "-d+2"
 			else

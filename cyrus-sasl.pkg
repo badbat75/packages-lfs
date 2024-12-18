@@ -22,5 +22,7 @@ PKG_POSTBUILD="install -v -dm755 \${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/cyrus-sa
 PKG_FAULTYCFLAGS=1
 
 case ${TOOLCHAIN} in
-    llvm) PKG_CFLAGS="-Wno-deprecated-non-prototype -Wno-sign-compare -Wno-implicit-function-declaration";;
+    gnu) PKG_CFLAGS="-Wno-cast-function-type -Wno-sign-compare";;
+    llvm) PKG_CFLAGS="-Wno-deprecated-non-prototype -Wno-sign-compare";;
 esac
+PKG_CFLAGS+=" -Wno-implicit-function-declaration"

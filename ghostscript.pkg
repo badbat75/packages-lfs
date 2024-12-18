@@ -1,5 +1,5 @@
 # ghostscript
-PKG_VER=10.01.1
+PKG_VER=10.04.0
 PKG_URL="https://github.com/ArtifexSoftware/ghostpdl-downloads/releases/download/gs${PKG_VER//./}/ghostscript-${PKG_VER}.tar.xz"
 #PKG_DEPS="lfs/cups:bootstrap"
 PKG_DEPS+=" lfs/fontconfig"

@@ -1,5 +1,5 @@
 # libpcap
-PKG_VER=1.10.4
+PKG_VER=1.10.5
 PKG_URL="https://www.tcpdump.org/release/libpcap-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/bison:native lfs/flex:native lfs/systemd:bootstrap lfs/D-Bus lfs/libnl"
 BUILD_PROCESS=cmakebuild

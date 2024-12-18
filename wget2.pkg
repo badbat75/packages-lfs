@@ -1,5 +1,5 @@
 # wget
-PKG_VER=2.1.0
+PKG_VER=2.2.0
 PKG_URL="https://ftp.gnu.org/gnu/wget/wget2-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/flex:native lfs/openssl lfs/make-ca lfs/libidn2 lfs/pcre2 lfs/zlib"
 BUILD_PROCESS=configmake

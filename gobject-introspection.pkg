@@ -1,5 +1,5 @@
 # gobject-introspection
-PKG_VER=1.78.1
+PKG_VER=1.82.0
 PKG_URL="https://download.gnome.org/sources/gobject-introspection/$(echo ${PKG_VER} | cut -d. -f1,2)/gobject-introspection-${PKG_VER}.tar.xz"
 BUILD_PROCESS=mesonninja
 PKG_DEPS="lfs/bison:native lfs/flex:native"

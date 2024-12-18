@@ -28,11 +28,12 @@ case ${BINUTILS_VER} in
 esac
 BUILD_PROCESS=configmake
 STD_CONF_FLAGS=0
+# Gprof broken with with glibc 2.40
 CONF_FLAGS="--prefix=${INSTALL_PREFIX} --libdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} --with-sysroot=/ --with-build-sysroot=\${SYSROOT} \
 	 \
 	--disable-werror \
 	--enable-shared --enable-static \
-	--enable-gold=default --enable-ld --enable-gprofng=yes --enable-lto \
+	--enable-gold=default --enable-ld --enable-gprofng=no --enable-lto \
 	--enable-new-dtags --disable-rpath --enable-threads=yes --enable-plugins --enable-64-bit-bfd \
 	--enable-compressed-debug-sections=all --enable-separate-code=yes --enable-plugins"
 CONF_FLAGS+=" --with-system-zlib"

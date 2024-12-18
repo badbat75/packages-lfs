@@ -1,5 +1,5 @@
 # openssh
-PKG_VER=9.7p1
+PKG_VER=9.9p1
 PKG_URL="http://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/Linux-PAM lfs/krb5 lfs/net-tools lfs/Linux-PAM lfs/libedit lfs/sysstat lfs/xauth lfs/zlib"
 BUILD_PROCESS=configmake

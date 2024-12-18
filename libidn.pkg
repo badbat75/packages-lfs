@@ -1,7 +1,7 @@
 # libidn
-PKG_VER=1.41
+PKG_VER=1.42
 PKG_URL="https://ftp.gnu.org/gnu/libidn/libidn-${PKG_VER}.tar.gz"
-PKG_DEPS="lfs/doxygen:native lfs/Pth"
+PKG_DEPS="lfs/doxygen:native"
 BUILD_PROCESS=configmake
 CONF_FLAGS=""
 PKG_AUTOCONF=1

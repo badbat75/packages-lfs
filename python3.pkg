@@ -33,12 +33,13 @@ case ${PKG_TARGET} in
 esac
 PKG_LDFLAGS="-s"
 PKG_MAKETARGETS=",install"
+PKG_MAKEVARS="LIBDEST=${INSTALL_EXECPREFIX}/lib/python$(echo "${PKG_VER}" | cut -d. -f1,2)/site-packages"
 PKG_OVERRIDELTO=0
 PKG_FAULTYCFLAGS=1
 
 PKG_PREBUILD="sed -i 's/self.srcdir = sysconfig.get_config_var('\''srcdir'\'')/self.srcdir = os.path.dirname(os.path.abspath(__file__))/' -i setup.py"
 PKG_DISABLECROSSPYTHON=1
-PYTHON_MODPATH=\${PKG_PKGPATH}${INSTALL_EXECPREFIX}/lib/python$(echo "${PKG_VER}" | cut -d. -f1,2)
+PYTHON_MODPATH=\${PKG_PKGPATH}${INSTALL_EXECPREFIX}/lib/python$(echo "${PKG_VER}" | cut -d. -f1,2)/site-packages
 PKG_POSTBUILD="sed -e 's/-fuse-ld=.* / /g' \\
 	-e 's/-Wl,--threads / /g' \\
 	-e 's/-Wl,--thread-count,.* / /g' \\

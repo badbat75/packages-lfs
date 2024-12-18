@@ -1,5 +1,5 @@
 # wpa2
-PKG_VER=2.10
+PKG_VER=2.11
 PKG_URL="https://w1.fi/cgit/hostap/snapshot/hostap_$(echo ${PKG_VER} | sed 's/\./_/g').tar.gz"
 #PKG_URL="https://w1.fi/cgit/hostap/snapshot/hostap-bb945b98fefc64887dffb40773a19d77585cee42.tar.bz2"
 

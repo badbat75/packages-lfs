@@ -1,5 +1,5 @@
 # libgpg-error
-PKG_VER=1.49
+PKG_VER=1.51
 PKG_URL="https://www.gnupg.org/ftp/gcrypt/libgpg-error/libgpg-error-${PKG_VER}.tar.bz2"
 BUILD_PROCESS=configmake
 PKG_AUTOCONF=1

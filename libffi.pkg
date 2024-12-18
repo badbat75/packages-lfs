@@ -4,6 +4,4 @@ PKG_URL="https://sourceware.org/pub/libffi/libffi-${PKG_VER}.tar.gz"
 BUILD_PROCESS=configmake
 CONF_FLAGS="enable_multi_os_directory=no"
 PKG_MAKETARGETS="all,install-strip"
-case ${TOOLCHAIN} in
-    llvm) PKG_CFLAGS="-Wno-implicit-function-declaration" ;;
-esac
+PKG_CFLAGS="-Wno-implicit-function-declaration"

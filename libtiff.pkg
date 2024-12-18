@@ -1,9 +1,10 @@
 # libtiff
-PKG_VER=4.5.0 
+PKG_VER=4.7.0 
 PKG_URL="https://download.osgeo.org/libtiff/tiff-${PKG_VER}.tar.gz"
-BUILD_PROCESS=cmakebuild
-CONF_FLAGS="-DWITH_JPEG8=ON -DCMAKE_INSTALL_DOCDIR=${INSTALL_SHAREDIR}/doc/libtiff-${PKG_VER}"
-#PKG_MAKETARGETS="all,install"
+BUILD_PROCESS=configmake
+PKG_AUTOCONF=1
+CONF_FLAGS="--with-docdir=${INSTALL_SHAREDIR}/doc/libtiff-${PKG_VER}"
+#PKG_MAKETARGETS="all,install-strip"
 
 case ${PKG_TARGET} in
     bootstrap) ;;

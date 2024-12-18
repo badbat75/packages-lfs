@@ -8,5 +8,6 @@ CONF_FLAGS=""
 PKG_MAKETARGETS="all,install-strip"
 
 case ${TOOLCHAIN} in
+    gnu) PKG_CFLAGS="-Wno-incompatible-pointer-types" ;;
     llvm) PKG_CFLAGS="-Wno-implicit-function-declaration" ;;
 esac

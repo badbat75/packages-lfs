@@ -1,5 +1,5 @@
 # cpio
-PKG_VER=2.14
+PKG_VER=2.15
 PKG_URL="https://ftp.gnu.org/gnu/cpio/cpio-${PKG_VER}.tar.bz2"
 PKG_DEPS="lfs/flex:native"
 BUILD_PROCESS=configmake

@@ -1,26 +1,27 @@
 # Vulkan
-PKG_VER=1.3.243.0
-PKG_URL="https://sdk.lunarg.com/sdk/download/${PKG_VER}/linux/vulkansdk-linux-x86_64-${PKG_VER}.tar.gz"
+PKG_VER=1.3.296.0
 BUILD_PROCESS=cmakebuild
 case ${PKG_TARGET} in
 	headers)
-		CONF_PATH=source/Vulkan-Headers
+		PKG_URL="https://github.com/KhronosGroup/Vulkan-Headers/archive/refs/tags/vulkan-sdk-${PKG_VER}.tar.gz"
 		PKG_MAKETARGETS=install
 	;;
 	loader)
+		PKG_URL="https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/vulkan-sdk-${PKG_VER}.tar.gz"
 		PKG_DEPS="lfs/Vulkan:headers"
 		PKG_DEPS+=" lfs/libxcb"
-		CONF_PATH=source/Vulkan-Loader
 		PKG_MAKETARGETS="all,install/strip"
 	;;
 	glslang)
-		PKG_DEPS=lfs/Vulkan:cross
-		CONF_PATH=source/glslang
-		CONF_FLAGS="-DPYTHON_EXECUTABLE:FILEPATH=cross-python3"
+		PKG_URL="https://github.com/KhronosGroup/glslang/archive/refs/tags/vulkan-sdk-${PKG_VER}.tar.gz"
+		PKG_DEPS="lfs/Vulkan:cross lfs/Vulkan-SPIRV-Tools"
+		CONF_FLAGS="-DALLOW_EXTERNAL_SPIRV_TOOLS=True -DPYTHON_EXECUTABLE:FILEPATH=cross-python3"
 		PKG_MAKETARGETS="all,install/strip"
 	;;
 	cross)
-		CONF_PATH=source/glslang
+		PKG_URL="https://github.com/KhronosGroup/glslang/archive/refs/tags/vulkan-sdk-${PKG_VER}.tar.gz"
+		PKG_DEPS=lfs/Vulkan-SPIRV-Tools:cross
+		CONF_FLAGS="-DALLOW_EXTERNAL_SPIRV_TOOLS=True"
 		PKG_MAKETARGETS="all,install/strip"
 	;;
 esac

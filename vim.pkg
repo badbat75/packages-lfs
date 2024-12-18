@@ -1,5 +1,5 @@
 # vim
-PKG_VER=9.1.0447
+PKG_VER=9.1.0938
 #PKG_URL="https://anduin.linuxfromscratch.org/LFS/vim-${PKG_VER}.tar.gz"
 PKG_URL="https://github.com/vim/vim/archive/refs/tags/v${PKG_VER}.tar.gz"
 PKG_DEPS="lfs/ncurses lfs/elfutils lfs/acl lfs/attr lfs/libX11 lfs/libSM"
