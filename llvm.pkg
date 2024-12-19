@@ -57,5 +57,8 @@ case ${PKG_TARGET} in
 	;;
 	*)
 		PKG_MAKETARGETS="install/strip"
+		PKG_POSTBUILD="sed -i 's|^set(LLVM_INSTALL_PREFIX \"|set(LLVM_INSTALL_PREFIX \"\${CMAKE_SYSROOT}|' \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/cmake/llvm/LLVMConfig.cmake
+			sed -i 's|^set(LLVM_CMAKE_DIR \"|set(LLVM_CMAKE_DIR \"\${CMAKE_SYSROOT}|' \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/cmake/llvm/LLVMConfig.cmake
+			sed -i 's|^set(_IMPORT_PREFIX \"|set(_IMPORT_PREFIX \"\${CMAKE_SYSROOT}|' \${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/cmake/llvm/LLVMExports.cmake"
 	;;
 esac
