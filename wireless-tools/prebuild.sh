@@ -4,4 +4,4 @@
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
 sed -i -e 's/^CC =/CC ?=/' -e 's/^AR =/AR ?=/' -e 's/^RANLIB =/RANLIB ?=/' Makefile
-    sed -i '/^INSTALL_LIB=/ s|/lib/$|/lib${HARCH_LIB}${INSTALL_LIBSUFFIX}/|' Makefile
+    sed -i "/^INSTALL_LIB=/ s|/lib/\$|/lib${HARCH_LIB}${INSTALL_LIBSUFFIX}/|" Makefile

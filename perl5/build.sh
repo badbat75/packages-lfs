@@ -15,7 +15,7 @@
 		-Dccflags="${PLATFORM_CFLAGS} -Wno-attributes"\ \
 		-Doptimize="${OPTCOMP_FLAGS}" \
 		-Dldflags="${OPTLINK_FLAGS}" \
-		-Dpager='${INSTALL_PREFIX}/bin/less -isR' \
+		-Dpager="${INSTALL_PREFIX}/bin/less -isR" \
 		-Duseshrplib \
 		-Dusethreads \
 		-Dmyhostname=localhost \

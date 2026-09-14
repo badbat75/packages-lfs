@@ -6,4 +6,4 @@
 eval export PKG_PKGPATH=${PKG_PKGPATH}
 	mkdir -pv ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
 	find ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/gcc/${HARCH} -type f,l \( -name "*.so*" -o -name "*.a*" -o -name "*.la*" -o -name "crt*.o" \) \
-	| xargs -r -I{} bash -c 'ln -fsv $(realpath --relative-to=${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} {}) ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/$(basename {})'
+	| xargs -r -I{} bash -c "ln -fsv \$(realpath --relative-to=${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} {}) ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/\$(basename {})"
