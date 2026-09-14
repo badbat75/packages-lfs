@@ -1,0 +1,12 @@
+--- a/Makefile-libbz2_so	2021-02-23 18:10:26.340000000 +0100
++++ b/Makefile-libbz2_so	2021-02-23 18:12:56.520000000 +0100
+@@ -35,7 +35,7 @@
+       bzlib.o
+
+ all: $(OBJS)
+-	$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.8 $(OBJS)
+-	$(CC) $(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
++	$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 $(OBJS)
++	$(CC) $(CFLAGS) $(LDFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
+ 	rm -f libbz2.so.1.0
+ 	ln -s libbz2.so.1.0.8 libbz2.so.1.0

@@ -1,45 +1,30 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
 # bzip2: pre-build script, sourced by runprebuild.sh (cwd: ${PKG_SRCPATH}, set -x, no -e).
+# The shared library soname/LDFLAGS fix is in patches/ (PATCHES in package.env).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
-cat <<EOF | patch -s -p1 || true
---- a/Makefile-libbz2_so	2021-02-23 18:10:26.340000000 +0100
-+++ b/Makefile-libbz2_so	2021-02-23 18:12:56.520000000 +0100
-@@ -35,7 +35,7 @@
-       bzlib.o
+[ ! -f Makefile-libbz2_a ] && mv Makefile Makefile-libbz2_a || true
+sed -i -e 's/^CC=/CC?=/' -e 's/^AR=/AR?=/' -e 's/^RANLIB=/RANLIB?=/' Makefile-libbz2_*
+sed -i -e 's/^CFLAGS=/CFLAGS?=/' -e 's/^LDFLAGS=/LDFLAGS?=/' Makefile-libbz2_*
+sed -i 's/\$(CC) -shared/\$(CC) \$(CFLAGS) -shared/g' Makefile-libbz2_so
+sed -i '/all:/ s/ test$//' Makefile-libbz2_a
 
- all: \$(OBJS)
--	\$(CC) -shared -Wl,-soname -Wl,libbz2.so.1.0 -o libbz2.so.1.0.8 \$(OBJS)
--	\$(CC) \$(CFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
-+	\$(CC) \$(CFLAGS) \$(LDFLAGS) -shared -Wl,-soname -Wl,libbz2.so.1 -o libbz2.so.1.0.8 \$(OBJS)
-+	\$(CC) \$(CFLAGS) \$(LDFLAGS) -o bzip2-shared bzip2.c libbz2.so.1.0.8
- 	rm -f libbz2.so.1.0
- 	ln -s libbz2.so.1.0.8 libbz2.so.1.0
+cat >bzip2.pc <<-EOF
+	prefix=${INSTALL_PREFIX}
+	exec_prefix=${INSTALL_EXECPREFIX}
+	bindir=${INSTALL_PREFIX}/bin
+	libdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+	includedir=${INSTALL_INCLUDEDIR}
 
+	Name: bzip2
+	Description: A file compression library
+	Version: 1.0.6
+	Libs: -L\${libdir} -lbz2
+	Cflags: -I\${includedir}
 EOF
 
-	[ ! -f Makefile-libbz2_a ] && mv Makefile Makefile-libbz2_a || true
-	sed -i -e 's/^CC=/CC?=/' -e 's/^AR=/AR?=/' -e 's/^RANLIB=/RANLIB?=/' Makefile-libbz2_*
-	sed -i -e 's/^CFLAGS=/CFLAGS?=/' -e 's/^LDFLAGS=/LDFLAGS?=/' Makefile-libbz2_*
-	sed -i 's/\$(CC) -shared/\$(CC) \$(CFLAGS) -shared/g' Makefile-libbz2_so
-	sed -i '/all:/ s/ test$//' Makefile-libbz2_a
-
-	cat >bzip2.pc <<-EOF
-		prefix=${INSTALL_PREFIX}
-		exec_prefix=${INSTALL_EXECPREFIX}
-		bindir=${INSTALL_PREFIX}/bin
-		libdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
-		includedir=${INSTALL_INCLUDEDIR}
-
-		Name: bzip2
-		Description: A file compression library
-		Version: 1.0.6
-		Libs: -L\${libdir} -lbz2
-		Cflags: -I\${includedir}
-	EOF
-
-	cat >Makefile <<EOF
+cat >Makefile <<EOF
 LIBRARY_VERSION = 1.0.8
 STRIP ?= strip
 

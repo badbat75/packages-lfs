@@ -4,9 +4,9 @@
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
 mkdir -pv ${PKG_PKGPATH}/{dev,proc,sys,run,etc,var}
-	if [ ! -z ${INSTALL_PREFIX} ]
+	if [ -n "${INSTALL_PREFIX}" ]
 	then
-		local PREFIX=$(echo ${INSTALL_PREFIX} | sed 's|^/||')
+		PREFIX=$(echo ${INSTALL_PREFIX} | sed 's|^/||')
 		mkdir -pv ${PKG_PKGPATH}/{${PREFIX}/bin,${PREFIX}/lib,${PREFIX}/sbin}
 		if [ ${LFS_SPLITUSR:-0} -eq 0 ]
 		then
@@ -18,7 +18,7 @@ mkdir -pv ${PKG_PKGPATH}/{dev,proc,sys,run,etc,var}
 			mkdir -pv ${PKG_PKGPATH}/lib
 			mkdir -pv ${PKG_PKGPATH}/sbin
 		fi
-		if [ ${HARCH_LIB} == 64 ]
+		if [ "${HARCH_LIB}" == "64" ]
 		then
 			mkdir -pv ${PKG_PKGPATH}/${PREFIX}/lib64
 			ln -sfv ${PREFIX}/lib64 ${PKG_PKGPATH}
