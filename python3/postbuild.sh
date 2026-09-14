@@ -7,5 +7,5 @@ sed -e 's/-fuse-ld=.* / /g' \
 	-e 's/-Wl,--threads / /g' \
 	-e 's/-Wl,--thread-count,.* / /g' \
 	-e 's/-Wl,--thinlto-jobs=.* / /g' \
-	-i "${PYTHON_MODPATH}"/_sysconfigdata__*.py
-	rm -rfv "${PYTHON_MODPATH}"/__pycache__
+	-i "${PKG_PKGPATH}${PYTHON_MODPATH}"/_sysconfigdata__*.py
+	rm -rfv "${PKG_PKGPATH}${PYTHON_MODPATH}"/__pycache__
