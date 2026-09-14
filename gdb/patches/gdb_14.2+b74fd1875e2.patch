@@ -1,0 +1,33 @@
+diff --git a/bfd/version.h b/bfd/version.h
+index 2c916d03a1d..5193a0ebbaa 100644
+--- a/bfd/version.h
++++ b/bfd/version.h
+@@ -16,7 +16,7 @@
+ 
+    In releases, the date is not included in either version strings or
+    sonames.  */
+-#define BFD_VERSION_DATE 20240303
++#define BFD_VERSION_DATE 20240526
+ #define BFD_VERSION @bfd_version@
+ #define BFD_VERSION_STRING  @bfd_version_package@ @bfd_version_string@
+ #define REPORT_BUGS_TO @report_bugs_to@
+diff --git a/gdb/testsuite/gdb.base/default.exp b/gdb/testsuite/gdb.base/default.exp
+index 8612117cb4f..260799a668a 100644
+--- a/gdb/testsuite/gdb.base/default.exp
++++ b/gdb/testsuite/gdb.base/default.exp
+@@ -612,7 +612,7 @@ set show_conv_list \
+ 	{$_gdb_setting_str = <internal function _gdb_setting_str>} \
+ 	{$_gdb_setting = <internal function _gdb_setting>} \
+ 	{$_gdb_major = 14} \
+-	{$_gdb_minor = 2} \
++	{$_gdb_minor = 3} \
+ 	{$_shell_exitsignal = void} \
+ 	{$_shell_exitcode = 0} \
+     }
+diff --git a/gdb/version.in b/gdb/version.in
+index 6b5bab0678a..524d573b326 100644
+--- a/gdb/version.in
++++ b/gdb/version.in
+@@ -1 +1 @@
+-14.2
++14.2.90.DATE-git
