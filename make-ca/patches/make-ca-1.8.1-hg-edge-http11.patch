@@ -1,0 +1,61 @@
+certdata.txt download for make-ca 1.8.1 after the hg.mozilla.org changes.
+
+hg.mozilla.org only answers with a redirect that openssl s_client cannot
+follow and the mozilla-release repository is gone, while the server
+rejects the HTTP/0.9 "GET <url>" request with 400 Bad Request. Use the
+NSS repository on hg-edge.mozilla.org, send an HTTP/1.1 request and strip
+the response headers up to the first "#" line, as make-ca 1.16.1 does.
+
+--- a/make-ca
++++ b/make-ca
+@@ -37,7 +37,7 @@
+     NSSDB="${PKIDIR}/nssdb"
+     LOCALDIR="${SSLDIR}/local"
+     DESTDIR=""
+-    URL="https://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt"
++    URL="https://hg-edge.mozilla.org/projects/nss/raw-file/tip/lib/ckfw/builtins/certdata.txt"
+ fi
+
+ # Some data in the certs have UTF-8 characters
+@@ -662,7 +662,7 @@
+   if test "${PROXY}x" != "x"; then
+     SARGS="${SARGS} -proxy ${PROXY}"
+   fi
+-  echo GET ${_url} | \
++  printf "GET ${_url} HTTP/1.1\nConnection: no-keep-alive\n\n" | \
+   ${OPENSSL} s_client ${SARGS} 2> /dev/null > "${TEMPDIR}/certdata.txt.log"
+   unset _url
+   echo "done."
+@@ -687,9 +687,9 @@
+
+   # Download the new file
+   echo -n "Downloading certdata.txt..."
+-  echo GET ${URL} | \
++  printf "GET ${URL} HTTP/1.1\nConnection: no-keep-alive\n\n" | \
+   ${OPENSSL} s_client ${SARGS} 2> /dev/null >> "${CERTDATA}"
+-  _line=$(( $(grep -n "certdata.txt" "${CERTDATA}" | cut -d ":" -f 1) - 1))
++  _line=$(( $(grep -n -m 1 "^#$" "${CERTDATA}" | cut -d ":" -f 1) - 1))
+   sed -e "1,${_line}d" -i "${CERTDATA}"
+   sed "1i # Revision:${REVISION}" -i "${CERTDATA}"
+   echo "done."
+--- a/make-ca.conf.dist
++++ b/make-ca.conf.dist
+@@ -19,15 +19,11 @@
+ NSSDB="${PKIDIR}/nssdb"
+ LOCALDIR="${SSLDIR}/local"
+ DESTDIR=""
+-URL="https://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt"
++URL="https://hg-edge.mozilla.org/projects/nss/raw-file/tip/lib/ckfw/builtins/certdata.txt"
+
+ # Source must be downloaded over https
+ # Valid urls for download are below
+-# Default to NSS release branch
++# Default to the NSS repository (hg.mozilla.org only redirects to hg-edge.mozilla.org now)
+
+-# https://hg.mozilla.org/releases/mozilla-release/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt
+-# https://hg.mozilla.org/projects/nss/raw-file/tip/lib/ckfw/builtins/certdata.txt
+-# https://hg.mozilla.org/mozilla-central/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt
+-# https://hg.mozilla.org/releases/mozilla-beta/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt
+-# https://hg.mozilla.org/releases/mozilla-aurora/raw-file/default/security/nss/lib/ckfw/builtins/certdata.txt
++# https://hg-edge.mozilla.org/projects/nss/raw-file/tip/lib/ckfw/builtins/certdata.txt
+
