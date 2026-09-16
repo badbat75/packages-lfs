@@ -10,7 +10,9 @@ sed -e '/IMPORTED_LOCATION_RELEASE/ s@"/usr/lib@"${CMAKE_SYSROOT}${_IMPORT_PREFI
 		-e '/list(APPEND _cmake_import_check_files_for_openjp2/ s@"/usr/lib@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}/lib@' \
 		-e 's@"${_IMPORT_PREFIX}@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}@g' \
 		-i ${CMAKEDIR}/OpenJPEGTargets-release.cmake
+		### 2.5.4 writes the include directory of the openjp2 target as a literal "/usr/include/..."
 		sed -e 's@"${_IMPORT_PREFIX}@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}@g' \
+		-e '/INTERFACE_INCLUDE_DIRECTORIES/ s@"/usr/@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}/@' \
 		-i ${CMAKEDIR}/OpenJPEGTargets.cmake
 		sed -e 's@"/usr/@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}/@g' \
 		-i ${CMAKEDIR}/OpenJPEGConfig.cmake
