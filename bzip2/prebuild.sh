@@ -1,7 +1,7 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
 # bzip2: pre-build script, sourced by runprebuild.sh (cwd: ${PKG_SRCPATH}, set -x, no -e).
-# The shared library soname/LDFLAGS fix is in patches/ (PATCHES in package.env).
+# The shared library soname/LDFLAGS fix is in patches/, applied before this.
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
 [ ! -f Makefile-libbz2_a ] && mv Makefile Makefile-libbz2_a || true
