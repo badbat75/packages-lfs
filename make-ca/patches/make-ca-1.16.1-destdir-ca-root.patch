@@ -1,0 +1,20 @@
+make-ca: the Mozilla CA root under DESTDIR
+
+With -D <destdir> make-ca -g verifies hg-edge.mozilla.org against
+/etc/make-ca/ISRG_Root_X1.pem of the running host, a file the host of a
+cross build does not have: openssl s_client fails, the log page stays
+empty and make-ca stops with "Unable to get revision from server". The
+file is installed under DESTDIR (make install), so verify against that
+copy; without -D nothing changes.
+
+--- a/make-ca
++++ b/make-ca
+@@ -662,7 +662,7 @@
+   echo -n "Checking for new version of certdata.txt..."
+   HOST=$(echo "${URL}" | /usr/bin/cut -d / -f 3)
+   _url=$(echo "${URL}" | sed 's@raw-file@log@')
+-  SARGS="-ign_eof -connect ${HOST}:443 -verifyCAfile ${MOZILLA_CA_ROOT}"
++  SARGS="-ign_eof -connect ${HOST}:443 -verifyCAfile ${DESTDIR}${MOZILLA_CA_ROOT}"
+   if test -d /etc/ssl/certs; then
+     SARGS="${SARGS} -verifyCApath ${CERTDIR}"
+   fi
