@@ -46,6 +46,6 @@ case ${PKG_TARGET} in
 			# End /etc/pam.d/system-session
 		EOF
 
-		chmod -v 4755 ${PKG_PKGPATH}/sbin/unix_chkpwd
+		chmod -v 4755 ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/sbin/unix_chkpwd
 	;;
 esac
