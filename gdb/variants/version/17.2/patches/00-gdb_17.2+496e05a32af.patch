@@ -1,0 +1,190 @@
+diff --git a/bfd/version.h b/bfd/version.h
+index 394adb7328f..2118271eb6d 100644
+--- a/bfd/version.h
++++ b/bfd/version.h
+@@ -16,7 +16,7 @@
+ 
+    In releases, the date is not included in either version strings or
+    sonames.  */
+-#define BFD_VERSION_DATE 20260510
++#define BFD_VERSION_DATE 20260806
+ #define BFD_VERSION @bfd_version@
+ #define BFD_VERSION_STRING  @bfd_version_package@ @bfd_version_string@
+ #define REPORT_BUGS_TO @report_bugs_to@
+diff --git a/gdb/aarch64-tdep.c b/gdb/aarch64-tdep.c
+index 500ac77d75a..84344010b14 100644
+--- a/gdb/aarch64-tdep.c
++++ b/gdb/aarch64-tdep.c
+@@ -1939,7 +1939,11 @@ static void
+ aarch64_shadow_stack_push (gdbarch *gdbarch, CORE_ADDR new_addr,
+ 			   regcache *regcache)
+ {
+-  aarch64_push_gcs_entry (regcache, new_addr);
++  bool gcs_is_enabled;
++
++  (void) gdbarch_get_shadow_stack_pointer (gdbarch, regcache, gcs_is_enabled);
++  if (gcs_is_enabled)
++    aarch64_push_gcs_entry (regcache, new_addr);
+ }
+ 
+ /* Implement the "push_dummy_call" gdbarch method.  */
+diff --git a/gdb/python/py-gdb-readline.c b/gdb/python/py-gdb-readline.c
+index 70ceebb36a1..9b16fb43315 100644
+--- a/gdb/python/py-gdb-readline.c
++++ b/gdb/python/py-gdb-readline.c
+@@ -90,20 +90,29 @@ gdbpy_initialize_gdb_readline (void)
+      GDB's readline should be implemented to replace Python's readline
+      and prevent conflicts.  For now, this file implements a
+      sys.meta_path finder that simply fails to import the readline
+-     module.  */
++     module.
++
++     Notes: Python includes three default importers.  As mentioned in the
++     documentation [1]:
++     - The first one knows how to locate built-in modules.
++     - The second one knows how to locate frozen modules.
++     - A third default finder searches an import path for modules.
++     [1]: https://docs.python.org/3/reference/import.html#finders-and-loaders
++
++     The third default finder is the one that will load readline, so the custom
++     finder to disable the import of readline in GDB has to be placed before
++     this third default finder.  */
+   if (PyRun_SimpleString ("\
+ import sys\n\
++from importlib.abc import MetaPathFinder\n\
+ \n\
+-class GdbRemoveReadlineFinder:\n\
+-  def find_module(self, fullname, path=None):\n\
+-    if fullname == 'readline' and path is None:\n\
+-      return self\n\
+-    return None\n\
++class GdbRemoveReadlineFinder(MetaPathFinder):\n\
+ \n\
+-  def load_module(self, fullname):\n\
+-    raise ImportError('readline module disabled under GDB')\n\
++  def find_spec(self, fullname, path=None, target=None):\n\
++    if fullname == \"readline\":\n\
++      raise ImportError(\"readline module disabled under GDB\")\n\
+ \n\
+-sys.meta_path.append(GdbRemoveReadlineFinder())\n\
++sys.meta_path.insert(2, GdbRemoveReadlineFinder())\n\
+ ") == 0)
+     PyOS_ReadlineFunctionPointer = gdbpy_readline_wrapper;
+ 
+diff --git a/gdb/ser-unix.c b/gdb/ser-unix.c
+index 5ec664df1f3..50c0fdddf6d 100644
+--- a/gdb/ser-unix.c
++++ b/gdb/ser-unix.c
+@@ -43,8 +43,10 @@
+ /* Workaround to resolve conflicting declarations of termios
+    in <asm/termbits.h> and <termios.h>.  */
+ #  define termios asmtermios
++#  define tcflag_t asmtcflag_t
+ #  include <asm/termbits.h>
+ #  undef termios
++#  undef tcflag_t
+ #endif
+ 
+ #ifdef HAVE_TERMIOS_H
+diff --git a/gdb/stabsread.c b/gdb/stabsread.c
+index 2d1411e9146..6cc3c5c7e02 100644
+--- a/gdb/stabsread.c
++++ b/gdb/stabsread.c
+@@ -5112,6 +5112,7 @@ read_member_functions (struct stab_field_info *fip, const char **pp,
+ 		{
+ 		  if (!is_destructor_name (tmp_sublist->fn_field.physname))
+ 		    {
++		      last_sublist = tmp_sublist;
+ 		      tmp_sublist = tmp_sublist->next;
+ 		      continue;
+ 		    }
+@@ -5122,7 +5123,6 @@ read_member_functions (struct stab_field_info *fip, const char **pp,
+ 		    last_sublist->next = tmp_sublist->next;
+ 		  else
+ 		    sublist = tmp_sublist->next;
+-		  last_sublist = tmp_sublist;
+ 		  tmp_sublist = tmp_sublist->next;
+ 		}
+ 
+diff --git a/gdb/testsuite/gdb.python/remove-readline-finder.exp b/gdb/testsuite/gdb.python/remove-readline-finder.exp
+new file mode 100644
+index 00000000000..362e90e6b7c
+--- /dev/null
++++ b/gdb/testsuite/gdb.python/remove-readline-finder.exp
+@@ -0,0 +1,27 @@
++# Copyright 2026 Free Software Foundation, Inc.
++
++# This program is free software; you can redistribute it and/or modify
++# it under the terms of the GNU General Public License as published by
++# the Free Software Foundation; either version 3 of the License, or
++# (at your option) any later version.
++#
++# This program is distributed in the hope that it will be useful,
++# but WITHOUT ANY WARRANTY; without even the implied warranty of
++# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++# GNU General Public License for more details.
++#
++# You should have received a copy of the GNU General Public License
++# along with this program.  If not, see <http://www.gnu.org/licenses/>.
++
++# Test that the readline module cannot be imported from GDB (PR 32473).
++
++load_lib gdb-python.exp
++
++require allow_python_tests
++
++standard_testfile
++
++clean_restart
++
++gdb_test "py import readline" \
++  "Python Exception <class 'ImportError'>: readline module disabled under GDB\r\n.*"
+diff --git a/gdb/tui/tui-io.c b/gdb/tui/tui-io.c
+index c97e8fd1717..84cad9366d5 100644
+--- a/gdb/tui/tui-io.c
++++ b/gdb/tui/tui-io.c
+@@ -319,7 +319,9 @@ tui_apply_style (WINDOW *w, ui_file_style style)
+   wattron (w, A_NORMAL);
+   wattroff (w, A_BOLD);
+   wattroff (w, A_DIM);
++#ifdef  A_ITALIC
+   wattroff (w, A_ITALIC);
++#endif
+   wattroff (w, A_UNDERLINE);
+   wattroff (w, A_REVERSE);
+   if (last_color_pair != -1)
+@@ -368,8 +370,10 @@ tui_apply_style (WINDOW *w, ui_file_style style)
+       gdb_assert_not_reached ("invalid intensity");
+     }
+ 
++#ifdef  A_ITALIC
+   if (style.is_italic ())
+     wattron (w, A_ITALIC);
++#endif
+ 
+   if (style.is_underline ())
+     wattron (w, A_UNDERLINE);
+diff --git a/gdb/ui-style.c b/gdb/ui-style.c
+index fba4f2835b4..3d142c63dc6 100644
+--- a/gdb/ui-style.c
++++ b/gdb/ui-style.c
+@@ -594,7 +594,11 @@ colorsupport ()
+     {
+       std::vector<color_space> result = {color_space::MONOCHROME};
+ 
+-      int colors = tgetnum ("Co");
++      /* ncurses versions prior to 6.1 (and other curses
++	 implementations) declare the tgetnum argument to be
++	 'char *', so we need the const_cast, since C++ will not
++	 implicitly convert.  */
++      int colors = tgetnum (const_cast<char*> ("Co"));
+ #ifdef __MINGW32__
+       /* MS-Windows terminal generally doesn't have "Co" in its
+ 	 terminfo, but always supports at least 8 colors.  */
+diff --git a/gdb/version.in b/gdb/version.in
+index 8fad390b2f7..f9436f2944f 100644
+--- a/gdb/version.in
++++ b/gdb/version.in
+@@ -1 +1 @@
+-17.2
++17.2.90.DATE-git
