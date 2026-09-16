@@ -2,12 +2,15 @@
 # shellcheck disable=SC2154
 # OpenJPEG: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
+# The ${CMAKE_SYSROOT} and ${_IMPORT_PREFIX} inside the sed expressions are literal text for CMake.
 
+### Since 2.5.4 the cmake package files live in lib/cmake/openjpeg-<major.minor> (OPENJPEG_INSTALL_PACKAGE_DIR)
+CMAKEDIR=${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/cmake/openjpeg-$(echo ${PKG_VER} | cut -d. -f1,2)
 sed -e '/IMPORTED_LOCATION_RELEASE/ s@"/usr/lib@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}/lib@' \
 		-e '/list(APPEND _cmake_import_check_files_for_openjp2/ s@"/usr/lib@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}/lib@' \
 		-e 's@"${_IMPORT_PREFIX}@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}@g' \
-		-i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/openjpeg-$(echo ${PKG_VER} | cut -d. -f1,2)/OpenJPEGTargets-release.cmake
+		-i ${CMAKEDIR}/OpenJPEGTargets-release.cmake
 		sed -e 's@"${_IMPORT_PREFIX}@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}@g' \
-		-i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/openjpeg-$(echo ${PKG_VER} | cut -d. -f1,2)/OpenJPEGTargets.cmake
+		-i ${CMAKEDIR}/OpenJPEGTargets.cmake
 		sed -e 's@"/usr/@"${CMAKE_SYSROOT}${_IMPORT_PREFIX}/@g' \
-		-i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/openjpeg-$(echo ${PKG_VER} | cut -d. -f1,2)/OpenJPEGConfig.cmake
+		-i ${CMAKEDIR}/OpenJPEGConfig.cmake
