@@ -3,4 +3,6 @@
 # dracut: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
-sed "/^DRACUT_VERSION=/ s/\$/${PKG_VER}-lfs/" -i ${PKG_PKGPATH}/usr/lib/dracut/dracut-version.sh
+# dracut-ng stamps the version into the dracut script itself (DRACUT_VERSION="112"), there is no
+# dracut-version.sh any more: mark the build as ours inside the quotes
+sed "/^DRACUT_VERSION=/ s/\"\$/-lfs\"/" -i ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/dracut
