@@ -10,7 +10,9 @@ install -vdm755 ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/{nss,dbm}
     cp -vRL dist/{public,private}/dbm/* ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/dbm
     install -vm755 dist/Release/lib/*.so ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
     install -vm644 dist/Release/lib/*.a ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
-    #install -vm644 dist/Release/lib/pkgconfig/* ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig
+    ### nss.pc comes from the standalone build patch (dist/Release/lib/pkgconfig/nss.pc is a symlink
+    ### into nss/config); Poppler and friends find the library through it
+    install -vm644 dist/Release/lib/pkgconfig/* ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig
     #install -vm644 dist/Release/lib/*.chk ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
     ln -sfv ./pkcs11/p11-kit-trust.so ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libnssckbi.so
     install -vm755 dist/Release/bin/* ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin
