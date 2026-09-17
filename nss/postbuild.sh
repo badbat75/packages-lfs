@@ -9,7 +9,13 @@ install -vdm755 ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/{nss,dbm}
     cp -vRL dist/{public,private}/nss/* ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/nss
     cp -vRL dist/{public,private}/dbm/* ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/dbm
     install -vm755 dist/Release/lib/*.so ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
-    install -vm644 dist/Release/lib/*.a ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+    ### The static libraries are the intermediate ones of the nss build, with names of their own
+    ### (libnss.a for libnss3.so): they go in only when the project builds static libraries, and then
+    ### as fat LTO objects, whose bytecode build removes (strip_lto_objects)
+    if [ "${PKG_OVERRIDESTATIC:-${BUILD_LIBSTATIC}}" -eq 1 ]
+    then
+        install -vm644 dist/Release/lib/*.a ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+    fi
     ### nss.pc comes from the standalone build patch (dist/Release/lib/pkgconfig/nss.pc is a symlink
     ### into nss/config); Poppler and friends find the library through it
     install -vm644 dist/Release/lib/pkgconfig/* ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig
