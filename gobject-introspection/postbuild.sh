@@ -12,7 +12,14 @@ case ${PKG_TARGET} in
 	*)
 		find ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin -name 'g-ir-*' -printf '%P\n' | xargs -t -I{} ln -sv ${TOOLCHAIN_PATH}/bin/{} ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/{}.cross
 		sed '/g_ir_/ s/$/.cross/' -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/gobject-introspection-1.0.pc
-		# $PKG_CONFIG_SYSROOT_DIR is literal text inside the m4 file
-		sed '/INTROSPECTION_.[A-Z]*=/ s/$PKG_CONFIG_SYSROOT_DIR//' -i ${PKG_PKGPATH}${INSTALL_SHAREDIR}/aclocal/introspection.m4
+		### The programs and girdir point into the sysroot through ${pc_sysrootdir}, which pkgconf keeps
+		### under the FDO sysroot rules of target builds (/ in the image)
+		# shellcheck disable=SC2016
+		sed -E -e 's/^(g_ir_[a-z]+)=\$\{bindir\}\//\1=${pc_sysrootdir}${bindir}\//' -e 's/^girdir=/girdir=${pc_sysrootdir}/' \
+			-i "${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"/pkgconfig/gobject-introspection{,-no-export}-1.0.pc
+		### $PKG_CONFIG_SYSROOT_DIR is literal text inside the m4 file: the programs already carry the
+		### sysroot, Makefile.introspection (datadir) needs it
+		# shellcheck disable=SC2016
+		sed '/INTROSPECTION_\(SCANNER\|COMPILER\|GENERATE\)=/ s/$PKG_CONFIG_SYSROOT_DIR//' -i "${PKG_PKGPATH}${INSTALL_SHAREDIR}/aclocal/introspection.m4"
 	;;
 esac
