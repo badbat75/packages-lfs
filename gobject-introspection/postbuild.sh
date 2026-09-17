@@ -9,6 +9,8 @@
 ### toolchain copies, not these)
 sed -i '1 s|^#!/usr/bin/env .*python3$|#!/usr/bin/env python3|' \
 	"${PKG_PKGPATH}${INSTALL_EXECPREFIX}"/bin/g-ir-{scanner,annotation-tool}
+### The .cross links point at the platform toolchain, so build logs "host paths in 5 files" for them:
+### they serve the builds that follow, and postinstall.sh removes them inside the image
 find ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin -name 'g-ir-*' -printf '%P\n' | xargs -t -I{} ln -sv ${TOOLCHAIN_PATH}/bin/{} ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/{}.cross
 sed '/g_ir_/ s/$/.cross/' -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/gobject-introspection-1.0.pc
 ### The programs and girdir point into the sysroot through ${pc_sysrootdir}, which pkgconf keeps
