@@ -19,3 +19,6 @@ diff -urp usr.orig/include/libaudit.h.orig usr/include/libaudit.h
 
 EOF
 popd
+### The python modules (_audit, auparse) need no libtool archive, whose dependency_libs name the gcc
+### library directory of the toolchain
+rm -fv "${PKG_PKGPATH}${INSTALL_EXECPREFIX}"/lib/python3*/site-packages/*.la
