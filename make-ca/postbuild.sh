@@ -5,3 +5,5 @@
 
 install -vdm755 ${PKG_PKGPATH}/etc/ssl/local
     ${PKG_PKGPATH}/usr/sbin/make-ca -s ${GLOBAL_TOOLCHAIN_PATH}/bin/openssl -D ${PKG_PKGPATH} -g
+### make-ca lists the anchors with md5sum "${DESTDIR}${ANCHORDIR}"/*: the image path of each file
+sed -i "s@  ${PKG_PKGPATH}/@  /@" "${PKG_PKGPATH}/etc/pki/anchors.md5sums"

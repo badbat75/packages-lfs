@@ -7,3 +7,7 @@
 ### a build tree script that executes the target groff binaries: point pdfmom at GROFFBIN,
 ### the cross groff of the toolchain (PKG_MAKEVARS), as groff 1.23 did through GROFF_BIN_PATH
 sed -i 's/GROFF_COMMAND=test-groff/GROFF_COMMAND=$(GROFFBIN)/' Makefile.in
+### chem, gperl, glilypond and gpinyin get their bindir, tmacdir and glilypond_dir at build time with
+### $(DESTDIR) in front, and the framework passes DESTDIR to every make run: the image paths without it
+# shellcheck disable=SC2016
+sed -i 's/|$(DESTDIR)\$(/|$(/' Makefile.in

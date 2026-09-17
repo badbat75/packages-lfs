@@ -10,6 +10,11 @@ case ${PKG_TARGET} in
 			"$(find "${INSTALL_LIBDIR}/gobject-introspection/giscanner" -name "_giscanner.cpython-*.so")"
 	;;
 	*)
+		### The python scripts get "/usr/bin/env <python>" from the interpreter meson ran with, the
+		### cross-python3 of the toolchain here: the python3 of the image (the .cross links below
+		### reach the toolchain copies, not these)
+		sed -i '1 s|^#!/usr/bin/env .*python3$|#!/usr/bin/env python3|' \
+			"${PKG_PKGPATH}${INSTALL_EXECPREFIX}"/bin/g-ir-{scanner,annotation-tool}
 		find ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin -name 'g-ir-*' -printf '%P\n' | xargs -t -I{} ln -sv ${TOOLCHAIN_PATH}/bin/{} ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/{}.cross
 		sed '/g_ir_/ s/$/.cross/' -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/gobject-introspection-1.0.pc
 		### The programs and girdir point into the sysroot through ${pc_sysrootdir}, which pkgconf keeps

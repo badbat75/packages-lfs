@@ -6,6 +6,9 @@
 
 mkdir -pv ${PKG_PKGPATH}${INSTALL_SYSCONFDIR} ${PKG_PKGPATH}/root
 ln -sfv bash ${PKG_PKGPATH}${INSTALL_PREFIX}/bin/sh
+### bash.pc tells the loadable builtins which compiler to use: configure wrote the cross compiler of
+### the toolchain behind sccache, the image has the gcc of lfs/gcc:binaries
+sed -E -i 's/^(CC|SHOBJ_CC) = .*/\1 = gcc/' "${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/bash.pc"
 
 install -v -m644 ${PKG_RECIPEPATH}/files/profile.sh ${PKG_PKGPATH}/etc/profile
 install -v -m644 ${PKG_RECIPEPATH}/files/bashrc.sh ${PKG_PKGPATH}/etc/bashrc
