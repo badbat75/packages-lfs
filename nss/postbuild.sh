@@ -16,3 +16,11 @@ install -vdm755 ${PKG_PKGPATH}${INSTALL_INCLUDEDIR}/{nss,dbm}
     #install -vm644 dist/Release/lib/*.chk ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
     ln -sfv ./pkcs11/p11-kit-trust.so ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libnssckbi.so
     install -vm755 dist/Release/bin/* ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin
+
+### The Makefile of the patch writes the directories of nss.pc from a fixed /usr: libdir and the -L flag
+### are ${prefix}/lib, while the libraries are in the multiarch directory (nss-config reads libdir too)
+# shellcheck disable=SC2016
+sed -E -e "s@^prefix=.*@prefix=${INSTALL_PREFIX}@" -e "s@^exec_prefix=.*@exec_prefix=${INSTALL_EXECPREFIX}@" \
+	-e "s@^libdir=.*@libdir=${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}@" -e "s@^includedir=.*@includedir=${INSTALL_INCLUDEDIR}/nss@" \
+	-e 's@^(Libs: )-L[^ ]+@\1-L${libdir}@' \
+	-i "${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/nss.pc"
