@@ -10,6 +10,18 @@ then
 	ln -sfv "${INSTALL_LIBSUFFIX#/}/${LD_LINUX_NAME}" "${PKG_PKGPATH}/lib"
 fi
 install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf.d
+### The multiarch layout puts the libraries in ${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}, a directory the
+### loader of this glibc searches by itself and the tools that read ld.so.conf do not know. dracut-install
+### is one: it looks for the libraries of a binary in its RUNPATH, in the directories of /etc/ld.so.conf
+### and in /lib64, /usr/lib64, /usr/local/lib64, /lib and /usr/lib only, and without this file the
+### initramfs had no libc and no libm for /init. Debian ships the same file
+if [ -n "${INSTALL_LIBSUFFIX}" ]
+then
+	cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/ld.so.conf.d/${HARCH}.conf <<-EOF
+		# Multiarch support
+		${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
+	EOF
+fi
 
 cat > ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/nsswitch.conf <<-EOF
 	# Begin /etc/nsswitch.conf
