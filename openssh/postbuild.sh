@@ -36,6 +36,11 @@ mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
 		ExecStart=/usr/sbin/sshd -i
 		StandardInput=socket
 	EOF
+	### sshd.socket (an sshd per connection) and sshd.service conflict. The systemd postinstall runs
+	### preset-all, which enables every unit no preset names: both were enabled and at boot sshd was
+	### not running. The service is the one the projects enable
+	install -vdm755 ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/system-preset
+	echo "disable sshd.socket" > ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/system-preset/80-openssh.preset
 	install -vdm755 ${PKG_PKGPATH}/etc/pam.d
 	cat <<-'EOF' >${PKG_PKGPATH}/etc/pam.d/sshd
 		# Begin /etc/pam.d/sshd
