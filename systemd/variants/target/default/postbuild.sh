@@ -48,6 +48,9 @@ ln -sfv /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/tmp.mount
 ### The postinstall runs preset-all, which enables every unit no preset names, and 90-systemd.preset
 ### leaves the sysupdate timers to the distribution. systemd-sysupdate needs transfer definitions
 ### (sysupdate.d) and the image has none: both timers ran it, and systemd-sysupdate-reboot.service
-### failed with "No transfer definitions found"
+### failed with "No transfer definitions found". The services go too: their [Install] has Also= on
+### the timers, and enabling them enabled the timers
 install -vdm755 ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/system-preset
-printf 'disable %s\n' systemd-sysupdate.timer systemd-sysupdate-reboot.timer > ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/system-preset/80-systemd-sysupdate.preset
+printf 'disable %s\n' systemd-sysupdate.service systemd-sysupdate.timer \
+	systemd-sysupdate-reboot.service systemd-sysupdate-reboot.timer \
+	> ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/system-preset/80-systemd-sysupdate.preset
