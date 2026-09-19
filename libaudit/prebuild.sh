@@ -3,6 +3,11 @@
 # libaudit: pre-build script, sourced by runprebuild.sh (cwd: ${PKG_SRCPATH}, set -x, no -e).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
+### LIBCAP_NG_PATH comes from the cap-ng.m4 lfs/libcap-ng installs, found in the aclocal
+### directory of the sysroot before m4/ of the sources: that copy never substitutes CAPNG_PKG,
+### which the one of audit adds, and audit.pc kept "Requires.private: @CAPNG_PKG@" (the pkg-config
+### lookup of audit by systemd failed). The build always uses libcap-ng (--with-libcap-ng=yes)
+sed -i 's/@CAPNG_PKG@/libcap-ng/' lib/audit.pc.in
 cp -v ${SYSROOT}${INSTALL_PREFIX}/include/linux/audit.h lib/audit.h
 	patch -p1 <<-'EOF'
 diff -urp audit-3.0.8.orig/bindings/swig/src/auditswig.i audit-3.0.8/bindings/swig/src/auditswig.i
