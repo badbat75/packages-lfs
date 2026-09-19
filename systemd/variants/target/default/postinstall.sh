@@ -4,6 +4,30 @@
 
 mkdir -pv ${INSTALL_LOCALSTATEDIR}/log/journal
 journalctl --update-catalog
+
+### The user and group databases of nsswitch.conf get the nss-systemd module, as nss-systemd(8)
+### recommends: a service with DynamicUser=yes otherwise owns its files as a bare number and getent
+### finds no name for it (measured: id in such a service printed uid=62957 with no name, and
+### uid=61802(run-p1834-i4546) with the module). group merges, so both files and systemd answer.
+### The hosts line is left alone: lfs/nss-mdns owns it, and the "resolve [!UNAVAIL=return]" the same
+### page recommends would cut avahi out of it, because systemd-resolved answers NOTFOUND for the
+### .local names it refuses (the ones of the other hosts of the LAN) and nothing after it runs.
+for db in passwd shadow
+do
+	if ! grep -q "^${db}:.*systemd" ${INSTALL_SYSCONFDIR}/nsswitch.conf
+	then
+		sed -i "s/^\(${db}:.*\)\$/\1 systemd/" ${INSTALL_SYSCONFDIR}/nsswitch.conf
+	fi
+done
+if ! grep -q '^group:.*systemd' ${INSTALL_SYSCONFDIR}/nsswitch.conf
+then
+	sed -i 's/^\(group:.*\)$/\1 [SUCCESS=merge] systemd/' ${INSTALL_SYSCONFDIR}/nsswitch.conf
+fi
+if ! grep -q '^gshadow:' ${INSTALL_SYSCONFDIR}/nsswitch.conf
+then
+	sed -i '/^shadow:/a gshadow: files systemd' ${INSTALL_SYSCONFDIR}/nsswitch.conf
+fi
+grep -e '^passwd:' -e '^group:' -e '^shadow:' -e '^gshadow:' ${INSTALL_SYSCONFDIR}/nsswitch.conf
 # systemd-sysusers
 # systemd-tmpfiles --create
 
