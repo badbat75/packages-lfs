@@ -2,16 +2,13 @@
 # shellcheck disable=SC2154
 # nss-mdns: post-install script, sourced as root inside the target chroot.
 
-### The hosts line of the nsswitch.conf of lfs/glibc resolves .local names through avahi-daemon
-### before DNS. The [NOTFOUND=return] the README of nss-mdns suggests is left out on purpose: it
-### stops the lookup of every .local name mDNS does not answer, and a LAN whose DNS server serves a
-### .local domain of its own (a common home router setup) then has no reachable host name. The cost
-### is one multicast query that finds nothing before DNS answers those names.
-if grep -q '^hosts:.*mdns' ${INSTALL_SYSCONFDIR}/nsswitch.conf
-then
-	### An earlier install of this package wrote that [NOTFOUND=return]: take it out
-	sed -i 's/^\(hosts:.*mdns_minimal\)[[:space:]]*\[NOTFOUND=return\]/\1/' ${INSTALL_SYSCONFDIR}/nsswitch.conf
-else
-	sed -i 's/^\(hosts:[[:space:]]*files\)/\1 mdns_minimal/' ${INSTALL_SYSCONFDIR}/nsswitch.conf
-fi
+### The module goes at the end of the hosts line of the nsswitch.conf of lfs/glibc, after dns, and
+### without the [NOTFOUND=return] the README of nss-mdns suggests: a name is looked up in files,
+### then in DNS, and only what neither answers goes to avahi over multicast. That order is what
+### makes the .local domain a LAN serves over unicast DNS resolve, in about 20 ms, while the names
+### that really are mDNS ones cost one DNS miss more (a few tens of ms). The other way round every
+### name under .local pays the multicast timeout first, and with [NOTFOUND=return] the DNS server
+### never sees it at all. The rule removes the module before appending it, so it also rewrites the
+### line an earlier install of this package left, on a running system as well.
+sed -i '/^hosts:/{s/[[:space:]]*mdns_minimal\([[:space:]]*\[NOTFOUND=return\]\)\?//; s/$/ mdns_minimal/}' ${INSTALL_SYSCONFDIR}/nsswitch.conf
 grep '^hosts:' ${INSTALL_SYSCONFDIR}/nsswitch.conf
