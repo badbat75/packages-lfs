@@ -57,3 +57,7 @@ install -vdm755 ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
 		ExecStart=/usr/bin/rsync --daemon --no-detach
 		StandardInput=socket
 	EOF
+### preset-all in the systemd postinstall enables every unit no preset names: rsyncd.socket had the
+### rsync daemon listen on port 873 of every image. It is enabled on purpose, the socket or the service
+install -vdm755 ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/system-preset
+printf 'disable %s\n' rsyncd.socket rsyncd.service > ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/systemd/system-preset/80-rsync.preset
