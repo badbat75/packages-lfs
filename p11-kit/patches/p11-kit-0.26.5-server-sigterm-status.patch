@@ -1,0 +1,18 @@
+SIGTERM interrupts pselect() and the loop leaves on the next iteration with ret still -1 from it:
+"p11-kit server" exited with status 255 and p11-kit-server.service (systemd --user) failed at
+every logout. A requested termination is a clean exit.
+
+--- a/p11-kit/server.c
++++ b/p11-kit/server.c
+@@ -605,8 +605,10 @@
+ 		if (need_children_cleanup)
+ 			cleanup_children ();
+
+-		if (terminate)
++		if (terminate) {
++			ret = 0;
+ 			break;
++		}
+
+ 		FD_ZERO (&rd_set);
+ 		FD_SET (server->socket, &rd_set);
