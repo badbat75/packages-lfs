@@ -1,0 +1,6 @@
+[Unit]
+Description=Save the clock for the boot without an RTC
+
+[Service]
+Type=oneshot
+ExecStart=/usr/libexec/fake-hwclock/fake-hwclock.sh save

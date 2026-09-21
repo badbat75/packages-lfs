@@ -1,0 +1,19 @@
+[Unit]
+Description=Restore the clock saved at the last shutdown (the board has no RTC)
+Documentation=man:date(1)
+### Early, before anything stamps the journal with the floor the kernel booted at; the ExecStop
+### saves the epoch at the shutdown, the hourly fake-hwclock-save.timer keeps it fresh across a
+### power loss
+DefaultDependencies=no
+After=systemd-remount-fs.service
+Before=sysinit.target systemd-timesyncd.service time-set.target
+ConditionPathExists=/var/lib/fake-hwclock/clock
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/libexec/fake-hwclock/fake-hwclock.sh load
+ExecStop=/usr/libexec/fake-hwclock/fake-hwclock.sh save
+
+[Install]
+WantedBy=sysinit.target

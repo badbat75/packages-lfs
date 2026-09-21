@@ -1,0 +1,8 @@
+[Unit]
+Description=Save the clock hourly for the boot without an RTC
+
+[Timer]
+OnCalendar=hourly
+
+[Install]
+WantedBy=timers.target
