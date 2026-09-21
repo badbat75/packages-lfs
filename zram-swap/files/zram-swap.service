@@ -1,0 +1,21 @@
+[Unit]
+Description=Compressed swap device on /dev/zram0
+Documentation=man:zramctl(8)
+### Wanted by swap.target, so the device it creates is up with the other swap devices: the
+### script loads the module, sizes it as a percentage of the RAM, formats it and swaps it on
+### at the priority of /etc/default/zram-swap. The default dependencies would put this unit
+### after basic.target, which orders after the sockets of sysinit.target, which orders after
+### swap.target: an ordering cycle. Early boot like the swap devices it joins
+DefaultDependencies=no
+After=local-fs.target
+Before=swap.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+EnvironmentFile=/etc/default/zram-swap
+ExecStart=/usr/libexec/zram-swap/zram-swap.sh start
+ExecStop=/usr/libexec/zram-swap/zram-swap.sh stop
+
+[Install]
+WantedBy=swap.target
