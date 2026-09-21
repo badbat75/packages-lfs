@@ -87,6 +87,14 @@ install -d -m755 ${PKG_PKGPATH}/etc
 
 		# End /etc/shells
 	EOF
+	cat > ${PKG_PKGPATH}/etc/environment <<-EOF
+		# Begin /etc/environment
+		# The key=value lines of the environment of every session: pam_env reads this file for
+		# the PAM stacks that name it, and systemd points its
+		# /usr/lib/environment.d/99-environment.conf symlink here
+
+		# End /etc/environment
+	EOF
 	sudo cat > ${PKG_PKGPATH}/etc/inputrc <<-EOF
 		# Begin /etc/inputrc
 		# Modified by Chris Lynn <roryo@roryo.dynup.net>
