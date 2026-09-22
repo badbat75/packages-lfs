@@ -1,14 +1,10 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
-# llvm, target libllvm: the full default build, with the install reduced to what Mesa links:
-# llvm-config, the libLLVM dylib, the static clang libraries (meson looks for libclang-cpp.so,
-# not built, and falls back to them), the LLVM and clang headers and the cmake config.
-# Replaces the postbuild of target/sysroot, whose sed work is done here as well.
-
-### Everything of the install that Mesa does not link goes
-find "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin" -mindepth 1 ! -name llvm-config -exec rm -rf {} +
-find "${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}" -maxdepth 1 -name '*.a' ! -name 'libclang*' -exec rm -f {} +
-rm -rf "${PKG_PKGPATH}${INSTALL_SHAREDIR}"
+# llvm, target libllvm: the install is only the libraries Mesa links (the PKG_MAKETARGETS of
+# the package.env of this variant: llvm-config, the LLVM libraries with the libLLVM dylib,
+# the static clang libraries (meson looks for libclang-cpp.so, not built, and falls back to
+# them) and the cmake config; the headers are lfs/llvm:headers). Replaces the postbuild of
+# target/sysroot, whose sed work is done here as well.
 
 CMAKEDIR=${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/cmake/llvm
 sed -i 's|^set(LLVM_INSTALL_PREFIX "|set(LLVM_INSTALL_PREFIX "${CMAKE_SYSROOT}|' ${CMAKEDIR}/LLVMConfig.cmake
