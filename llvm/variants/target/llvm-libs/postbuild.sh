@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
-# llvm, target libs: the install is only the libraries Mesa links (the PKG_MAKETARGETS of
+# llvm, target llvm-libs: the install is only the libraries Mesa links (the PKG_MAKETARGETS of
 # the package.env of this variant: llvm-config, the LLVM libraries with the libLLVM dylib,
 # the clang libraries (libclang-cpp.so, which meson finds and Mesa links, and the static
 # ones) and the cmake config; the headers are lfs/llvm:headers). Replaces the postbuild of
