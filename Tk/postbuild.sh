@@ -9,5 +9,6 @@ sed -e "s@${PKG_BLDPATH}/unix@${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}@g" -e "s@${P
 ### configure runs pkg-config by name for Xft, the native one that keeps the -L of the sysroot: TK_LIBS
 ### and Libs.private carry it
 strip_host_paths "${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}"/{tkConfig.sh,pkgconfig/tk.pc}
-	ln -v -sf wish8.6 ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/wish &&
-	chmod -v 755 ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libtk8.6.so
+### Tk 9 names its library after the Tcl it is built for: libtcl9tk9.0.so
+ln -v -sf wish${PKG_VER%.*} ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/wish
+chmod -v 755 ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libtcl${PKG_VER%%.*}tk${PKG_VER%.*}.so
