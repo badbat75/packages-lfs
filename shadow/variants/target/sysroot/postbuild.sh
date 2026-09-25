@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
-# shadow: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
+# shadow, target sysroot: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
 install -v -m640 /dev/null ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/shadow
