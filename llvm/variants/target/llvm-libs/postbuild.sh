@@ -13,3 +13,18 @@ sed -i 's|^set(_IMPORT_PREFIX "|set(_IMPORT_PREFIX "${CMAKE_SYSROOT}|' ${CMAKEDI
 ### The default lit of the out of tree builds is the llvm-lit of the build tree, which is not installed:
 ### none, they look for one themselves
 sed -i 's|^set(LLVM_DEFAULT_EXTERNAL_LIT ".*")|set(LLVM_DEFAULT_EXTERNAL_LIT "")|' ${CMAKEDIR}/LLVMConfig.cmake
+### LLVMExports-release.cmake checks that the file of every imported target exists, the tools
+### too (llvm-tblgen, opt, llc...), which this flavor does not install: find_package(LLVM) in the
+### sysroot stopped on the first one (lfs/Vulkan-SPIRV-LLVM-Translator). The check goes for the
+### targets whose file is not in the staging directory; their definitions stay
+EXPORTS=${CMAKEDIR}/LLVMExports-release.cmake
+sed -n 's|^list(APPEND _cmake_import_check_files_for_\([^ ]*\) "${_IMPORT_PREFIX}\([^"]*\)" )$|\1 \2|p' "${EXPORTS}" |
+	while read -r TARGET FILE
+	do
+		if [ ! -e "${PKG_PKGPATH}${INSTALL_PREFIX}${FILE}" ]
+		then
+			printf '/^list(APPEND _cmake_import_check_targets %s )$/d\n' "${TARGET}"
+			printf '/^list(APPEND _cmake_import_check_files_for_%s /d\n' "${TARGET}"
+		fi
+	done > "${PKG_BLDPATH}/exports-prune.sed"
+sed -i -f "${PKG_BLDPATH}/exports-prune.sed" "${EXPORTS}"
