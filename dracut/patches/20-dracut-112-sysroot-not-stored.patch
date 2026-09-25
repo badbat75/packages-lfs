@@ -1,0 +1,16 @@
+build-parameter.txt of the initramfs recorded --sysroot with the data directory of the build host
+(kernelbuild runs dracut with --sysroot): leave the option out of the stored parameters.
+
+--- a/dracut.sh
++++ b/dracut.sh
+@@ -780,7 +780,9 @@
+                     ;;
+                 -r | --sysroot)
+                     sysroot_l="$2"
+-                    PARMS_TO_STORE+=" '$2'"
++                    # a directory of the host that made the image, not a parameter of the image
++                    PARMS_TO_STORE="${PARMS_TO_STORE%"$1"}"
++                    PARMS_TO_STORE="${PARMS_TO_STORE% }"
+                     shift
+                     ;;
+                 --compress)

@@ -1,0 +1,14 @@
+The dm module asks modinfo about dm_mod with -k only, which reads /lib/modules of the host: with
+--sysroot the pre-udev hook was left out. Pass the sysroot as the base directory of modinfo.
+
+--- a/modules.d/70dm/module-setup.sh
++++ b/modules.d/70dm/module-setup.sh
+@@ -18,7 +18,7 @@
+ 
+ # called by dracut
+ install() {
+-    modinfo -k "$kernel" dm_mod > /dev/null 2>&1 \
++    modinfo ${dracutsysrootdir:+-b "$dracutsysrootdir"} -k "$kernel" dm_mod > /dev/null 2>&1 \
+         && inst_hook pre-udev 30 "$moddir/dm-pre-udev.sh"
+ 
+     inst_multiple dmsetup
