@@ -6,3 +6,4 @@
 ./configure --prefix=${INSTALL_PREFIX}
 make V=1 src/install/dracut-install
 install -vDm755 src/install/dracut-install ${INSTALL_EXECPREFIX}/bin/dracut-install
+echo ${PKG_VER} > ${INSTALL_SHAREDIR}/dracut-install.version
