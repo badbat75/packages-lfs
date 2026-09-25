@@ -1,0 +1,25 @@
+gzip.h defines head as a macro for the hash heads of deflate.c; gzip.c includes
+signal.h after it, and on aarch64 signal.h brings asm/sigcontext.h, whose
+struct _aarch64_ctx head the macro rewrites. signal.h before gzip.h.
+
+--- a/gzip.c
++++ b/gzip.c
+@@ -58,6 +58,10 @@
+ 
+ #include "tailor.h"
+ 
++/* Before gzip.h: its head macro would rename the head field of the
++   asm/sigcontext.h that signal.h includes on aarch64.  */
++#include <signal.h>
++
+ #include "gzip.h"
+ #include "lzw.h"
+ #include "revision.h"
+@@ -79,7 +83,6 @@
+ #include <inttypes.h>
+ #include <limits.h>
+ #include <locale.h>
+-#include <signal.h>
+ #include <stdcountof.h>
+ #include <stddef.h>
+ #include <stdlib.h>
