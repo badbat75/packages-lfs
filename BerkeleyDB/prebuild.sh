@@ -5,6 +5,7 @@
 
     sed -i 's/AC_DEFINE(HAVE_SYSTEM_INCLUDE_FILES)/AC_DEFINE(HAVE_SYSTEM_INCLUDE_FILES, [], [Description])/' dist/configure.ac
     sed -i 's/AC_DEFINE(DB_WIN32)/AC_DEFINE(DB_WIN32, [], [Description])/' dist/configure.ac
+    # shellcheck source=/dev/null
     . dist/RELEASE
     sed -e "s/__EDIT_DB_VERSION_FAMILY__/$DB_VERSION_FAMILY/g" \
     -e "s/__EDIT_DB_VERSION_RELEASE__/$DB_VERSION_RELEASE/g" \

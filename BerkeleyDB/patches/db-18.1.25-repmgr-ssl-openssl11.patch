@@ -1,0 +1,22 @@
+The error path of __repmgr_ssl_ctx_init frees the OpenSSL lock array, declared only for
+OpenSSL before 1.1: with 1.1 and later repmgr_net.c does not compile. The same guard as the
+declaration.
+
+--- a/src/repmgr/repmgr_net.c
++++ b/src/repmgr/repmgr_net.c
+@@ -2894,6 +2894,7 @@ err_cleanup:
+ 	if (ssl_ctx)
+ 		SSL_CTX_free(ssl_ctx);
+ 
++#if OPENSSL_VERSION_NUMBER < 0x10100000L
+ 	if (repmgr_ssl_mutex_arr != NULL) {
+ 		for (i = 0; i < CRYPTO_num_locks(); i++) {
+ 			if (repmgr_ssl_mutex_arr[i] != NULL)
+@@ -2902,6 +2903,7 @@ err_cleanup:
+ 		
+ 		repmgr_ssl_mutex_arr = NULL;
+ 	}
++#endif
+ 
+ 	return (1);
+ }
