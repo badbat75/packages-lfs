@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
-# openssh: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
+# openssh, target sysroot: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
 mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
