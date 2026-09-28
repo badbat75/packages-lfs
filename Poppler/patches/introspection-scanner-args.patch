@@ -1,0 +1,11 @@
+--- a/glib/CMakeLists.txt
++++ b/glib/CMakeLists.txt
+@@ -128,7 +128,7 @@
+ 
+   # General gir: Reset object-list for introspection & load tool args
+   set(INTROSPECTION_GIRS)
+-  set(INTROSPECTION_SCANNER_ARGS "--add-include-path=${CMAKE_CURRENT_SOURCE_DIR}" "--warn-all")
++  set(INTROSPECTION_SCANNER_ARGS "--add-include-path=${CMAKE_CURRENT_SOURCE_DIR}" "--warn-all" ${INTROSPECTION_SCANNER_EXTRA_ARGS})
+   set(INTROSPECTION_COMPILER_ARGS ${INTROSPECTION_COMPILER_ARGS} "--includedir=${CMAKE_CURRENT_SOURCE_DIR}")
+ 
+   # Poppler: Assign package to gir & export keys
