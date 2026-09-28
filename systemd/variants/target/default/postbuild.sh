@@ -39,7 +39,7 @@ cat >> ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}/systemd/system/getty@tty1.service.d/n
 	TTYVTDisallocate=no
 EOF
 
-cat >> ${PKG_PKGPATH}${INSTALL_LIBDIR}/udev/rules.d/60-block-scheduler.rules <<-EOF
+cat >> ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/udev/rules.d/60-block-scheduler.rules <<-EOF
 	ACTION=="add", SUBSYSTEM=="block", ENV{DEVTYPE}=="disk", KERNEL=="mmcblk*[0-9]|msblk*[0-9]|mspblk*[0-9]|sd*[!0-9]|sr*", ATTR{queue/scheduler}="bfq"
 EOF
 
