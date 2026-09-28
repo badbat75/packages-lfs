@@ -12,6 +12,14 @@ sed -i '1 s|^#!/usr/bin/env .*python3$|#!/usr/bin/env python3|' \
 ### The .cross links point at the platform toolchain, so build logs "host paths in 5 files" for them:
 ### they serve the builds that follow, and postinstall.sh removes them inside the image
 find ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin -name 'g-ir-*' -printf '%P\n' | xargs -t -I{} ln -sv ${TOOLCHAIN_PATH}/bin/{} ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/{}.cross
+### The introspection dumper is a program of the target: g-ir-scanner.cross runs it through qemu with
+### the sysroot (QEMU_LD_PREFIX), as the exe_wrapper of the meson cross file, which generate_gir does
+### not pass on. A copy, not a link: the scanner finds share/gir-1.0 relative to its own path (the
+### sysroot); an option given later on the command line wins
+rm "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
+sed '0,/^import sys$/ s//import sys\nsys.argv[1:1] = ["--use-binary-wrapper=qemu-'"${HM}"'-static"]/' \
+	"${TOOLCHAIN_PATH}/bin/g-ir-scanner" > "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
+chmod 755 "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
 sed '/g_ir_/ s/$/.cross/' -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/gobject-introspection-1.0.pc
 ### The programs and girdir point into the sysroot through ${pc_sysrootdir}, which pkgconf keeps
 ### under the FDO sysroot rules of target builds (/ in the image)
