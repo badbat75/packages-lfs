@@ -1,0 +1,17 @@
+make_fcontext of boost.context on ARM before ARMv7 loads the address of its finish label from a
+literal (ldr a2, =finish): an absolute R_ARM_ABS32 in .text, which lld refuses in a shared library
+("cannot be used against local symbol; recompile with -fPIC") and ld.bfd turns into a text
+relocation. adr, PC relative, is what ARMv7 uses and what the ARM state of every architecture has:
+the literal stays for Thumb-1 only.
+
+--- a/libs/context/src/asm/make_arm_aapcs_elf_gas.S
++++ b/libs/context/src/asm/make_arm_aapcs_elf_gas.S
+@@ -77,7 +77,7 @@
+ 
+ 
+     @ compute abs address of label finish
+-    #if __ARM_ARCH >= 7
++    #if __ARM_ARCH >= 7 || !defined(__thumb__)
+     adr  a2, finish
+     #else
+     ldr  a2, =finish
