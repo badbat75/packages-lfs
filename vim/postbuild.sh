@@ -25,3 +25,6 @@ mkdir -pv ${PKG_PKGPATH}${INSTALL_SYSCONFDIR}
 
 		" End /etc/vimrc
 	EOF
+
+### efm_perl.pl gets the perl the build found (which.sh), lfs/perl5:native: the one of the image
+sed -i "s#${GLOBAL_TOOLCHAIN_PATH}/perl5/bin/perl#${INSTALL_EXECPREFIX}/bin/perl#g" "${PKG_PKGPATH}${INSTALL_SHAREDIR}"/vim/vim*/tools/efm_perl.pl
