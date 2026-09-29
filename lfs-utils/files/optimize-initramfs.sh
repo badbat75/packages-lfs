@@ -1,13 +1,13 @@
 #!/bin/sh
-# dracut-hostonly: the initramfs of every kernel of /boot made again for this machine (lfs/lfs-utils)
+# optimize-initramfs.sh: the initramfs of every kernel of /boot made again for this machine (lfs/lfs-utils)
 ### The kernel package installs a generic initramfs, made on the build host for any machine of the
 ### platform; here it is kept as initramfs-<release>-generic.img, the rescue entry of the boot
 ### loader, and replaced by one with only what this machine needs (dracut --hostonly). The stamp in
-### /var/lib/dracut-hostonly is the size and the mtime of the initramfs made last time: another file
+### /var/lib/optimize-initramfs is the size and the mtime of the initramfs made last time: another file
 ### is a generic one a kernel package installed since, which is done again. Run it as root after the
-### first boot and after every kernel package installed: /opt/lfs-utils/dracut-hostonly.sh
+### first boot and after every kernel package installed: /opt/lfs-utils/optimize-initramfs.sh
 set -e
-STATE=/var/lib/dracut-hostonly
+STATE=/var/lib/optimize-initramfs
 mkdir -p "${STATE}"
 for MODDIR in /lib/modules/*/
 do
