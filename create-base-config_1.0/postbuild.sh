@@ -64,18 +64,19 @@ install -d -m755 ${PKG_PKGPATH}/etc
 		users:x:999:
 		nogroup:x:65534:
 	EOF
-	echo 20210214-systemd > ${PKG_PKGPATH}/etc/lfs-release
+	echo "${OS_VERSION}" > ${PKG_PKGPATH}/etc/lfs-release
 	cat > ${PKG_PKGPATH}/etc/lsb-release <<-EOF
 		DISTRIB_ID="Linux From Scratch"
-		DISTRIB_RELEASE="20230217-systemd"
+		DISTRIB_RELEASE="${OS_VERSION}"
 		DISTRIB_CODENAME="Gabriele"
 		DISTRIB_DESCRIPTION="Linux From Scratch"
 	EOF
 	cat > ${PKG_PKGPATH}/etc/os-release <<-EOF
 		NAME="Linux From Scratch"
-		VERSION="20230217-systemd"
+		VERSION="${OS_VERSION}"
 		ID=lfs
-		PRETTY_NAME="Linux From Scratch 20230217-systemd"
+		PRETTY_NAME="Linux From Scratch ${OS_VERSION}"
+		VERSION_ID="${OS_VERSION}"
 		VERSION_CODENAME="Gabriele"
 	EOF
 	cat > ${PKG_PKGPATH}/etc/shells <<-EOF
