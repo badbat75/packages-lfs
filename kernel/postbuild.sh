@@ -11,7 +11,7 @@
 ### root file system with its firmware. With them the generic initramfs took every drm module of the
 ### kernel with every firmware file they name (nouveau alone: 280 MB), when linux-firmware was
 ### already in the sysroot, and none when it was not; a machine gets its own initramfs from
-### /opt/lfs-utils/dracut-hostonly.sh (lfs/lfs-utils)
+### /opt/lfs-utils/optimize-initramfs.sh (lfs/lfs-utils)
 if [ "${PKG_KERNEL_INITRAMFS:-0}" -eq 1 ]
 then
 	KERNEL_RELEASE=$(cat include/config/kernel.release)
