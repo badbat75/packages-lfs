@@ -16,6 +16,14 @@ find ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin -name 'g-ir-*' -printf '%P\n' | xar
 ### <HARCH>-run (qemu, or the loader of the sysroot on the machine of the build host), as the
 ### exe_wrapper of the meson cross file, which generate_gir does not pass on. A copy, not a link: the scanner finds share/gir-1.0 relative to its own path (the
 ### sysroot); an option given later on the command line wins
+### g-ir-compiler looks for the included GIRs in its own datadir, the platform toolchain, which has the
+### ones of GLib:cross only when that was built after gobject-introspection:cross, and those describe
+### the build machine: the GIRs of the target are in the sysroot (the autotools Makefile.introspection
+### passes no --includedir for them, meson does)
+rm "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-compiler.cross"
+printf '#!/bin/sh\nexec "%s" --includedir="%s" "$@"\n' "${TOOLCHAIN_PATH}/bin/g-ir-compiler" \
+	"${BIN_PATH}${INSTALL_SHAREDIR}/gir-1.0" > "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-compiler.cross"
+chmod 755 "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-compiler.cross"
 rm "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
 sed '0,/^import sys$/ s//import sys\nsys.argv[1:1] = ["--use-binary-wrapper='"${HARCH}"'-run"]/' \
 	"${TOOLCHAIN_PATH}/bin/g-ir-scanner" > "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
