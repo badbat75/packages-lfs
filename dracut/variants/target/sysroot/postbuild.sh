@@ -9,7 +9,7 @@ sed "/^DRACUT_VERSION=/ s/\"\$/-lfs\"/" -i ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/b
 
 ### A board without a real time clock starts the initramfs at the release date of systemd, its
 ### built-in floor: the first lines of the journal of every boot had that date. clock-epoch raises
-### the floor: this package installs the file, so it is in the sysroot when kernelbuild makes the
+### the floor: this package installs the file, so it is in the sysroot when dracut-sysroot makes the
 ### initramfs there, before any post install script (reproducible="yes" of 01-dist.conf gives it
 ### the mtime of dracut-functions.sh, the time this package was built); the systemd postinstall
 ### touches it inside the image, the floor of the root file system
