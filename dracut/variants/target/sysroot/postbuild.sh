@@ -18,8 +18,6 @@ echo "install_optional_items+=\" ${INSTALL_PREFIX}/lib/clock-epoch \"" \
 	> ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/dracut/dracut.conf.d/50-clock-epoch.conf
 touch ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/clock-epoch
 
-### dracut-hostonly.service: the generic initramfs of the kernel package replaced by one of this
-### machine, the generic one kept for rescue (files/dracut-hostonly.sh); the project enables it
-install -v -d -m755 ${PKG_PKGPATH}${INSTALL_PREFIX}/libexec/dracut ${PKG_PKGPATH}/lib/systemd/system
-install -v -m755 ${PKG_RECIPEPATH}/files/dracut-hostonly.sh ${PKG_PKGPATH}${INSTALL_PREFIX}/libexec/dracut/dracut-hostonly.sh
-install -v -m644 ${PKG_RECIPEPATH}/files/dracut-hostonly.service ${PKG_PKGPATH}/lib/systemd/system/dracut-hostonly.service
+### dracut-hostonly.sh: the generic initramfs of the kernel package replaced by one of this machine,
+### the generic one kept for rescue (files/dracut-hostonly.sh), run by hand
+install -v -D -m755 ${PKG_RECIPEPATH}/files/dracut-hostonly.sh ${PKG_PKGPATH}/opt/lfs-utils/dracut-hostonly.sh
