@@ -6,6 +6,8 @@
 ### /var/lib/optimize-initramfs is the size and the mtime of the initramfs made last time: another file
 ### is a generic one a kernel package installed since, which is done again. Run it as root after the
 ### first boot and after every kernel package installed: /opt/lfs-utils/optimize-initramfs.sh
+### The programs of /etc/initramfs/post-update.d get the release and the initramfs made, as on Debian:
+### a boot firmware that reads a copy of it elsewhere (the Raspberry Pi: raspberrypi/rpi-kernel) refreshes it
 set -e
 STATE=/var/lib/optimize-initramfs
 mkdir -p "${STATE}"
@@ -20,6 +22,10 @@ do
 	### Written aside and renamed: a power loss in the middle leaves the generic one in place
 	dracut --hostonly --force "${INITRAMFS}.new" "${RELEASE}"
 	mv -f "${INITRAMFS}.new" "${INITRAMFS}"
+	for HOOK in /etc/initramfs/post-update.d/*
+	do
+		[ -x "${HOOK}" ] && "${HOOK}" "${RELEASE}" "${INITRAMFS}"
+	done
 	sync
 	stat -c '%s %Y' "${INITRAMFS}" > "${STATE}/${RELEASE}"
 done
