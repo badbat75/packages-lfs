@@ -7,6 +7,10 @@
     install -v -m755 -d ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libdaemon-${PKG_VER}/reference/html
     install -v -m644 doc/reference/html/* ${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libdaemon-0.14/reference/html
     #install -v -m644 doc/reference/man/man3/* ${PKG_PKGPATH}${INSTALL_SHAREDIR}/man/man3
-### README is the text dump of README.html, with links to the copy of the build tree: the installed one
-sed -i "s@file://${PKG_BLDPATH}/doc/@file://${INSTALL_SHAREDIR}/doc/libdaemon-${PKG_VER}/@g" \
-	"${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libdaemon-${PKG_VER}/README"
+### README is the text dump of README.html, with links to the copy of the build tree: the installed one.
+### configure makes it only with lynx, which the build machine does not have: README.html is there
+if [ -f "${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libdaemon-${PKG_VER}/README" ]
+then
+	sed -i "s@file://${PKG_BLDPATH}/doc/@file://${INSTALL_SHAREDIR}/doc/libdaemon-${PKG_VER}/@g" \
+		"${PKG_PKGPATH}${INSTALL_SHAREDIR}/doc/libdaemon-${PKG_VER}/README"
+fi
