@@ -10,7 +10,7 @@ mkdir -pv ${PKG_PKGPATH}/lib/systemd/system
 
 		[Service]
 		ExecStart=/usr/sbin/sshd -D
-		ExecReload=/bin/kill -HUP $MAINPID
+		ExecReload=/bin/kill -HUP \$MAINPID
 		KillMode=process
 		Restart=always
 
