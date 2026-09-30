@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
-# libxslt: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
+# libxslt, target sysroot: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
 ### xslt-config and xsltConf.sh give the flags of libxml2 as pkg-config returned them, with the sysroot
