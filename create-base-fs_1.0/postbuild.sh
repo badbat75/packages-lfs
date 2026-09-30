@@ -3,7 +3,7 @@
 # create-base-fs_1.0: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 # Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 
-mkdir -pv ${PKG_PKGPATH}/{dev,proc,sys,run,etc,var}
+mkdir -pv ${PKG_PKGPATH}/{boot,dev,proc,sys,run,etc,var}
 	if [ -n "${INSTALL_PREFIX}" ]
 	then
 		PREFIX=$(echo ${INSTALL_PREFIX} | sed 's|^/||')
