@@ -1,0 +1,24 @@
+#!/bin/sh
+# help2man_target <help2man> <runner> [<help2man options>] <program>: the HELP2MAN of the GRUB build
+# (lfs/GRUB). The manual pages of the tools come from their --help and --version, so help2man runs
+# programs of the target: through <runner> (<HARCH>-run), with the loader and the libraries of the
+# sysroot, not the ones of the build host (libfreetype and libdevmapper are not in the container).
+# A script named after the program, first in the PATH, runs it: help2man takes the name of the page
+# from the name it runs
+HELP2MAN=${1}
+RUNNER=${2}
+shift 2
+for PROGRAM
+do
+	:
+done
+PROGRAM_PATH=$(command -v "${PROGRAM}") || exit 127
+case ${PROGRAM_PATH} in
+	/*) ;;
+	*) PROGRAM_PATH=${PWD}/${PROGRAM_PATH} ;;
+esac
+SHIM_DIR=$(mktemp -d)
+trap 'rm -rf "${SHIM_DIR}"' EXIT
+printf '#!/bin/sh\nexec %s "%s" "$@"\n' "${RUNNER}" "${PROGRAM_PATH}" > "${SHIM_DIR}/${PROGRAM##*/}"
+chmod 755 "${SHIM_DIR}/${PROGRAM##*/}"
+PATH=${SHIM_DIR}:${PATH} "${HELP2MAN}" "$@"
