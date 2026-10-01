@@ -7,6 +7,7 @@
 "${PKG_SRCPATH}/install.sh" --prefix="${INSTALL_PREFIX}" --destdir="${PKG_PKGPATH}" \
 	--components="${RUST_COMPONENTS}" --disable-ldconfig
 ### The manifests uninstall.sh reads name the files with the staging directory: the paths of the image
-### instead. install.log is the log of this install
-sed -i "s|${PKG_PKGPATH}||g" "${PKG_PKGPATH}${INSTALL_LIBDIR}/rustlib/"manifest-*
-rm -fv "${PKG_PKGPATH}${INSTALL_LIBDIR}/rustlib/install.log"
+### instead. install.log is the log of this install. rustlib is in <prefix>/lib whatever the platform
+### (install.sh defaults its libdir to it and rustc looks for its sysroot there, lib64 or not)
+sed -i "s|${PKG_PKGPATH}||g" "${PKG_PKGPATH}${INSTALL_PREFIX}/lib/rustlib/"manifest-*
+rm -fv "${PKG_PKGPATH}${INSTALL_PREFIX}/lib/rustlib/install.log"
