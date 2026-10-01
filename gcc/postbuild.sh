@@ -7,3 +7,9 @@ eval export PKG_PKGPATH=${PKG_PKGPATH}
 	mkdir -pv ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}
 	find ${PKG_PKGPATH}${INSTALL_PREFIX}/lib/gcc/${HARCH} -type f,l \( -name "*.so*" -o -name "*.a*" -o -name "*.la*" -o -name "crt*.o" \) \
 	| xargs -r -I{} bash -c "ln -fsv \$(realpath --relative-to=${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX} {}) ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/\$(basename {})"
+### cc, the C compiler every Makefile and rustc (its default linker) call: gcc, where this build installs it
+### (not gcc:libraries, the target libraries only)
+if [ -x "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/gcc" ]
+then
+	ln -sfv gcc "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/cc"
+fi
