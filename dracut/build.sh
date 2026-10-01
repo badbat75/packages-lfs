@@ -6,12 +6,12 @@
 ### The Makefile links the units into modules.d with ln -sr between the staging paths: under
 ### /lib/systemd/system the relative path is one level short once /lib is the link to usr/lib of the
 ### image, and every dracut unit (dracut-shutdown, the initrd ones) pointed to /usr/usr/lib/dracut
-### No manual pages: they are asciidoc sources, which asciidoctor (Ruby) or asciidoc and xsltproc make,
-### and the build machine has no asciidoc
+### The manual pages are asciidoc sources: made with asciidoc (python/asciidoc:native) and the xsltproc
+### and DocBook style sheets of the global toolchain, not with asciidoctor (Ruby)
 ./configure \
 	--systemdsystemunitdir=${INSTALL_PREFIX}/lib/systemd/system \
 	--enable-dracut-cpio \
-	--disable-documentation
+	--disable-asciidoctor
 sed -e "s/cargo --offline build --release/cargo --offline build --target=${HM}-unknown-${HOS}-${HLIBC} --release/" \
 	-e "s@src/dracut-cpio/target/release/dracut-cpio@src/dracut-cpio/target/${HM}-unknown-${HOS}-${HLIBC}/release/dracut-cpio@g" -i Makefile
 case ${TOOLCHAIN} in
