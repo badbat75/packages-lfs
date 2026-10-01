@@ -38,8 +38,9 @@
 		target-os=${HOS} \
 		variant=release \
 		$(
+			### b2 puts cflags and cxxflags after its own options, so the -O of CXXFLAGS (OPTLEVEL) is the
+			### level: optimization only matches it where b2 has one (speed -O3, space -Os)
 			case ${OPTLEVEL} in
-				2)	echo -n "optimization=minimal" ;;
 				3)	echo -n "optimization=speed" ;;
 				s)	echo -n "optimization=space" ;;
 				*)	echo -n "optimization=off" ;;
