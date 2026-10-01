@@ -14,8 +14,10 @@ sed -i '1 s|^#!/usr/bin/env .*python3$|#!/usr/bin/env python3|' \
 find ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin -name 'g-ir-*' -printf '%P\n' | xargs -t -I{} ln -sv ${TOOLCHAIN_PATH}/bin/{} ${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/{}.cross
 ### The introspection dumper is a program of the target: g-ir-scanner.cross runs it through
 ### <HARCH>-run (qemu, or the loader of the sysroot on the machine of the build host), as the
-### exe_wrapper of the meson cross file, which generate_gir does not pass on. A copy, not a link: the scanner finds share/gir-1.0 relative to its own path (the
-### sysroot); an option given later on the command line wins
+### exe_wrapper of the meson cross file, which generate_gir does not pass on, and lists its libraries
+### through <HARCH>-ldd, the same loader: the ldd of the build host loads them with its own C library,
+### which fails on symbols of a newer one in the sysroot (GLIBC_2.44). A copy, not a link: the scanner
+### finds share/gir-1.0 relative to its own path (the sysroot); an option given later on the command line wins
 ### g-ir-compiler looks for the included GIRs in its own datadir, the platform toolchain, which has the
 ### ones of GLib:cross only when that was built after gobject-introspection:cross, and those describe
 ### the build machine: the GIRs of the target are in the sysroot (the autotools Makefile.introspection
@@ -25,7 +27,7 @@ printf '#!/bin/sh\nexec "%s" --includedir="%s" "$@"\n' "${TOOLCHAIN_PATH}/bin/g-
 	"${BIN_PATH}${INSTALL_SHAREDIR}/gir-1.0" > "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-compiler.cross"
 chmod 755 "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-compiler.cross"
 rm "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
-sed '0,/^import sys$/ s//import sys\nsys.argv[1:1] = ["--use-binary-wrapper='"${HARCH}"'-run"]/' \
+sed '0,/^import sys$/ s//import sys\nsys.argv[1:1] = ["--use-binary-wrapper='"${HARCH}"'-run", "--use-ldd-wrapper='"${HARCH}"'-ldd"]/' \
 	"${TOOLCHAIN_PATH}/bin/g-ir-scanner" > "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
 chmod 755 "${PKG_PKGPATH}${INSTALL_EXECPREFIX}/bin/g-ir-scanner.cross"
 sed '/g_ir_/ s/$/.cross/' -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/gobject-introspection-1.0.pc
