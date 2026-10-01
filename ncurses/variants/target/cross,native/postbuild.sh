@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
-# ncurses, target cross: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
+# ncurses, target cross or native: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 # Replaces the recipe postbuild.sh. Every ALL_CAPS variable visible to package.env is available here as ${VAR}.
 # The toolchain keeps the paths of the build: the link scripts and the pc files only.
 
