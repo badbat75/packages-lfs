@@ -11,7 +11,7 @@ sed -e '/#include <sstream>/a #include <limits>' -i src/gallium/drivers/r600/sfn
 ### meson does not read RUSTFLAGS, the rustc flags of the framework (link arguments: sysroot, target and
 ### linker for clang; target cpu): they go into the rust command itself, the only thing the sanity check
 ### of meson runs (rust_args are left out of it), without the final -C linker= that rust_ld replaces
-RUST_CMD="'${GLOBAL_TOOLCHAIN_PATH}/bin/rustc', '--target', '${CARGO_TARGET}'"
+RUST_CMD="'rustc', '--target', '${CARGO_TARGET}'"
 for RUST_ARG in ${RUSTFLAGS% -C linker=*}
 do
 	RUST_CMD+=", '${RUST_ARG}'"
