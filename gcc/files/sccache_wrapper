@@ -1,0 +1,13 @@
+#!/bin/sh
+# sccache_wrapper <compiler wrapper> <compiler> <arguments>: the STAGE_CC_WRAPPER of the cross gcc
+# builds. The target libraries are compiled by the xgcc of the build tree, which finds cc1 next to it
+# through -B: sccache does not follow -B, so the directory of cc1 goes first in the PATH. Any other
+# compiler runs without the wrapper
+wrapper=${1}
+shift
+dir=$(dirname "$(realpath "${1}")")
+if [ -e "${dir}/cc1" ]
+then
+	PATH=${dir}:${PATH} exec ${wrapper} "${@}"
+fi
+exec "${@}"
