@@ -1,6 +1,6 @@
 # shellcheck shell=bash
 # shellcheck disable=SC2154
-# libclc: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
+# llvm, target libclc: post-build script, sourced by runpostbuild.sh (cwd: ${PKG_BLDPATH}, set -ex).
 
 if [ ! -f "${PKG_SRCPATH}/libclc/CMakeLists.txt" ]
 then
@@ -21,7 +21,7 @@ export LD_LIBRARY_PATH="${LLVM_NATIVE_PATH}/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_
 for CLC_BITS in 32 64
 do
 	CLC_TRIPLE="spirv${CLC_BITS}-unknown-unknown"
-	"${GLOBAL_TOOLCHAIN_PATH}/bin/cmake" -S "${PKG_SRCPATH}/libclc" -B "${PKG_BLDPATH}/${CLC_TRIPLE}" -G Ninja \
+	"${GLOBAL_TOOLCHAIN_PATH}/bin/cmake" -S "${PKG_SRCPATH}/libclc" -B "${PKG_BLDPATH}/bbxb-libclc-${CLC_TRIPLE}" -G Ninja \
 		-DCMAKE_BUILD_TYPE=Release \
 		-DCMAKE_MAKE_PROGRAM="${GLOBAL_TOOLCHAIN_PATH}/bin/ninja" \
 		-DCMAKE_C_COMPILER="${LLVM_NATIVE_PATH}/bin/clang" \
@@ -31,12 +31,12 @@ do
 		-DLLVM_DEFAULT_TARGET_TRIPLE="${CLC_TRIPLE}" \
 		-DLLVM_SPIRV="${TOOLCHAIN_PATH}/bin/llvm-spirv" \
 		-DCMAKE_INSTALL_PREFIX="${INSTALL_PREFIX}"
-	"${GLOBAL_TOOLCHAIN_PATH}/bin/ninja" -C "${PKG_BLDPATH}/${CLC_TRIPLE}" -j"${NPROCS}"
+	"${GLOBAL_TOOLCHAIN_PATH}/bin/ninja" -C "${PKG_BLDPATH}/bbxb-libclc-${CLC_TRIPLE}" -j"${NPROCS}"
 	case ${CLC_BITS} in
 		32) CLC_MESANAME="spirv-mesa3d-.spv" ;;
 		64) CLC_MESANAME="spirv64-mesa3d-.spv" ;;
 	esac
-	install -vDm644 "${PKG_BLDPATH}/${CLC_TRIPLE}/${CLC_TRIPLE}/libclc.spv" "${PKG_PKGPATH}${INSTALL_SHAREDIR}/clc/${CLC_MESANAME}"
+	install -vDm644 "${PKG_BLDPATH}/bbxb-libclc-${CLC_TRIPLE}/${CLC_TRIPLE}/libclc.spv" "${PKG_PKGPATH}${INSTALL_SHAREDIR}/clc/${CLC_MESANAME}"
 done
 
 ### LLVM 23 no longer writes libclc.pc; Mesa reads libexecdir from it
