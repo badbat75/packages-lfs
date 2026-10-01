@@ -11,7 +11,7 @@ fi
 ### Nothing here is compiled for the target: the compiler is the native clang, away from the cross
 ### flags of environment.source. The cmake compiler checks are not linked (no libstdc++ needed on the host)
 unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
-LLVM_NATIVE_PATH="${GLOBAL_TOOLCHAIN_PATH}/llvm-${LLVM_VER}"
+LLVM_NATIVE_PATH="${GLOBAL_TOOLCHAIN_PATH}/llvm-${PKG_VER}"
 ### llvm-spirv of the cross translator links the native libLLVM
 export LD_LIBRARY_PATH="${LLVM_NATIVE_PATH}/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 

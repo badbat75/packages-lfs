@@ -13,8 +13,8 @@ fi
 ### sysroot, the source path maps and the directories of the cross gcc (setup_clang_config): away from
 ### the flags of environment.source, which are the ones of the build machine
 unset CFLAGS CXXFLAGS CPPFLAGS LDFLAGS
-LLVM_NATIVE_PATH="${GLOBAL_TOOLCHAIN_PATH}/llvm-${LLVM_VER}"
-CLANG="${TOOLCHAIN_PATH}/llvm-${LLVM_VER}/bin/${HARCH}-clang"
+LLVM_NATIVE_PATH="${GLOBAL_TOOLCHAIN_PATH}/llvm-${PKG_VER}"
+CLANG="${TOOLCHAIN_PATH}/llvm-${PKG_VER}/bin/${HARCH}-clang"
 RESOURCE_DIR=$( "${LLVM_NATIVE_PATH}/bin/clang" -print-resource-dir )
 ### The normalized triple: the directory clang looks the runtime up in, and the target compiler-rt asks
 ### for when it builds one target only
