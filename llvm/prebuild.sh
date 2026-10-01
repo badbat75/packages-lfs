@@ -8,3 +8,15 @@
 sed -e '/^set(LLVM_SRC_ROOT /s@.*@set(LLVM_SRC_ROOT "")@' \
 	-e '/^set(LLVM_OBJ_ROOT /s@.*@set(LLVM_OBJ_ROOT "")@' \
 	-i llvm/tools/llvm-config/CMakeLists.txt
+### The standalone build of lldb finds the resource directory of clang three directories above the cmake
+### directory of clang (lib/cmake/clang): the one of the image is lib/<triple>/cmake/clang. The prefix
+### clang installed into instead, which its ClangConfig.cmake gives (in the sysroot for the image)
+sed -e 's@PREFIX "${Clang_DIR}/../../../"@PREFIX "${CLANG_INSTALL_PREFIX}"@' \
+	-i lldb/cmake/modules/LLDBStandalone.cmake
+### The libpython lldb loads when none is loaded yet is the one of the build, the sysroot for a cross
+### build: the path of the image instead (Config.h of lldb, compiled into liblldb)
+grep -q 'BBXB: the libpython of the image' lldb/cmake/modules/LLDBConfig.cmake || \
+	sed -e '/get_target_property(_Python3_LIB_PATH Python3::Python IMPORTED_LOCATION)/a\
+    if(CMAKE_SYSROOT) # BBXB: the libpython of the image\
+      string(REPLACE "${CMAKE_SYSROOT}" "" _Python3_LIB_PATH "${_Python3_LIB_PATH}")\
+    endif()' -i lldb/cmake/modules/LLDBConfig.cmake
