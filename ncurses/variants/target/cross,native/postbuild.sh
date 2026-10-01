@@ -6,7 +6,7 @@
 
 echo "INPUT(-lncursesw)" > ${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libncurses.so
 echo "INPUT(-lncursesw)" > ${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libtinfo.so
-### form, panel and menu by their plain names too (the panel the curses GUI of lldb looks for)
+### form, panel and menu by their plain names too (the panel the curses GUI of lfs/llvm looks for)
 for LIB in form panel menu
 do
 	echo "INPUT(-l${LIB}w)" > ${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/lib${LIB}.so

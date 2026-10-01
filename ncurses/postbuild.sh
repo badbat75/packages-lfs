@@ -6,6 +6,11 @@
 
 echo "INPUT(-lncursesw)" > ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libncurses.so
 	echo "INPUT(-lncursesw)" > ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/libtinfo.so
+### form, panel and menu by their plain names too (the panel the curses GUI of lfs/llvm looks for)
+for LIB in form panel menu
+do
+	echo "INPUT(-l${LIB}w)" > ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/lib${LIB}.so
+done
 	sed -e 's/^Libs: .*-l/Libs: -L\${libdir} -l/' -e 's/^Cflags:  -D/Cflags: -I\${includedir} -D/' -i ${PKG_PKGPATH}${INSTALL_LIBDIR}${INSTALL_LIBSUFFIX}/pkgconfig/{formw,menuw,ncursesw,panelw}.pc
 ### ncursesw6-config gives the link flags of the build; curses.h and terminfo(5) name the Caps files
 ### of the source tree they were generated from
