@@ -1,0 +1,37 @@
+mold 2.42.1: with --retain-symbols-file, write to .symtab only the symbols compute_symtab_size counted
+
+main.cc sets write_to_symtab on every name of the --retain-symbols-file list before the symbol tables
+are sized. compute_symtab_size counts a global symbol of an object only when its section is alive, and
+one of a shared library only when it is imported or exported; populate_symtab wrote every symbol with
+write_to_symtab set. A name of the list that a shared library defines and the output neither imports
+nor exports (std::__cxx11::basic_string::_M_construct of libstdc++, in the export list libtool writes
+for libasprintf of gettext) was written without having been counted: its name went past the end of
+.strtab, over the first entries of .symtab, and strip refused the library ("symbol number 0 uses
+unsupported binding of 7"). libtool links every C++ library with -export-symbols through
+--retain-symbols-file. populate_symtab now writes what has an output index, the mark of the count.
+
+--- a/src/input-files.cc
++++ b/src/input-files.cc
+@@ -1496,7 +1496,7 @@
+ 
+   for (i64 i = this->first_global; i < this->elf_syms.size(); i++) {
+     Symbol<E> &sym = *this->symbols[i];
+-    if (sym.file == this && sym.write_to_symtab)
++    if (sym.file == this && this->output_sym_indices[i] != -1)
+       write_sym(sym, sym.is_local(ctx) ? local_idx++ : global_idx++);
+   }
+ }
+@@ -1896,8 +1896,11 @@
+   u8 *strtab = ctx.buf + ctx.strtab->shdr.sh_offset;
+   i64 strtab_off = this->strtab_offset;
+ 
+-  for (i64 i = 0; Symbol<E> *sym : this->get_global_syms()) {
+-    if (sym->file != this || !sym->write_to_symtab)
++  // Write only what compute_symtab_size counted: --retain-symbols-file
++  // sets write_to_symtab on symbols it then leaves out
++  for (i64 i = 0, k = this->first_global; k < this->symbols.size(); k++) {
++    Symbol<E> *sym = this->symbols[k];
++    if (sym->file != this || this->output_sym_indices[k] == -1)
+       continue;
+ 
+     U32<E> *xindex = nullptr;
