@@ -1,0 +1,48 @@
+FAPI: use the vasprintf of the C library
+
+ifapi_helpers.c defines a vasprintf of its own, which replaces the one of glibc. With _FORTIFY_SOURCE,
+stdio.h declares vasprintf as an always_inline wrapper; built with -fno-semantic-interposition and
+LTO, the call becomes one to vasprintf.localalias that the ltrans cannot inline, and the link stops
+("inlining failed in call to 'always_inline' 'vasprintf.localalias': function not inlinable").
+glibc has vasprintf (config.h defines _GNU_SOURCE).
+
+--- a/src/tss2-fapi/ifapi_helpers.c	2026-10-02 19:31:17.814497526 +0200
++++ b/src/tss2-fapi/ifapi_helpers.c	2026-10-02 19:31:35.021820279 +0200
+@@ -550,37 +550,6 @@
+  *
+  * @param[out] str The allocated output string.
+  * @param[in] fmt The format string (printf formats can be used.)
+- * @param[in] args The list of objects to be printed.
+- *
+- * @retval int The size of the string ff the printing was successful.
+- * @retval -1 if not enough memory can be allocated.
+- */
+-int
+-vasprintf(char **str, const char *fmt, va_list args) {
+-    int     size = 0;
+-    va_list tmpa;
+-    char   *dmy = NULL;
+-    va_copy(tmpa, args);
+-    size = vsnprintf(dmy, size, fmt, tmpa);
+-    va_end(tmpa);
+-    if (size < 0) {
+-        return -1;
+-    }
+-    *str = (char *)malloc(size + 1);
+-    if (NULL == *str) {
+-        return -1;
+-    }
+-    size = vsprintf(*str, fmt, args);
+-    return size;
+-}
+-
+-/** Print to allocated string.
+- *
+- * A list of parameters will be printed to an allocated string according to the
+- * format description in the first parameter.
+- *
+- * @param[out] str The allocated output string.
+- * @param[in] fmt The format string (printf formats can be used.)
+  * @param[in] ... The list of objects to be printed.
+  *
+  * @retval TSS2_RC_SUCCESS If the printing was successful.
