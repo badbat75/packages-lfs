@@ -14,3 +14,8 @@ sed -E -e '/-DCFG_INSTALL_/ {
 	s/\$\(INCLUDE_INSTALL_DIR\)/$(includedir)/
 	s/\$\(MAN_INSTALL_DIR\)/$(mandir)/
 }' -i unix/Makefile.in
+
+### The configure of TEA (unix/ and every extension of pkgs/: itcl, thread, tdbc...) appends
+### CFLAGS_DEFAULT, "${CFLAGS_OPTIMIZE} -DNDEBUG", after CFLAGS: CFLAGS_OPTIMIZE is -O2 there, the
+### level is OPTLEVEL
+sed -E -i 's/^([[:space:]]*CFLAGS_OPTIMIZE=)("-O2"|-O2)$/\1/' unix/configure pkgs/*/configure
