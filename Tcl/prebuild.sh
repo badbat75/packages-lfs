@@ -16,6 +16,6 @@ sed -E -e '/-DCFG_INSTALL_/ {
 }' -i unix/Makefile.in
 
 ### The configure of TEA (unix/ and every extension of pkgs/: itcl, thread, tdbc...) appends
-### CFLAGS_DEFAULT, "${CFLAGS_OPTIMIZE} -DNDEBUG", after CFLAGS: CFLAGS_OPTIMIZE is -O2 there, the
-### level is OPTLEVEL
-sed -E -i 's/^([[:space:]]*CFLAGS_OPTIMIZE=)("-O2"|-O2)$/\1/' unix/configure pkgs/*/configure
+### CFLAGS_DEFAULT, "${CFLAGS_OPTIMIZE} -DNDEBUG", after CFLAGS: CFLAGS_OPTIMIZE starts with -O2 there
+### ("-O2 -fomit-frame-pointer" on Linux), the level is OPTLEVEL
+sed -E -i 's/^([[:space:]]*CFLAGS_OPTIMIZE=)("?)-O2( |"|$)/\1\2\3/' unix/configure pkgs/*/configure
